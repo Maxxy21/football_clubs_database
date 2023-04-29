@@ -1,5 +1,5 @@
--- A Database for a Football Club
 -- Introduction to Databases project
+-- A Database for a Football Club
 -- Author: Maxwell Aboagye
 
 BEGIN;
@@ -28,7 +28,7 @@ CREATE TABLE Sponsor
     sponsorID      INT PRIMARY KEY,
     name           VARCHAR(50) NOT NULL,
     industry       VARCHAR(50),
-    foundationYear DATE
+    foundationYear SMALLINT
 );
 
 CREATE TABLE Person
@@ -93,22 +93,22 @@ CREATE TABLE StateOfContract
 
 CREATE TABLE StateOfPlaysFor
 (
-    personID     INT,
+    playerID     INT,
     startDate    DATE,
     jerseyNumber INT,
     teamID       INT,
-    PRIMARY KEY (personID, startDate),
-    FOREIGN KEY (personID) REFERENCES Person (personID),
+    PRIMARY KEY (playerID, startDate),
+    FOREIGN KEY (playerID) REFERENCES Person (personID),
     FOREIGN KEY (teamID) REFERENCES Team (teamID)
 );
 
 CREATE TABLE StateOfManage
 (
-    personID  INT,
+    managerID  INT,
     startDate DATE,
     teamID    INT,
-    PRIMARY KEY (personID, startDate),
-    FOREIGN KEY (personID) REFERENCES Person (personID),
+    PRIMARY KEY (managerID, startDate),
+    FOREIGN KEY (managerID) REFERENCES Person (personID),
     FOREIGN KEY (teamID) REFERENCES Team (teamID)
 );
 
@@ -118,23 +118,31 @@ CREATE TABLE ContractWith
     personID  INT REFERENCES Person (personID),
     startDate DATE,
     PRIMARY KEY (teamID, personID, startDate),
-    FOREIGN KEY (personID, startDate) REFERENCES StateOfContract (personID, startDate)
+    FOREIGN KEY (personID, startDate) REFERENCES HasStateC (personID, startDate)
 );
 
 CREATE TABLE HasStateM
 (
-    personID  INT REFERENCES Manager (managerID),
+    managerID  INT REFERENCES Manager (managerID),
     startDate DATE,
-    PRIMARY KEY (personID, startDate),
-    FOREIGN KEY (personID, startDate) REFERENCES StateOfManage (personID, startDate)
+    PRIMARY KEY (managerID, startDate),
+    FOREIGN KEY (managerID, startDate) REFERENCES StateOfManage (managerID, startDate)
 );
 
 CREATE TABLE HasStateP
 (
-    personID  INT REFERENCES Player (playerID),
+    playerID  INT REFERENCES Player (playerID),
+    startDate DATE,
+    PRIMARY KEY (playerID, startDate),
+    FOREIGN KEY (playerID, startDate) REFERENCES StateOfPlaysFor (playerID, startDate)
+);
+
+CREATE TABLE HasStateC
+(
+    personID  INT REFERENCES Person (personID),
     startDate DATE,
     PRIMARY KEY (personID, startDate),
-    FOREIGN KEY (personID, startDate) REFERENCES StateOfPlaysFor (personID, startDate)
+    FOREIGN KEY (personID, startDate) REFERENCES StateOfContract (personID, startDate)
 );
 
 CREATE TABLE Plays
