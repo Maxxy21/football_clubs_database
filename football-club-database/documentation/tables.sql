@@ -77,13 +77,16 @@ CREATE TABLE Person
     nationality VARCHAR(50)
 );
 
-
 CREATE TABLE Player
 (
     playerID    INT PRIMARY KEY,
     startingXI  BOOLEAN,
     appearances INT CHECK (appearances >= 0),
-    FOREIGN KEY (playerID) REFERENCES Person (personID)
+    CONSTRAINT playerInPerson FOREIGN KEY (playerID)
+        REFERENCES Person (personID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE CoachingStaff
@@ -91,15 +94,26 @@ CREATE TABLE CoachingStaff
     coachingStaffID INT PRIMARY KEY,
     role            VARCHAR(50),
     teamID          INT,
-    FOREIGN KEY (coachingStaffID) REFERENCES Person (personID),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+    CONSTRAINT coachingStaffInPerson FOREIGN KEY (coachingStaffID)
+        REFERENCES Person (personID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT coachingStaffInTeam FOREIGN KEY (teamID)
+        REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE Manager
 (
     managerID         INT PRIMARY KEY,
     yearsOfExperience INT,
-    FOREIGN KEY (managerID) REFERENCES Person (personID)
+    CONSTRAINT managerInPerson FOREIGN KEY (managerID)
+        REFERENCES Person (personID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE Captain
@@ -108,8 +122,15 @@ CREATE TABLE Captain
     captainSince DATE NOT NULL CHECK (captainSince <= CURRENT_DATE),
     seniority    INT,
     teamID       INT,
-    FOREIGN KEY (captainID) REFERENCES Player (playerID),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+    CONSTRAINT captainInPlayer FOREIGN KEY (captainID)
+        REFERENCES Player (playerID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT captainInTeam FOREIGN KEY (teamID)
+        REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE Position
@@ -126,8 +147,15 @@ CREATE TABLE StateOfContract
     endDate   DATE CHECK (endDate > startDate),
     salary    DECIMAL(10, 2),
     PRIMARY KEY (personID, teamID, startDate),
-    FOREIGN KEY (personID) REFERENCES Person (personID),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+    CONSTRAINT personInContract FOREIGN KEY (personID)
+        REFERENCES Person (personID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT teamInContract FOREIGN KEY (teamID)
+        REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE StateOfPlaysFor
@@ -137,8 +165,15 @@ CREATE TABLE StateOfPlaysFor
     jerseyNumber INT CHECK (jerseyNumber BETWEEN 1 AND 99),
     teamID       INT,
     PRIMARY KEY (playerID, startDate),
-    FOREIGN KEY (playerID) REFERENCES Person (personID),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+    CONSTRAINT personInPlaysFor FOREIGN KEY (playerID)
+        REFERENCES Person (personID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT teamInPlaysFor FOREIGN KEY (teamID)
+        REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE StateOfManage
@@ -147,8 +182,15 @@ CREATE TABLE StateOfManage
     startDate DATE,
     teamID    INT,
     PRIMARY KEY (managerID, startDate),
-    FOREIGN KEY (managerID) REFERENCES Person (personID),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+    CONSTRAINT managerInStateOfManage FOREIGN KEY (managerID)
+        REFERENCES Person (personID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT teamInStateOfManage FOREIGN KEY (teamID)
+        REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 /**
@@ -158,18 +200,26 @@ CREATE TABLE StateOfManage
     */
 CREATE TABLE HasStateM
 (
-    managerID INT REFERENCES Manager (managerID),
+    managerID INT,
     startDate DATE,
     PRIMARY KEY (managerID, startDate),
-    FOREIGN KEY (managerID, startDate) REFERENCES StateOfManage (managerID, startDate)
+    CONSTRAINT managerInHasStateM FOREIGN KEY (managerID, startDate)
+        REFERENCES StateOfManage (managerID, startDate)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE HasStateP
 (
-    playerID  INT REFERENCES Player (playerID),
+    playerID  INT,
     startDate DATE,
     PRIMARY KEY (playerID, startDate),
-    FOREIGN KEY (playerID, startDate) REFERENCES StateOfPlaysFor (playerID, startDate)
+    CONSTRAINT playerInHasStateP FOREIGN KEY (playerID, startDate)
+        REFERENCES StateOfPlaysFor (playerID, startDate)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE HasStateC
@@ -190,51 +240,78 @@ CREATE TABLE ContractWith
     FOREIGN KEY (teamID) REFERENCES Team (teamID)
 );
 
-
 CREATE TABLE Plays
 (
     playerID   INT,
     positionID INT,
     PRIMARY KEY (playerID, positionID),
-    FOREIGN KEY (playerID) REFERENCES Player (playerID),
+    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (positionID) REFERENCES Position (positionID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE Trains
 (
-    personID INT REFERENCES CoachingStaff (coachingStaffID),
-    playerID INT REFERENCES Player (playerID),
-    PRIMARY KEY (personID, playerID)
+    personID INT,
+    playerID INT,
+    PRIMARY KEY (personID, playerID),
+    FOREIGN KEY (personID) REFERENCES CoachingStaff (coachingStaffID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (playerID) REFERENCES Player (playerID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE L_Sponsorship
 (
-    sponsorID INT REFERENCES Sponsor (sponsorID),
-    leagueID  INT REFERENCES League (leagueID),
+    sponsorID INT,
+    leagueID  INT,
     startDate DATE,
     endDate   DATE,
     type      VARCHAR(50),
-    PRIMARY KEY (sponsorID, leagueID, startDate)
+    PRIMARY KEY (sponsorID, leagueID, startDate),
+    FOREIGN KEY (sponsorID) REFERENCES Sponsor (sponsorID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (leagueID) REFERENCES League (leagueID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE T_Sponsorship
 (
-    sponsorID INT REFERENCES Sponsor (sponsorID),
-    teamID    INT REFERENCES Team (teamID),
+    sponsorID INT,
+    teamID    INT,
     startDate DATE,
     endDate   DATE,
     type      VARCHAR(50),
-    PRIMARY KEY (sponsorID, teamID, startDate)
+    PRIMARY KEY (sponsorID, teamID, startDate),
+    FOREIGN KEY (sponsorID) REFERENCES Sponsor (sponsorID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE P_Sponsorship
 (
-    sponsorID INT REFERENCES Sponsor (sponsorID),
-    personID  INT REFERENCES Player (playerID),
+    sponsorID INT,
+    personID  INT,
     startDate DATE,
     endDate   DATE,
     type      VARCHAR(50),
-    PRIMARY KEY (sponsorID, personID, startDate)
+    PRIMARY KEY (sponsorID, personID, startDate),
+    FOREIGN KEY (sponsorID) REFERENCES Sponsor (sponsorID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (personID) REFERENCES Player (playerID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE ParticipatesIn
@@ -243,12 +320,15 @@ CREATE TABLE ParticipatesIn
     leagueID INT,
     season   VARCHAR(50) NOT NULL,
     PRIMARY KEY (teamID, leagueID, season),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID),
+    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (leagueID) REFERENCES League (leagueID)
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 );
 
-
--- Add UNIQUE constraints to enforce one manager and captain per team at a given time
+-- The UNIQUE constraints remain the same
 CREATE UNIQUE INDEX idx_unique_manager ON StateOfManage (teamID, startDate);
 CREATE UNIQUE INDEX idx_unique_captain ON Captain (captainID, captainSince);
 
@@ -368,10 +448,10 @@ VALUES (1, 1, '2018-07-01', '2023-06-30', 'Boot Sponsor'),
        (2, 2, '2018-07-01', '2023-06-30', 'Boot Sponsor');
 
 -- -- Populating ParticipatesIn
-INSERT INTO ParticipatesIn (leagueID, teamID)
-VALUES (1, 1),
-       (1, 2),
-       (1, 3);
+INSERT INTO ParticipatesIn (teamID, leagueID, season)
+VALUES (1, 1, '2023-2024'),
+       (2, 1, '2023-2024'),
+       (3, 1, '2023-2024');
 
 
 COMMIT;

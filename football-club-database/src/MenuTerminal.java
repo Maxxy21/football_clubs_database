@@ -1,4 +1,3 @@
-import java.io.Console;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -18,12 +17,12 @@ public class MenuTerminal extends Menu {
     }
 
     private void askCredentials() {
-        String dbName, username, password;
+        String database, username, password;
         Connection conn = null;
 
         while (conn == null) {
             System.out.print("\nEnter name of database: ");
-            dbName = nextString();
+            database = nextString();
 
             System.out.print("Enter username: ");
             username = nextString();
@@ -32,10 +31,7 @@ public class MenuTerminal extends Menu {
             password = nextString();
 
             try {
-                if (db.isConnected()) {
-                    db.disconnect();
-                }
-                conn = db.connect(dbName, username, password);
+                conn = db.connect(database, username, password);
             } catch (Exception e) {
                 System.out.println("Could not connect to the database!");
                 System.out.println(e.getMessage());
@@ -62,7 +58,7 @@ public class MenuTerminal extends Menu {
                     case "2":
                         return EditMenu.instance().show();
                     case "3":
-                        return new CommitMenu(QueryMenu.instance()).show();
+                        return QueryMenu.instance().show();
                     default:
                         return State.Invalid;
                 }

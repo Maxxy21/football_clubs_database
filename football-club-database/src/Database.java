@@ -11,9 +11,9 @@ public class Database {
 
     private Connection conn;
 
-    public Connection connect(String dbName, String username, String password) throws SQLException {
-        String url = "jdbc:postgresql://localhost:5433/" + dbName + "?user=" + username + "&password=" + password;
-        conn = DriverManager.getConnection(url);
+    public Connection connect(String database, String username, String password) throws SQLException {
+        String url = "jdbc:postgresql://localhost:5433/" + database;
+        conn = DriverManager.getConnection(url, username, password);
         conn.setAutoCommit(false);
         return conn;
     }
