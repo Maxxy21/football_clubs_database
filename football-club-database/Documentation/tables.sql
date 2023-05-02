@@ -3,7 +3,6 @@
 -- Author: Maxwell Aboagye
 
 
-
 DROP TABLE IF EXISTS ParticipatesIn;
 DROP TABLE IF EXISTS P_Sponsorship;
 DROP TABLE IF EXISTS T_Sponsorship;
@@ -31,7 +30,14 @@ DROP TABLE IF EXISTS Team;
 
 BEGIN;
 
--- Creating tables
+-- Tables creation
+
+/**
+* =================================================================== --
+* Entities Tables--
+* ================================================================
+*/
+
 CREATE TABLE Team
 (
     teamID         INT PRIMARY KEY,
@@ -145,6 +151,11 @@ CREATE TABLE StateOfManage
     FOREIGN KEY (teamID) REFERENCES Team (teamID)
 );
 
+/**
+    * =================================================================== --
+    * Relationship Tables--
+    * ================================================================
+    */
 CREATE TABLE HasStateM
 (
     managerID INT REFERENCES Manager (managerID),
@@ -178,7 +189,6 @@ CREATE TABLE ContractWith
     FOREIGN KEY (personID, startDate) REFERENCES StateOfContract (personID, startDate, startDate),
     FOREIGN KEY (teamID) REFERENCES Team (teamID)
 );
-
 
 
 CREATE TABLE Plays
@@ -229,14 +239,13 @@ CREATE TABLE P_Sponsorship
 
 CREATE TABLE ParticipatesIn
 (
-    teamID    INT,
-    leagueID  INT,
-    season    VARCHAR(50) NOT NULL,
+    teamID   INT,
+    leagueID INT,
+    season   VARCHAR(50) NOT NULL,
     PRIMARY KEY (teamID, leagueID, season),
     FOREIGN KEY (teamID) REFERENCES Team (teamID),
     FOREIGN KEY (leagueID) REFERENCES League (leagueID)
 );
-
 
 
 -- Add UNIQUE constraints to enforce one manager and captain per team at a given time
