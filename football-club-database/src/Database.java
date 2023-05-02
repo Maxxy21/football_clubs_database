@@ -11,14 +11,7 @@ public class Database {
 
     private Connection conn;
 
-    public Connection connect(String dbName, String username, String password) throws Exception {
-        try {
-            // Initialize driver
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new Exception("JDBC driver for PostgreSQL not found.");
-        }
-
+    public Connection connect(String dbName, String username, String password) throws SQLException {
         String url = "jdbc:postgresql://localhost:5433/" + dbName + "?user=" + username + "&password=" + password;
         conn = DriverManager.getConnection(url);
         conn.setAutoCommit(false);

@@ -17,11 +17,11 @@ public class InsertMenu extends Menu {
         String question = "\nIn which table would you like to insert something?\n" +
                 "[1] Team.\n" +
                 "[2] Player.\n" +
-                "[4] Coaching Staff.\n" +
-                "[5] Manager.\n" +
-                "[6] Sponsor.\n" +
-                "[7] League.\n" +
-                "[8] Position.\n" +
+                "[3] Coaching Staff.\n" +
+                "[4] Manager.\n" +
+                "[5] Sponsor.\n" +
+                "[6] League.\n" +
+                "[7] Position.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -45,7 +45,7 @@ public class InsertMenu extends Menu {
                 case "6":
                     insertLeague();
                     break;
-                case "8":
+                case "7":
                     insertPosition();
                     break;
                 default:

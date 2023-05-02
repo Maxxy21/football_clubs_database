@@ -29,13 +29,16 @@ public class MenuTerminal extends Menu {
             username = nextString();
 
             System.out.print("Enter password: ");
-            Console console = System.console();
-            password = console == null ? nextString() : String.valueOf(console.readPassword());
+            password = nextString();
 
             try {
+                if (db.isConnected()) {
+                    db.disconnect();
+                }
                 conn = db.connect(dbName, username, password);
             } catch (Exception e) {
-                System.out.printf("Could not connect to the database!%n%s%n", e.getMessage());
+                System.out.println("Could not connect to the database!");
+                System.out.println(e.getMessage());
             }
         }
     }

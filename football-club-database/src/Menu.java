@@ -52,13 +52,12 @@ public abstract class Menu {
         return value;
     }
 
-    protected Double nextDouble() {
-        Double value = null;
+    protected double nextDouble() {
+        double value = 0.0;
         try {
             value = Double.parseDouble(sc.nextLine());
         } catch (NumberFormatException ignored) {
         }
-
         return value;
     }
 
@@ -73,13 +72,12 @@ public abstract class Menu {
         return d;
     }
 
-    public Boolean nextBoolean() {
-        Boolean value = null;
+    protected boolean nextBoolean() {
+        boolean value = false;
         try {
             value = Boolean.parseBoolean(sc.nextLine());
         } catch (NumberFormatException ignored) {
         }
-
         return value;
     }
 
