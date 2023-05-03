@@ -7,6 +7,15 @@ public class TablePrinter implements AutoCloseable {
 
     private final String hLine;
 
+    /**
+     * Constructs a TablePrinter object that prints the contents of the given ResultSet in a tabular format.
+     * The table consists of column names, horizontal lines, and data rows. The method also automatically
+     * calculates the appropriate column widths based on the length of the column names and the data
+     * within the columns.
+     *
+     * @param resultSet The ResultSet containing the data to be printed in a tabular format
+     * @throws SQLException If a database access error occurs
+     */
     public TablePrinter(ResultSet resultSet) throws SQLException {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int nColumns = metaData.getColumnCount();
