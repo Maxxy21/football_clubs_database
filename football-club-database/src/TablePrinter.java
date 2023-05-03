@@ -1,36 +1,37 @@
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class TablePrinter implements AutoCloseable {
 
-    private final int nColumns;
     private final String hLine;
-    private final int[] colWidths;
 
-    public TablePrinter(String... columns) {
-        nColumns = columns.length;
-        if (nColumns == 0)
-            throw new IllegalArgumentException("Tables with zero columns are not allowed.");
+    public TablePrinter(ResultSet resultSet) throws SQLException {
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int nColumns = metaData.getColumnCount();
 
-        colWidths = new int[nColumns];
+        int[] colWidths = new int[nColumns];
         Arrays.fill(colWidths, 0);
-        for (int i = 0; i < nColumns; i++) {
-            colWidths[i] = Math.max(colWidths[i], columns[i].length());
-            System.out.print(padRight(columns[i], colWidths[i]) + " | ");
+        for (int i = 1; i <= nColumns; i++) {
+            colWidths[i - 1] = Math.max(colWidths[i - 1], metaData.getColumnName(i).length());
+            System.out.print(padRight(metaData.getColumnName(i), colWidths[i - 1]) + " | ");
         }
         System.out.println();
 
         hLine = repeat(Arrays.stream(colWidths).sum() + nColumns * 3);
         System.out.println(hLine);
-    }
 
-    public void print(Object... values) {
-        if (values.length != nColumns)
-            throw new IllegalArgumentException("Number of values inserted does not correspond to number of columns.");
-        for (int i = 0; i < nColumns; i++) {
-            String value = String.valueOf(values[i]);
-            System.out.print(padRight(value, colWidths[i]) + " | ");
+        // Print rows
+        while (resultSet.next()) {
+            for (int i = 1; i <= nColumns; i++) {
+                String value = resultSet.getString(i);
+                System.out.print(padRight(value, colWidths[i - 1]) + " | ");
+            }
+            System.out.println();
         }
-        System.out.println();
+
+        System.out.println(hLine);
     }
 
     @Override

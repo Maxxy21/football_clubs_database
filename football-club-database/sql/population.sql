@@ -18,7 +18,12 @@ INSERT INTO Person (personID, firstName, middleName, lastName, dob, nationality)
 VALUES (1, 'Lionel', '', 'Messi', '1987-06-24', 'Argentina'),
        (2, 'Cristiano', '', 'Ronaldo', '1985-02-05', 'Portugal'),
        (3, 'Gerard', '', 'Piqué', '1987-02-02', 'Spain'),
-       (4, 'Sergio', '', 'Ramos', '1986-03-30', 'Spain');
+       (4, 'Sergio', '', 'Ramos', '1986-03-30', 'Spain'),
+       (5, 'Assistant', '', 'Coach1', '1975-06-24', 'Country1'),
+       (6, 'Goalkeeper', '', 'Coach2', '1970-02-05', 'Country2'),
+       (7, 'Manager', '', '1', '1975-02-02', 'Country3'),
+       (8, 'Manager', '', '2', '1976-03-30', 'Country4');
+	  
 
 -- Populating Players
 INSERT INTO Player (playerID, startingXI, appearances)

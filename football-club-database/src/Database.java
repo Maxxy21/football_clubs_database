@@ -3,6 +3,7 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Database {
@@ -11,6 +12,16 @@ public class Database {
 
     private Connection conn;
 
+    /**
+     * Establishes a connection to the specified database using the provided
+     * username and password.
+     *
+     * @param database The name of the database to connect to
+     * @param username The username
+     * @param password The password
+     * @return A Connection object representing the established connection
+     * @throws SQLException If a database access error occurs
+     */
     public Connection connect(String database, String username, String password) throws SQLException {
         String url = "jdbc:postgresql://localhost:5433/" + database;
         conn = DriverManager.getConnection(url, username, password);
@@ -18,11 +29,21 @@ public class Database {
         return conn;
     }
 
+    /**
+     * Closes the current database connection.
+     *
+     * @throws SQLException If a database access error occurs
+     */
     public void disconnect() throws SQLException {
         if (conn != null)
             conn.close();
     }
 
+    /**
+     * Checks if the current database connection is active.
+     *
+     * @return true if the connection is active, false otherwise
+     */
     public boolean isConnected() {
         boolean active = false;
 
@@ -34,10 +55,20 @@ public class Database {
         return active;
     }
 
+    /**
+     * Commits the current transaction.
+     *
+     * @throws SQLException If a database access error occurs
+     */
     public void commit() throws SQLException {
         conn.commit();
     }
 
+    /**
+     * Rolls back the current transaction.
+     *
+     * @throws SQLException If a database access error occurs
+     */
     public void rollback() throws SQLException {
         conn.rollback();
     }
@@ -299,16 +330,55 @@ public class Database {
         }
     }
 
-    public void updatePlayerPosition(int playerID, int oldPositionID, int newPositionID) throws SQLException {
-        String query = "UPDATE Plays SET positionID = ? WHERE playerID = ? AND positionID = ?";
+    /**
+     * Updates the position of a player based on their player ID and the new position provided.
+     * If the player already has a position, prompts the user to confirm whether they want to update it.
+     * If the user confirms, updates the player's position accordingly.
+     *
+     * @param playerID    the ID of the player whose position will be updated
+     * @param newPosition the new position for the player
+     * @throws SQLException if a database error occurs
+     */
+    public void updatePlayerPosition(int playerID, String newPosition) throws SQLException {
+        String query = "SELECT pos.type " +
+                "FROM Position pos " +
+                "JOIN Plays pl ON pos.positionID = pl.positionID " +
+                "WHERE pl.playerID = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, newPositionID);
-            pstmt.setInt(2, playerID);
-            pstmt.setInt(3, oldPositionID);
-            pstmt.executeUpdate();
+            pstmt.setInt(1, playerID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String currentPosition = rs.getString("type");
+                    System.out.println("The player already has a position: " + currentPosition);
+                    System.out.println("Do you want to update the position? (yes/no)");
+
+                    Scanner scanner = new Scanner(System.in);
+                    String userInput = scanner.nextLine();
+
+                    if (userInput.equalsIgnoreCase("yes")) {
+                        String updateQuery = "UPDATE Plays SET positionID = " +
+                                "(SELECT positionID FROM Position WHERE type = ?) WHERE playerID = ?";
+                        try (PreparedStatement updatePstmt = conn.prepareStatement(updateQuery)) {
+                            updatePstmt.setString(1, newPosition);
+                            updatePstmt.setInt(2, playerID);
+                            int rowsAffected = updatePstmt.executeUpdate();
+                            if (rowsAffected > 0) {
+                                System.out.println("Player position updated successfully.");
+                            } else {
+                                System.out.println("Error updating player position.");
+                            }
+                        }
+                    } else {
+                        System.out.println("Player position not updated.");
+                    }
+                } else {
+                    System.out.println("The player does not have a position.");
+                }
+            }
         }
     }
+
 
     public void updateManagerOfTeam(int newManagerID, int teamID, Date startDate) throws SQLException {
         String query = "INSERT INTO StateOfManage (managerID, teamID, startDate) VALUES (?, ?, ?)";
@@ -390,9 +460,14 @@ public class Database {
 
 
     /**
-     * =================================================================== --
-     * Methods for updating and insertion of the historicized entities--
-     * ================================================================
+     * Updates or inserts a historicized entity in the specified table.
+     *
+     * @param tableName        The name of the table to update or insert the record into
+     * @param primaryKeyColumn The name of the primary key column
+     * @param primaryKeyValue  The primary key value of the record to update or insert
+     * @param columns          The list of column names to update or insert
+     * @param values           The list of corresponding values to update or insert
+     * @throws SQLException If a database access error occurs
      */
 
     public void updateInsertHistoricizedEntity(String tableName, String primaryKeyColumn, Object primaryKeyValue, List<String> columns, List<Object> values) throws SQLException {
@@ -422,104 +497,119 @@ public class Database {
         }
     }
 
-    /**
-     * =================================================================== --
-     * Methods for sample queries--
-     * ================================================================
-     */
 
-    public String getPlayerPosition(int playerID) throws SQLException {
-        String query = "SELECT p.type FROM Position p JOIN Plays pl ON p.positionID = pl.positionID " +
+    /**
+     * Retrieves and prints the position of a player given their player ID.
+     *
+     * @param playerID The ID of the player whose position will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
+    public void getPlayerPosition(int playerID) throws SQLException {
+        String query = "SELECT P.playerID, pr.firstName, pr.middleName, pr.lastName, t.name as teamName, pos.type " +
+                "FROM Position pos " +
+                "JOIN Plays pl ON pos.positionID = pl.positionID " +
+                "JOIN Player P ON pl.playerID = P.playerID " +
+                "JOIN Person pr ON P.playerID = pr.personID " +
+                "JOIN StateOfPlaysFor S ON P.playerID = S.playerID " +
+                "JOIN Team t ON S.teamID = t.teamID " +
                 "WHERE pl.playerID = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, playerID);
-
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("type");
-                }
+                new TablePrinter(rs);
             }
         }
-
-        return null;
     }
 
+    /**
+     * Retrieves and prints the list of players for a given team ID.
+     *
+     * @param teamID The ID of the team whose players will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
     public void getTeamPlayers(int teamID) throws SQLException {
-        try (TablePrinter printer = new TablePrinter("playerID")) {
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT playerID FROM StateOfPlaysFor WHERE teamID = ?")) {
-                pstmt.setInt(1, teamID);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    printer.print(rs.getInt("playerID"));
-                }
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT P.playerID, pr.firstName, pr.middleName, pr.lastName " +
+                "FROM StateOfPlaysFor S JOIN Player P ON S.playerID = P.playerID JOIN Person pr ON P.playerID = pr.personID " +
+                "WHERE S.teamID = ?")) {
+            pstmt.setInt(1, teamID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
             }
         }
     }
 
+    /**
+     * Retrieves and prints the contract information for a player given their player ID.
+     *
+     * @param playerID The ID of the player whose contract information will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
     public void getPlayerContract(int playerID) throws SQLException {
-        try (TablePrinter printer = new TablePrinter("personID", "teamID", "startDate", "endDate", "salary")) {
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM StateOfContract WHERE personID = ?")) {
-                pstmt.setInt(1, playerID);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    printer.print(rs.getInt("personID"),
-                            rs.getInt("teamID"),
-                            rs.getDate("startDate"),
-                            rs.getDate("endDate"),
-                            rs.getBigDecimal("salary"));
-                }
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT S.*, pr.firstName, pr.middleName, pr.lastName " +
+                "FROM StateOfContract S JOIN Player P ON S.personID = P.playerID JOIN Person pr ON P.playerID = pr.personID " +
+                "WHERE S.personID = ?")) {
+            pstmt.setInt(1, playerID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
             }
         }
     }
 
+    /**
+     * Retrieves and prints the list of sponsorships for a given team ID.
+     *
+     * @param teamID The ID of the team whose sponsorships will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
     public void getTeamSponsorships(int teamID) throws SQLException {
-        try (TablePrinter printer = new TablePrinter("sponsorID", "teamID", "startDate", "endDate", "type")) {
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM T_Sponsorship WHERE teamID = ?")) {
-                pstmt.setInt(1, teamID);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    printer.print(rs.getInt("sponsorID"),
-                            rs.getInt("teamID"),
-                            rs.getDate("startDate"),
-                            rs.getDate("endDate"),
-                            rs.getString("type"));
-                }
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "SELECT t.*, sp.name as sponsorName " +
+                        "FROM T_Sponsorship t JOIN Sponsor sp ON t.sponsorID = sp.sponsorID " +
+                        "WHERE t.teamID = ?")) {
+            pstmt.setInt(1, teamID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
             }
         }
     }
 
+    /**
+     * Retrieves and prints the list of sponsorships for a given player ID.
+     *
+     * @param playerID The ID of the player whose sponsorships will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
     public void getPlayerSponsorships(int playerID) throws SQLException {
-        try (TablePrinter printer = new TablePrinter("sponsorID", "personID", "startDate", "endDate", "type")) {
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM P_Sponsorship WHERE personID = ?")) {
-                pstmt.setInt(1, playerID);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    printer.print(rs.getInt("sponsorID"),
-                            rs.getInt("personID"),
-                            rs.getDate("startDate"),
-                            rs.getDate("endDate"),
-                            rs.getString("type"));
-                }
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "SELECT p.*, sp.name as sponsorName, pr.firstName, pr.middleName, pr.lastName " +
+                        "FROM P_Sponsorship p JOIN Sponsor sp ON p.sponsorID = sp.sponsorID " +
+                        "JOIN Person pr ON p.personID = pr.personID " +
+                        "WHERE p.personID = ?")) {
+            pstmt.setInt(1, playerID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
             }
         }
     }
 
+    /**
+     * Retrieves and prints the list of sponsorships for a given league ID.
+     *
+     * @param leagueID The ID of the league whose sponsorships will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
     public void getLeagueSponsorships(int leagueID) throws SQLException {
-        try (TablePrinter printer = new TablePrinter("sponsorID", "leagueID", "startDate", "endDate", "type")) {
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM L_Sponsorship WHERE leagueID = ?")) {
-                pstmt.setInt(1, leagueID);
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    printer.print(rs.getInt("sponsorID"),
-                            rs.getInt("personID"),
-                            rs.getDate("startDate"),
-                            rs.getDate("endDate"),
-                            rs.getString("type"));
-                }
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT L.sponsorID, S.name as sponsorName, L.leagueID, L.startDate, L.endDate, L.type " +
+                "FROM L_Sponsorship L " +
+                "INNER JOIN Sponsor S ON L.sponsorID = S.sponsorID WHERE L.leagueID = ?")) {
+            pstmt.setInt(1, leagueID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
             }
         }
     }
+
 
     // Check if a record exists in a table
     public boolean recordExists(String tableName, String columnName, Object columnValue) throws SQLException {
@@ -562,6 +652,14 @@ public class Database {
         return "UPDATE " + tableName + " SET " + assignments + " WHERE " + primaryKeyColumn + " = ?";
     }
 
+    /**
+     * Deletes a record from the specified table given the primary key column and value.
+     *
+     * @param tableName The name of the table to delete the record from
+     * @param primaryKeyColumn The name of the primary key column
+     * @param primaryKeyValue The primary key value of the record to delete
+     * @throws SQLException If a database access error occurs
+     */
     public void deleteRecord(String tableName, String primaryKeyColumn, Object primaryKeyValue) throws SQLException {
         String query = "DELETE FROM " + tableName + " WHERE " + primaryKeyColumn + " = ?";
 

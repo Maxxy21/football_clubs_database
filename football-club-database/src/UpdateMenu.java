@@ -95,17 +95,19 @@ public class UpdateMenu extends Menu {
         System.out.println("Manager updated successfully.");
     }
 
+    /**
+     * Prompts the user for a player ID and new position, then calls the updatePlayerPosition method
+     * in the database class to check the current position and update it if necessary.
+     * @throws SQLException if a database error occurs
+     */
     private static void updatePlayerPosition() throws SQLException {
         System.out.print("Enter player ID: ");
         int playerID = nextInteger();
 
-        System.out.print("Enter old position ID: ");
-        int oldPositionID = nextInteger();
+        System.out.print("Enter the new position (e.g., Forward, Midfielder, etc.): ");
+        String newPosition = nextString();
 
-        System.out.print("Enter new position ID: ");
-        int newPositionID = nextInteger();
-
-        db.updatePlayerPosition(playerID, oldPositionID, newPositionID);
+        db.updatePlayerPosition(playerID, newPosition);
         System.out.println("Player position relationship updated successfully.");
     }
 

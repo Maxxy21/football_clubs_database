@@ -39,7 +39,6 @@ public class MenuTerminal extends Menu {
         }
     }
 
-
     private State askAction() {
         boolean connected = true;
         State state;

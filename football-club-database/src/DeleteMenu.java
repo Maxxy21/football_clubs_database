@@ -30,6 +30,30 @@ public class DeleteMenu extends Menu {
                 case "1":
                     deleteTeam();
                     break;
+                case "2":
+                    deletePlayer();
+                    break;
+                case "3":
+                    deletePerson();
+                    break;
+                case "4":
+                    deleteCoachingStaff();
+                    break;
+                case "5":
+                    deleteManager();
+                    break;
+                case "6":
+                    deleteSponsor();
+                    break;
+                case "7":
+                    deleteLeague();
+                    break;
+                case "8":
+                    deleteCaptain();
+                    break;
+                case "9":
+                    deletePosition();
+                    break;
 
                 default:
                     return State.Invalid;

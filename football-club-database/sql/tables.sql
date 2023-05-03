@@ -121,8 +121,10 @@ CREATE TABLE StateOfContract
     CONSTRAINT teamInContract FOREIGN KEY (teamID)
         REFERENCES Team (teamID)
         ON UPDATE CASCADE
-        DEFERRABLE INITIALLY DEFERRED
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT unique_person_startdate UNIQUE (personID, startDate)
 );
+
 
 CREATE TABLE StateOfPlaysFor
 (
@@ -198,12 +200,11 @@ CREATE TABLE HasStateC
 
 CREATE TABLE ContractWith
 (
-    teamID    INT REFERENCES Team (teamID),
+    teamID    INT,
     personID  INT,
     startDate DATE,
     PRIMARY KEY (teamID, personID, startDate),
-    FOREIGN KEY (personID, startDate) REFERENCES StateOfContract (personID, startDate, startDate),
-    FOREIGN KEY (teamID) REFERENCES Team (teamID)
+    FOREIGN KEY (personID, teamID, startDate) REFERENCES StateOfContract (personID, teamID, startDate)
 );
 
 CREATE TABLE Plays
@@ -211,6 +212,7 @@ CREATE TABLE Plays
     playerID   INT,
     positionID INT,
     PRIMARY KEY (playerID, positionID),
+    UNIQUE (playerID),
     FOREIGN KEY (playerID) REFERENCES Player (playerID)
         ON UPDATE CASCADE
         DEFERRABLE INITIALLY DEFERRED,

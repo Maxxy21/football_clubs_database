@@ -16,8 +16,9 @@ public class QueryMenu extends Menu {
                 "[1] Retrieve Team's Players.\n" +
                 "[2] List all sponsorships for a player\n" +
                 "[3] List all sponsorships for a team.\n" +
-                "[3] List all sponsorships for a league.\n" +
-                "[3] Retrieve a Player's contract.\n" +
+                "[4] List all sponsorships for a league.\n" +
+                "[5] Retrieve a Player's contract.\n" +
+                "[6] Retrieve a Player's position.\n" +
                 "[b] Back the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -37,6 +38,9 @@ public class QueryMenu extends Menu {
                     break;
                 case "5":
                     queryPlayerContract();
+                    break;
+                case "6":
+                    queryPlayerPosition();
                     break;
                 default:
                     return State.Invalid;
@@ -81,5 +85,12 @@ public class QueryMenu extends Menu {
         db.getLeagueSponsorships(leagueID);
     }
 
+
+    private void queryPlayerPosition() throws SQLException {
+        System.out.print("Enter player ID: ");
+        int playerID = nextInteger();
+
+        db.getPlayerPosition(playerID);
+    }
 
 }
