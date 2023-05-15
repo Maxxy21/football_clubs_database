@@ -1,0 +1,73 @@
+Entities and Relationships:
+Person(1,n) --- Has --- Contract(1,1)
+Team(0,n) --- Has --- T-Sponsorship(1,n)
+Team(0,n) --- With --- Contract(1,1)
+Team(1,1) --- HasCaptainHistory --- CaptainHistory(0,n)
+T-Sponsorship(1,1) --- With --- Sponsor(0,n)
+CaptainHistory --- HasCaptainRole --- Player(1,1)
+Player(0,n) --- Has --- P-Sponsorship(1,n)
+P-Sponsorship(1,1) --- With --- Sponsor(0,n)
+CoachingStaff(1,n) --- Trains --- Player(1,n)
+Player --- ISA --- Person
+CoachingStaff --- ISA --- Person
+Manager --- ISA --- CoachingStaff
+
+Attributes:
+Team(teamID, name, city, kitColors, foundationYear)
+T-Sponsorship(tSponsorshipID, startDate, endDate, type)
+P-Sponsorship(pSponsorshipID, startDate, endDate, type)
+Sponsor(sponsorID, name, industry, foundationYear)
+CaptainHistory(captainHistoryID, startDate, endDate)
+Contract(contractID, startDate, endDate, salary, jerseyNumber, position)
+Manager(yearsOfExperience)
+CoachingStaff(role)
+Person(name(firstName, lastName, middleName), personID, dob, nationality)
+Player(startingXI, appearances)
+
+Primary Keys:
+Team(teamID)
+T-Sponsorship(tSponsorshipID)
+P-Sponsorship(pSponsorshipID)
+Sponsor(sponsorID)
+CaptainHistory(captainHistoryID)
+Contract(contractID)
+Manager(personID)
+CoachingStaff(personID)
+Person(personID)
+Player(personID)
+
+Foreign Keys:
+Team(teamID) --- References --- T-Sponsorship(teamID)
+Team(teamID) --- References --- Contract(teamID)
+Team(teamID) --- References --- CaptainHistory(teamID)
+T-Sponsorship(tSponsorshipID) --- References --- Sponsor(tSponsorshipID)
+CaptainHistory(captainHistoryID) --- References --- Player(captainHistoryID)
+P-Sponsorship(pSponsorshipID) --- References --- Sponsor(pSponsorshipID)
+CoachingStaff(personID) --- References --- Player(personID)
+Manager(personID) --- References --- CoachingStaff(personID)
+Person(personID) --- References --- Player(personID)
+Person(personID) --- References --- CoachingStaff(personID)
+
+
+
+General statements: We want to realize a database for football clubs, aiming to represent data related to a team; its players and their positions, captain history, coaching staff, manager, sponsor, and contracts between a team and a person. The database will track historical data for contracts, team memberships, and managerial positions over time.
+
+Statements concerning teams: For the teams, we are interested in the team ID that uniquely identifies them together with the name. The city they are located in, the year of foundation, and kit colors are also of interest.
+
+Statements concerning persons: For the persons, each of them is identified uniquely by an ID together with the name (some people might have the same name), we represent the date of birth and nationality. We want to keep track of the contract’s date, salary, jersey number, and position they have received over time with a team.
+
+Statements concerning players: For the players, who are persons in a team, we are also interested in their startingXI status and the number of appearances they have made.
+
+Statements concerning captain history: For the captain history, we want to keep track of the start and end dates of a player's captaincy.
+
+Statements concerning coaching staff: For the coaching staff, who are also persons in a team, we are interested in their special roles in a team and the teamID to identify which team they belong to. Coaching staff members train multiple players, and each player is trained by multiple coaching staff members.
+
+Statements concerning managers: For the managers, who are part of the coaching staff, we represent the years of experience.
+
+Statements concerning team sponsorships (T-Sponsorship): For the team sponsorships, we are interested in the tSponsorshipID, start date, end date, and type of sponsorship.
+
+Statements concerning player sponsorships (P-Sponsorship): For the player sponsorships, we are interested in the pSponsorshipID, start date, end date, and type of sponsorship.
+
+Statements concerning sponsors: For the sponsors, we are interested in the sponsorID that uniquely identifies them, along with their name, industry, and foundation year. There can be sponsorship, either for a team or for a player.
+
+Statements concerning contracts: For the contracts, we are interested in the contractID, start date, end date, salary, jersey number, and position. Each person in a team will have a contract, and we want to keep track of the contracts between a team and a person. Contracts can be associated with players or coaching staff, including managers.

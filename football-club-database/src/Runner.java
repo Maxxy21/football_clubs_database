@@ -1,5 +1,5 @@
 
-public class App {
+public class Runner {
 
     static {
         try {
@@ -12,7 +12,7 @@ public class App {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("--- Football Clubs Database App ---");
+        System.out.println("--- Football Clubs Database ---");
         MenuTerminal.instance().show();
     }
 }
