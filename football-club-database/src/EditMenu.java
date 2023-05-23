@@ -1,13 +1,3 @@
-/*
-Lets the user edit the following tables:
-- Mission, being planned by at least 1 Organization and to which at least 1 research team contributes
-- Spacecraft, being sent for 1 Mission
-- ImageSet, being captured for 1 Spacecraft
-- Organization
-- ResearchTeam, contributing to at least 1 Mission
-- TAccess
-- Contribute
- */
 public class EditMenu extends Menu {
 
     private static EditMenu INSTANCE;
@@ -24,7 +14,8 @@ public class EditMenu extends Menu {
                 "[1] Insert.\n" +
                 "[2] Delete.\n" +
                 "[3] Update.\n" +
-                "[b] Back the main menu.\n" +
+                "[4] Transfer.\n" + // Added this line
+                "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
         return processCommand(question, (cmd) -> {
@@ -35,10 +26,11 @@ public class EditMenu extends Menu {
                     return DeleteMenu.instance().show();
                 case "3":
                     return UpdateMenu.instance().show();
+                case "4":
+                    return TransferMenu.instance().show(); // Added this line
                 default:
                     return State.Invalid;
             }
         });
     }
-
 }

@@ -81,6 +81,27 @@ public abstract class Menu {
         return value;
     }
 
+    protected Integer nextNullableInteger() {
+        String input = nextString().trim();
+        if (input.isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid integer or leave it empty.");
+            return nextNullableInteger();
+        }
+    }
+
+    protected String nextNullableString() {
+        String input = nextString().trim();
+        if (input.isEmpty()) {
+            return null;
+        }
+        return input;
+    }
+
     protected Date nextDate() {
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date date = null;

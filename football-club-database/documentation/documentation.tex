@@ -25,15 +25,15 @@
 
 \makeindex[columns=3, title=Alphabetical Index, intoc]
 \lstset{
-  basicstyle=\ttfamily,
-  columns=fullflexible,
-  breaklines=true,
-  postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    breaklines=true,
+    postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
 }
 
 \title{\huge Introduction to Database Project\\
-    \vspace{6px}
-    \huge \textbf {Project Title: "Football Clubs Database"}}
+\vspace{6px}
+\huge \textbf {Project Title: Football Clubs Database}}
 \author{Student: Maxwell Aboagye}
 % \date{01/09/2021}
 
@@ -43,363 +43,373 @@
 
 \begin{document}
 
-\maketitle
+    \maketitle
 
-\tableofcontents
+    \tableofcontents
 
-\pagebreak
+    \pagebreak
 % Body of document
 
-\section{Conceptual design}\label{sec:conceptual-design}
+    \section{Conceptual design}\label{sec:conceptual-design}
 
-\subsection{Structured requirements}\label{subsec:structured-requirements}
+    \subsection{Structured requirements}\label{subsec:structured-requirements}
 
-\setlength{\parindent}{0cm}
-\vspace{12px}
-\textbf{General statements:\\}
-We want to realize a database for football clubs, aiming to represent data related to a team; its players and their positions, captain, coaching staff, manager, sponsor, and contracts between a team and a person. The database will also include information about the leagues in which the teams participate. Additionally, the database will track historical data for contracts, team memberships, and managerial positions over time.
+    \setlength{\parindent}{0cm}
+    \vspace{12px}
+    \textbf{General statements:\\}
+    We want to realize a database for football clubs, aiming to represent data related to a team; its players and their positions, captain, coaching staff, manager, sponsor, and contracts between a team and a person. The database will also include information about the leagues in which the teams participate during specific seasons. Additionally, the database will track historical data for contracts, team memberships, and managerial positions over time.
 
-\vspace{12px}
-\textbf{Statements concerning teams:\\}
-For the teams, we are interested in the team ID that uniquely identifies them together with the name.
-The city they are located in, the year of foundation and kit colours are also of interest.
+    \vspace{12px}
+    \textbf{Statements concerning teams:\\}
+    For the teams, we are interested in the team ID that uniquely identifies them together with the name.
+    The city they are located in, the year of foundation and kit colours are also of interest.
 
-\vspace{12px}
-\textbf{Statements concerning leagues:\\}
-For the leagues, we are interested in the leagueID that uniquely identifies them, along with the name, country, start date, end date, and the number of teams participating in the league.
+    \vspace{12px}
+    \textbf{Statements concerning leagues:\\}
+    For the leagues, we are interested in the leagueID that uniquely identifies them, along with the name, country, start date, end date, and the number of teams participating in the league.
 
-\vspace{12px}
-\textbf{Statements concerning persons:\\}
-For the persons, each of them is identified uniquely by an ID together with the name (some people might have the same name), we represent the date of birth and nationality.
-We want to keep track of the contract\rqs date and salaries they have received over time with a team.
+    \vspace{12px}
+    \textbf{Statements concerning persons:\\}
+    For the persons, each of them is identified uniquely by an ID together with the name (some people might have the same name), we represent the date of birth and nationality.
+    We want to keep track of the contract's date and salaries they have received over time with a team.
 
-\vspace{12px}
-\textbf{Statements concerning players:\\}
-For the players, who are persons in a team, we are also interested in their startingXI status, and the number of appearances they have made.
-We want to keep track of the team they play for and those they have played for in the past, with the start date along with their jersey numbers.
+    \vspace{12px}
+    \textbf{Statements concerning players:\\}
+    For the players, who are persons in a team, we are also interested in their startingXI status, and the number of appearances they have made.
+    We want to keep track of the team they play for and those they have played for in the past, with the start date along with their jersey numbers.
 
-\vspace{12px}
-\textbf{Statements concerning captains:\\}
-For the captains, who are players, we are interested in their seniority and the date since they have been captain.
+    \vspace{12px}
+    \textbf{Statements concerning captains:\\}
+    For the captains, who are players, we are interested in their seniority and the date since they have been captain.
 
-\vspace{12px}
-\textbf{Statements concerning coaching staff:\\}
-For the coaching staff, who are also persons in a team, we are interested in their special roles in a team and the teamID to identify which team they belong to.
+    \vspace{12px}
+    \textbf{Statements concerning coaching staff:\\}
+    For the coaching staff, who are also persons in a team, we are interested in their special roles in a team and the teamID to identify which team they belong to.
 
-\vspace{12px}
-\textbf{Statements concerning managers:\\}
-For the managers, who are part of the coaching staff, we represent the years of experience, and we want to keep track of the team they have managed in the past with the start date.
+    \vspace{12px}
+    \textbf{Statements concerning managers:\\}
+    For the managers, who are part of the coaching staff, we represent the years of experience, and we want to keep track of the team they have managed in the past with the start date.
 
-\vspace{12px}
-\textbf{Statements concerning positions:\\}
-For the positions which a player can play, we are interested in the type and the positionID that uniquely identifies it.
-There are at most 11 different positions.
+    \vspace{12px}
+    \textbf{Statements concerning positions:\\}
+    For the positions which a player can play, we are interested in the type and the positionID that uniquely identifies it.
+    There are at most 11 different positions.
 
-\vspace{12px}
-\textbf{Statements concerning sponsors:\\}
-For the sponsors, we are interested in the sponsorID that uniquely identifies them, along with their name, industry, and foundation year.
-There can be sponsorship, either for a team or for a player.
+    \vspace{12px}
+    \textbf{Statements concerning sponsors:\\}
+    For the sponsors, we are interested in the sponsorID that uniquely identifies them, along with their name, industry, and foundation year.
+    There can be sponsorship, either for a team or for a player.
 
-\pagebreak
-
-
-\subsection{Glossary of terms}\label{subsec:glossary}
-  \begin{table}[H]
-    \centering
-  \def\arraystretch{1.25}%  1 is the default, change whatever you need
-  \begin{tabular}{|>{\columncolor{myColor}} m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
-    \hline
-    \rowcolor{myColor}
-    {\textcolor{white}{\large \textbf{Term}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Synonyms}}} & {\textcolor{white}{\large \textbf{Connections}}} \\
-    \hline
-     {\textcolor{white}{\textbf{Team}}} & A collection of team personnel, including players, manager, coaching staff and more. & Football\phantom{,,}team, Club & Sponsor,\phantom{,,}Player, Person,\phantom{,,}Manager, Captain, League \\
-    \hline
-    {\textcolor{white}{\textbf{Person}}} & A member of a team.
-    & Member,\phantom{,,}Individual & Team,\phantom{,,}Player, Manager, Coaching\phantom{,,}Staff  \\
-    \hline
-   {\textcolor{white}{\textbf{Player}}} & A person who plays for a team.
-   & Footballer & Team,\phantom{,,}Sponsor, Position, Coaching\phantom{,,}Staff\\
-    \hline
-   {\textcolor{white}{\textbf{Captain}}} & A player who is the leader of a team.
-   & Skipper, Leader & Team, Player  \\
-    \hline
-    {\textcolor{white}{\textbf{Coaching Staff}}} & A person who is a  non-playing team member listed on the official team list.
-    & Trainers, Technical Staff & Player,\phantom{,,}Person, Manager, Team \\
-    \hline
-    {\textcolor{white}{\textbf{Manager}}} & A coaching staff member who manages a team.
-    & Head Coach & Team,\phantom{,,}Person, Coaching Staff \\
-    \hline
-   {\textcolor{white}{\textbf{Position}}} & Different positions a Player can play.
-   & Role, Spot & Player \\
-    \hline
-    {\textcolor{white}{\textbf{League}}} & A football league.
-    & Competition & Team, Sponsor \\
-    \hline
-   {\textcolor{white}{\textbf{Sponsor}}} & A company providing funds to another entity. & Official\phantom{,,}Sponsor, Partner & Player,\phantom{,,}Team, League \\
-    \hline
-  \end{tabular}\label{tab:table}
-  \end{table}
-
-\subsection{Conceptual schema}\label{subsec:conceptual-schema}
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.39, angle=270]{images/conceptualSchema.png}
-  \caption{Conceptual schema}\label{fig:figure}
-\end{figure}
+    \pagebreak
 
 
-\subsection{Data dictionaries}\label{subsec:data-dictionaries}
+    \subsection{Glossary of terms}\label{subsec:glossary}
+    \begin{table}[H]
+        \centering
+        \def\arraystretch{1.25}%  1 is the default, change whatever you need
+        \begin{tabular}{|>{\columncolor{myColor}} m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
+            \hline
+            \rowcolor{myColor}
+            {\textcolor{white}{\large \textbf{Term}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Synonyms}}} & {\textcolor{white}{\large \textbf{Connections}}} \\
+            \hline
+            {\textcolor{white}{\textbf{Team}}} & A collection of team personnel, including players, manager, coaching staff and more. & Football\phantom{,,}team, Club & Sponsor,\phantom{,,}Player, Person,\phantom{,,}Manager, Captain, League \\
+            \hline
+            {\textcolor{white}{\textbf{Person}}} & A member of a team.
+            & Member,\phantom{,,}Individual & Team,\phantom{,,}Player, Manager, Coaching\phantom{,,}Staff  \\
+            \hline
+            {\textcolor{white}{\textbf{Player}}} & A person who plays for a team.
+            & Footballer & Team,\phantom{,,}Sponsor, Position, Coaching\phantom{,,}Staff\\
+            \hline
+            {\textcolor{white}{\textbf{Captain}}} & A player who is the leader of a team.
+            & Skipper, Leader & Team, Player  \\
+            \hline
+            {\textcolor{white}{\textbf{Coaching Staff}}} & A person who is a  non-playing team member listed on the official team list.
+            & Trainers, Technical Staff & Player,\phantom{,,}Person, Manager, Team \\
+            \hline
+            {\textcolor{white}{\textbf{Manager}}} & A coaching staff member who manages a team.
+            & Head Coach & Team,\phantom{,,}Person, Coaching Staff \\
+            \hline
+            {\textcolor{white}{\textbf{Position}}} & Different positions a Player can play.
+            & Role, Spot & Player \\
+            \hline
+            {\textcolor{white}{\textbf{League}}} & A football league.
+            & Competition & Team, Sponsor \\
+            \hline
+            {\textcolor{white}{\textbf{Sponsor}}} & A company providing funds to another entity. & Official\phantom{,,}Sponsor, Partner & Player,\phantom{,,}Team, League \\
+            \hline
+        \end{tabular}\label{tab:table}
+    \end{table}
 
-\vspace{12px}
+    \subsection{Conceptual schema}\label{subsec:conceptual-schema}
+    \begin{figure}[H]
+        % \centering
+        % \includegraphics[scale=0.39, angle=270]{images/conceptual-schema.drawio.png}
+        \centerline{\includesvg[inkscapelatex=false,width=1.4\columnwidth]{images/conceptual-schema.svg}}
+        \caption{Conceptual schema}\label{fig:figure}
+    \end{figure}
 
-{\centering \textbf{Data dictionary: Entities}\\}
+    \pagebreak
 
-\begin{table}[H]
-  \def\arraystretch{1.20}%  1 is the default, change whatever you need
-  \centering
-  \begin{tabular}{|>{\columncolor{myColor}}  m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
-    \hline
-      \rowcolor{myColor}
-    {\textcolor{white}{\large \textbf{Entity}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}} \\
-    \hline
-     {\textcolor{white}{\textbf{Team}}} & Represents\phantom{,,}a\phantom{,,}football team & name\newline teamID\newline city\newline foundationYear\newline kitColors \newline & \{teamID\} \\
-    \hline
-    {\textcolor{white}{\textbf{Person}}}  & Represents a person involved in a football club & personID \newline dob \newline nationality\newline name\phantom{,,}(firstName,\newline \phantom{,,,,,,,,}middleName,\newline \phantom{,,,,,,,,,,,,}lastName) & \{personID\} \\
-    \hline
-    {\textcolor{white}{\textbf{Player}}} & 	Represents a player in a team.
-    & startingXI \newline appearances & \{personID\} \\
-    \hline
-    {\textcolor{white}{\textbf{Captain}}} & Represents a captain of a team.
-    & captainSince \newline seniority & \{personID\} \\
-    \hline
-    {\textcolor{white}{\textbf{Position}}} & Represents a playing position in a team & positionID\newline type & \{positionID\} \\
-    \hline
-    {\textcolor{white}{\textbf{CoachingStaff}}} &  Represents a coaching staff member of a team & role \newline teamID & \{personID\} \\
-    \hline
-    {\textcolor{white}{\textbf{Manager}}} & Represents a manager of a team & yearsOfExperience & \{personID\} \\
-    \hline
-    {\textcolor{white}{\textbf{Sponsor}}} & Represents a sponsor for a team, league or player & name \newline industry\newline sponsorID \newline industry \newline foundationYear & \{sponsorID\} \\
-    \hline
-     {\textcolor{white}{\textbf{League}}} & Represents a football league & leagueID\newline name \newline country \newline startDate \newline endDate \newline numTeams & \{leagueID\} \\
-    \hline
+    \subsection{Data dictionaries}\label{subsec:data-dictionaries}
+    \vspace{12px}
 
-  \end{tabular}\label{tab:table2}
-\end{table}
+    {\centering \textbf{Data dictionary: Entities}\\}
 
-\pagebreak
-{\centering \textbf{Data dictionary: Entities}\\}
-\begin{table}[H]
-  \newcommand{\arraystretch}{1.20}%  1 is the default, change whatever you need
-  \centering
-  \begin{tabular}{|>{\columncolor{myColor}}  m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
-    \hline
-      \rowcolor{myColor}
-    {\textcolor{white}{\large \textbf{Entity}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}} \\
-    \hline
-    {\textcolor{white}{\textbf{StateOfPlaysFor}}} & Represents the historical state of a player's team & startDate\newline jerseyNumber\newline teamID\newline playerID & \{startDate,\newline playerID\} \\
-    \hline
-    {\textcolor{white}{\textbf{StateOfContract}}} & Represents a historical state of a contract between Person and Team & startDate\newline endDate\newline salary\newline teamID\newline personID & \{startDate,\newline personID\} \\
-    \hline
-    {\textcolor{white}{\textbf{StateOfManage}}} & Represents the historical state of a manager's team & startDate\newline managerID\newline teamID & \{startDate,\newline managerID\} \\
-    \hline
+    \begin{table}[H]
+        \def\arraystretch{1.20}%  1 is the default, change whatever you need
+        \centering
+        \begin{tabular}{|>{\columncolor{myColor}}  m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
+            \hline
+            \rowcolor{myColor}
+            {\textcolor{white}{\large \textbf{Entity}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}} \\
+            \hline
+            {\textcolor{white}{\textbf{Team}}} & Represents\phantom{,,}a\phantom{,,}football team & name\newline teamID\newline city\newline foundationYear\newline kitColors \newline & \{teamID\} \\
+            \hline
+            {\textcolor{white}{\textbf{Person}}}  & Represents a person involved in a football club & personID \newline dob \newline nationality\newline name\phantom{,,}(firstName,\newline \phantom{,,,,,,,,}middleName,\newline \phantom{,,,,,,,,,,,,}lastName) & \{personID\} \\
+            \hline
+            {\textcolor{white}{\textbf{Player}}} & 	Represents a player in a team.
+            & startingXI \newline appearances & \{personID\} \\
+            \hline
+            {\textcolor{white}{\textbf{Captain}}} & Represents a captain of a team.
+            & captainSince \newline seniority & \{personID\} \\
+            \hline
+            {\textcolor{white}{\textbf{Position}}} & Represents a playing position in a team & positionID\newline type & \{positionID\} \\
+            \hline
+            {\textcolor{white}{\textbf{CoachingStaff}}} &  Represents a coaching staff member of a team & role \newline teamID & \{personID\} \\
+            \hline
+            {\textcolor{white}{\textbf{Manager}}} & Represents a manager of a team & yearsOfExperience & \{personID\} \\
+            \hline
+            {\textcolor{white}{\textbf{Sponsor}}} & Represents a sponsor for a team, league or player & name \newline industry\newline sponsorID \newline industry \newline foundationYear & \{sponsorID\} \\
+            \hline
+            {\textcolor{white}{\textbf{League}}} & Represents a football league & leagueID\newline name \newline country \newline startDate \newline endDate \newline numTeams & \{leagueID\} \\
+            \hline
 
-  \end{tabular}\label{tab:table3}
-\end{table}
+        \end{tabular}\label{tab:table2}
+    \end{table}
 
+    \pagebreak
+    {\centering \textbf{Data dictionary: Entities}\\}
+    \begin{table}[H]
+        \def\arraystretch{1.20}%  1 is the default, change whatever you need
+        \centering
+        \begin{tabular}{|>{\columncolor{myColor}}  m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
+            \hline
+            \rowcolor{myColor}
+            {\textcolor{white}{\large \textbf{Entity}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}} \\
+            \hline
+            {\textcolor{white}{\textbf{StateOfPlaysFor}}} & Represents the historical state of a player's team & startDate\newline jerseyNumber\newline teamID\newline playerID & \{startDate,\newline playerID\} \\
+            \hline
+            {\textcolor{white}{\textbf{StateOfContract}}} & Represents a historical state of a contract between Person and Team & startDate\newline endDate\newline salary\newline teamID\newline personID & \{startDate,\newline personID\} \\
+            \hline
+            {\textcolor{white}{\textbf{StateOfManage}}} & Represents the historical state of a manager's team & startDate\newline managerID\newline teamID & \{startDate,\newline managerID\} \\
+            \hline
 
-
-\pagebreak
-
-{\centering \textbf{Data dictionary: Relationships}\\}
-
-\begin{table}[H]
-  \def\arraystretch{1.25}%  1 is the default, change whatever you need
-  \centering
-  \begin{tabular}{|>{\columncolor{myColor}}  m{2.8cm} | m{4cm}| m{3cm} | m{2.5cm} | m{2cm} |}
-    \hline
-    \rowcolor{myColor}
-   {\textcolor{white}{\large \textbf{Relationship}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Components}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}}  \\
-    \hline
-    {\textcolor{white}{\textbf{Manages}}} & Describes which team a manager manages.
-    & Team,\newline StateOfManage & & \\
-    \hline
-   {\textcolor{white}{\textbf{HasStateM}}} & Connects\phantom{,}a manager\phantom{,}with\phantom{,} their\phantom{,}historicized management state & Manager,\newline StateOfManage & & \\
-    \hline
-    {\textcolor{white}{\textbf{Trains}}} & Describes the connection between player and Coaching Staff .
-    & CoachingStaff,\newline Player &  &  \\
-    \hline
-    {\textcolor{white}{\textbf{Plays}}} & Describes the position a player plays in.
-    & Player,\newline Position & & \\
-    \hline
-    {\textcolor{white}{\textbf{HasStateC}}} & Connects a person with their historicized contract state.
-    & Person,\newline StateOfContract &  &  \\
-    \hline
-    {\textcolor{white}{\textbf{PlaysFor}}} & Describes which team a player plays for. & StateOfPlaysFor,\newline Team &  &  \\
-    \hline
-    {\textcolor{white}{\textbf{ContractWith}}} & Connects a team with a person's historicized contract state.
-    & Team,\newline StateOfContract &  &  \\
-    \hline
-    {\textcolor{white}{\textbf{HasStateP}}} & Connects a player with their historicized state. & Player,\newline StateOfPlaysFor &  &  \\
-    \hline
-    {\textcolor{white}{\textbf{Leads}}} & Describes the relationship between a captain and the team they lead.
-    & Captain,\newline Team &  &  \\
-    \hline
-    {\textcolor{white}{\textbf{T-Sponsorship}}} & Describes the sponsorship relationship between a sponsor and a team.
-    & Team,\newline Sponsor & startDate,\newline endDate,\newline type & \{startDate, endDate, sponsorID, teamID\}  \\
-    \hline
-     {\textcolor{white}{\textbf{P-Sponsorship}}} & Sponsorship between a team and a player.
-     & Sponsor,\newline Player& startDate,\newline endDate,\newline type &  \{startDate, endDate, sponsorID, playerID\}  \\
-    \hline
-    {\textcolor{white}{\textbf{L-Sponsorship}}} & Sponsorship between a team and a player.
-    & Sponsor,\newline League & startDate,\newline endDate,\newline type & \{startDate, endDate, sponsorID, leagueID\} \\
-    \hline
-
-  \end{tabular}\label{tab:table4}
-\end{table}
+        \end{tabular}\label{tab:table3}
+    \end{table}
 
 
-\pagebreak
 
-{\centering \textbf{Data dictionary: External constraints}\\}
-\begin{table}[H]
-  \def\arraystretch{1.25}%  1 is the default, change whatever you need
-  \centering
-  \begin{tabular}{|>{\columncolor{myColor}}  m{1.5cm} | m{13.5cm}| }
-    \hline
-    \rowcolor{myColor}
-    \multicolumn{2}{| c |}  {\textcolor{white}{\large \textbf{External Integrity Constraints}}} \\
-    \hline
-     {\textcolor{white}{\textbf{1}}} & A player cannot be a part of two different teams at the same time  \\
-    \hline
-     {\textcolor{white}{\textbf{2}}} & A person cannot be a manager, a coaching staff member, and a player simultaneously  \\
-    \hline
-     {\textcolor{white}{\textbf{3}}} & A person can have only one active contract with a team at any given time  \\
-    \hline
-     {\textcolor{white}{\textbf{4}}} & A team can have only one manager and one captain at any given time  \\
-    \hline
-     {\textcolor{white}{\textbf{5}}} & A captain's "captainSince" date cannot be in the future or earlier than the player's contract start date with the team. \\
-    \hline
-     {\textcolor{white}{\textbf{6}}} & A player cannot play more than 11 positions  \\
-    \hline
-     {\textcolor{white}{\textbf{7}}} & A player's number of appearances cannot be negative  \\
-    \hline
-    {\textcolor{white}{\textbf{8}}} & A Player's jersey number should be within a predefined range (e.g., 1-99) \\
-    \hline
-  \end{tabular}\label{tab:table5}
-\end{table}
+    \pagebreak
 
-\pagebreak
+    {\centering \textbf{Data dictionary: Relationships}\\}
 
-\subsection{Table of volumes and operations}\label{subsec:table-of-volumes-and-operations}
+    \begin{table}[H]
+        \def\arraystretch{1.25}%  1 is the default, change whatever you need
+        \centering
+        \begin{tabular}{|>{\columncolor{myColor}}  m{2.8cm} | m{4cm}| m{3cm} | m{2.5cm} | m{2cm} |}
+            \hline
+            \rowcolor{myColor}
+            {\textcolor{white}{\large \textbf{Relationship}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Components}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}}  \\
+            \hline
+            {\textcolor{white}{\textbf{Manages}}} & Describes which team a manager manages.
+            & Team,\newline StateOfManage & & \\
+            \hline
+            {\textcolor{white}{\textbf{HasStateM}}} & Connects\phantom{,}a manager\phantom{,}with\phantom{,} their\phantom{,}historicized management state & Manager,\newline StateOfManage & & \\
+            \hline
+            {\textcolor{white}{\textbf{Trains}}} & Describes the connection between player and Coaching Staff .
+            & CoachingStaff,\newline Player &  &  \\
+            \hline
+            {\textcolor{white}{\textbf{Plays}}} & Describes the position a player plays in.
+            & Player,\newline Position & & \\
+            \hline
+            {\textcolor{white}{\textbf{HasStateC}}} & Connects a person with their historicized contract state.
+            & Person,\newline StateOfContract &  &  \\
+            \hline
+            {\textcolor{white}{\textbf{PlaysFor}}} & Describes which team a player plays for. & StateOfPlaysFor,\newline Team &  &  \\
+            \hline
+            {\textcolor{white}{\textbf{ContractWith}}} & Connects a team with a person's historicized contract state.
+            & Team,\newline StateOfContract &  &  \\
+            \hline
+            {\textcolor{white}{\textbf{HasStateP}}} & Connects a player with their historicized state. & Player,\newline StateOfPlaysFor &  &  \\
+            \hline
+            {\textcolor{white}{\textbf{Leads}}} & Describes the relationship between a captain and the team they lead.
+            & Captain,\newline Team &  &  \\
+            \hline
+            {\textcolor{white}{\textbf{PatricipateIn}}} & Describes the relationship between the team and the league they participate in.
+            & League,\newline Team & season & \{season\} \\
+            \hline
+            {\textcolor{white}{\textbf{T-Sponsorship}}} & Describes the sponsorship relationship between a sponsor and a team.
+            & Team,\newline Sponsor & startDate,\newline endDate,\newline type & \{startDate\} \\
+            \hline
+            {\textcolor{white}{\textbf{P-Sponsorship}}} & Sponsorship between a team and a player.
+            & Sponsor,\newline Player& startDate,\newline endDate,\newline type &  \{startDate\}  \\
+            \hline
+            {\textcolor{white}{\textbf{L-Sponsorship}}} & Sponsorship between a team and a player.
+            & Sponsor,\newline League & startDate,\newline endDate,\newline type & \{startDate\}  \\
+            \hline
 
-\vspace{12px}
+        \end{tabular}\label{tab:table4}
+    \end{table}
 
-{\centering \textbf{Table of Volumes}\\}
 
-\begin{table}[H]
-  \def\arraystretch{1.25}%  1 is the default, change whatever you need
-  \centering
-  \begin{tabular}{|>{\columncolor{myColor}} m{4.5cm} | m{4.5cm}| m{4.5cm} |}
-    \hline
-    \rowcolor{myColor}
-    {\textcolor{white}{\large \textbf{Concept}}} &  {\textcolor{white}{\large \textbf{Construct}}} &  {\textcolor{white}{\large \textbf{Volume}}} \\
-    \hline
-{\textcolor{white}{\textbf{Team}}} & Entity & 50 \\
-\hline
-{\textcolor{white}{\textbf{Person}}} & Entity & 1400 \\
-\hline
-{\textcolor{white}{\textbf{Player}}} & Entity & 1250 \\
-\hline
-{\textcolor{white}{\textbf{CoachingStaff}}} & Entity & 150 \\
-\hline
-{\textcolor{white}{\textbf{Manager}}} & Entity & 50 \\
-\hline
-{\textcolor{white}{\textbf{Captain}}} & Entity & 50 \\
-\hline
-{\textcolor{white}{\textbf{Position}}} & Entity & 11 \\
-\hline
-{\textcolor{white}{\textbf{League}}} & Entity & 5 \\
-\hline
-{\textcolor{white}{\textbf{Sponsor}}} & Entity & 100 \\
-\hline
-{\textcolor{white}{\textbf{StateOfManage}}} & Entity & 50 \\
-\hline
-{\textcolor{white}{\textbf{StateOfPlaysFor}}} & Entity & 1250 \\
-\hline
-{\textcolor{white}{\textbf{StateOfContract}}} & Entity & 1400 \\
-\hline
-{\textcolor{white}{\textbf{ContractWith}}} & Relationship & 1400 \\
-\hline
-{\textcolor{white}{\textbf{HasStateM}}} & Relationship & 50 \\
-\hline
-{\textcolor{white}{\textbf{HasStateP}}} & Relationship & 1250 \\
-\hline
-{\textcolor{white}{\textbf{HasStateC}}} & Relationship & 1400 \\
-\hline
-{\textcolor{white}{\textbf{Plays}}} & Relationship & 1250 \\
-\hline
-{\textcolor{white}{\textbf{Trains}}} & Relationship & 400 \\
-\hline
-{\textcolor{white}{\textbf{L-Sponsorship}}} & Relationship & 100 \\
-\hline
-{\textcolor{white}{\textbf{T-Sponsorship}}} & Relationship & 200 \\
-\hline
-{\textcolor{white}{\textbf{P-Sponsorship}}} & Relationship & 300 \\
-\hline
+    \pagebreak
 
-  \end{tabular}\label{tab:table6}
-\end{table}
+    {\centering \textbf{Data dictionary: External constraints}\\}
+    \begin{table}[H]
+        \def\arraystretch{1.25}%  1 is the default, change whatever you need
+        \centering
+        \begin{tabular}{|>{\columncolor{myColor}}  m{1.5cm} | m{13.5cm}| }
+            \hline
+            \rowcolor{myColor}
+            \multicolumn{2}{| c |}  {\textcolor{white}{\large \textbf{External Integrity Constraints}}} \\
+            \hline
+            {\textcolor{white}{\textbf{1}}} & A player cannot be a part of two different teams simultaneously.  \\
+            \hline
+            {\textcolor{white}{\textbf{2}}} & A person cannot hold the roles of manager, coaching staff member, and player concurrently.  \\
+            \hline
+            {\textcolor{white}{\textbf{3}}} & A person can have only one active contract with a team at any given time  \\
+            \hline
+            {\textcolor{white}{\textbf{4}}} & A team can have only one manager and one captain at any given time.  \\
+            \hline
+            {\textcolor{white}{\textbf{5}}} & A captain's "captainSince" date cannot be in the future or earlier than the player's contract start date with the team. \\
+            \hline
+            {\textcolor{white}{\textbf{6}}} & A player cannot play more than 11 positions  \\
+            \hline
+            {\textcolor{white}{\textbf{7}}} & A player's number of appearances cannot be negative  \\
+            \hline
+            {\textcolor{white}{\textbf{8}}} & A Player's jersey number should be within a predefined range (e.g., 1-99) \\
+            \hline
+            {\textcolor{white}{\textbf{9}}} & The end date of a contract in the StateOfContract table should be greater than its start date. \\
+            \hline
+            {\textcolor{white}{\textbf{10}}} & The start date in the StateOfManage should not overlap with the start dates of other entries for the same manager, ensuring that a manager cannot manage multiple teams simultaneously \\
+            \hline
+        \end{tabular}\label{tab:table5}
+    \end{table}
 
-\pagebreak
+    \pagebreak
 
-\textbf{Operations of interest:}
-\begin{enumerate}
-  \item Insert a new player to a team.
-  \item Update team's coaching staff (including manager).
-  \item Update player's contract.
-  \item Assign a new captain.
-  \item Insert a new sponsorship.
-  \item Retrieve team's players.
-  \item Retrieve a player's contract.
-  \item List all sponsorships for a player.
-  \item List all sponsorships for a team.
-  \item List all sponsorships for a league.
-\end{enumerate}
+    \subsection{Table of volumes and operations}\label{subsec:table-of-volumes-and-operations}
 
-\vspace{12px}
+    \vspace{12px}
 
-{\centering \textbf{Table of Operations}\\}
+    {\centering \textbf{Table of Volumes}\\}
 
-\begin{table}[H]
-  \def\arraystretch{1.25}%  1 is the default, change whatever you need
-  \centering
- \begin{tabular}{|>{\columncolor{myColor}} m{2cm} | m{3.5cm}| m{3.5cm} |}
-    \hline
-    \rowcolor{myColor}
-    {\textcolor{white}{\large \textbf{Operation}}} &  {\textcolor{white}{\large \textbf{Type}}} &  {\textcolor{white}{\large \textbf{Frequency}}} \\
-    \hline
-    {\textcolor{white}{\textbf{1}}} & Interactive & 10/month  \\
-    \hline
-    {\textcolor{white}{\textbf{2}}} & Interactive & 3/month  \\
-    \hline
-   {\textcolor{white}{\textbf{3}}} & Interactive & 20/month  \\
-    \hline
-    {\textcolor{white}{\textbf{4}}} & Interactive & 1/year  \\
-    \hline
-    {\textcolor{white}{\textbf{5}}} & Interactive & 5/month  \\
-    \hline
-   {\textcolor{white}{\textbf{6}}} & Interactive & 100/day  \\
-    \hline
-    {\textcolor{white}{\textbf{7}}} & Interactive & 50/day  \\
-    \hline
-    {\textcolor{white}{\textbf{8}}} & Batch & 10/month  \\
-    \hline
-    {\textcolor{white}{\textbf{9}}} & Batch & 1/week  \\
-    \hline
-    {\textcolor{white}{\textbf{10}}} & Batch & 1/month  \\
-    \hline
-  \end{tabular}\label{tab:table7}
-\end{table}
+    \begin{table}[H]
+        \def\arraystretch{1.25}%  1 is the default, change whatever you need
+        \centering
+        \begin{tabular}{|>{\columncolor{myColor}} m{4.5cm} | m{4.5cm}| m{4.5cm} |}
+            \hline
+            \rowcolor{myColor}
+            {\textcolor{white}{\large \textbf{Concept}}} &  {\textcolor{white}{\large \textbf{Construct}}} &  {\textcolor{white}{\large \textbf{Volume}}} \\
+            \hline
+            {\textcolor{white}{\textbf{Team}}} & Entity & 50 \\
+            \hline
+            {\textcolor{white}{\textbf{Person}}} & Entity & 1400 \\
+            \hline
+            {\textcolor{white}{\textbf{Player}}} & Entity & 1250 \\
+            \hline
+            {\textcolor{white}{\textbf{CoachingStaff}}} & Entity & 150 \\
+            \hline
+            {\textcolor{white}{\textbf{Manager}}} & Entity & 50 \\
+            \hline
+            {\textcolor{white}{\textbf{Captain}}} & Entity & 50 \\
+            \hline
+            {\textcolor{white}{\textbf{Position}}} & Entity & 11 \\
+            \hline
+            {\textcolor{white}{\textbf{League}}} & Entity & 5 \\
+            \hline
+            {\textcolor{white}{\textbf{Sponsor}}} & Entity & 100 \\
+            \hline
+            {\textcolor{white}{\textbf{StateOfManage}}} & Entity & 50 \\
+            \hline
+            {\textcolor{white}{\textbf{StateOfPlaysFor}}} & Entity & 1250 \\
+            \hline
+            {\textcolor{white}{\textbf{StateOfContract}}} & Entity & 1400 \\
+            \hline
+            {\textcolor{white}{\textbf{ContractWith}}} & Relationship & 1400 \\
+            \hline
+            {\textcolor{white}{\textbf{HasStateM}}} & Relationship & 50 \\
+            \hline
+            {\textcolor{white}{\textbf{HasStateP}}} & Relationship & 1250 \\
+            \hline
+            {\textcolor{white}{\textbf{HasStateC}}} & Relationship & 1400 \\
+            \hline
+            {\textcolor{white}{\textbf{Plays}}} & Relationship & 1250 \\
+            \hline
+            {\textcolor{white}{\textbf{ParticipatesIn}}} & Relationship & 250 \\
+            \hline
+            {\textcolor{white}{\textbf{Trains}}} & Relationship & 400 \\
+            \hline
+            {\textcolor{white}{\textbf{L-Sponsorship}}} & Relationship & 100 \\
+            \hline
+            {\textcolor{white}{\textbf{T-Sponsorship}}} & Relationship & 200 \\
+            \hline
+            {\textcolor{white}{\textbf{P-Sponsorship}}} & Relationship & 300 \\
+            \hline
+
+        \end{tabular}\label{tab:table6}
+    \end{table}
+
+    \pagebreak
+
+    \textbf{Operations of interest:}
+    \begin{enumerate}
+        \item Insert a new player to a team.
+        \item Update team's coaching staff (including manager).
+        \item Update player's contract.
+        \item Assign a new captain.
+        \item Insert a new sponsorship.
+        \item Retrieve team's players.
+        \item Retrieve a player's contract.
+        \item List all sponsorships for a player.
+        \item List all sponsorships for a team.
+        \item List all sponsorships for a league.
+    \end{enumerate}
+
+    \vspace{12px}
+
+    {\centering \textbf{Table of Operations}\\}
+
+    \begin{table}[H]
+        \def\arraystretch{1.25}%  1 is the default, change whatever you need
+        \centering
+        \begin{tabular}{|>{\columncolor{myColor}} m{2cm} | m{3.5cm}| m{3.5cm} |}
+            \hline
+            \rowcolor{myColor}
+            {\textcolor{white}{\large \textbf{Operation}}} &  {\textcolor{white}{\large \textbf{Type}}} &  {\textcolor{white}{\large \textbf{Frequency}}} \\
+            \hline
+            {\textcolor{white}{\textbf{1}}} & Interactive & 10/month  \\
+            \hline
+            {\textcolor{white}{\textbf{2}}} & Interactive & 3/month  \\
+            \hline
+            {\textcolor{white}{\textbf{3}}} & Interactive & 20/month  \\
+            \hline
+            {\textcolor{white}{\textbf{4}}} & Interactive & 1/year  \\
+            \hline
+            {\textcolor{white}{\textbf{5}}} & Interactive & 5/month  \\
+            \hline
+            {\textcolor{white}{\textbf{6}}} & Interactive & 100/day  \\
+            \hline
+            {\textcolor{white}{\textbf{7}}} & Interactive & 50/day  \\
+            \hline
+            {\textcolor{white}{\textbf{8}}} & Batch & 10/month  \\
+            \hline
+            {\textcolor{white}{\textbf{9}}} & Batch & 1/week  \\
+            \hline
+            {\textcolor{white}{\textbf{10}}} & Batch & 1/month  \\
+            \hline
+        \end{tabular}\label{tab:table7}
+    \end{table}
 
 % \section{Restructuring of the conceptual schema}
 

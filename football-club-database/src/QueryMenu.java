@@ -16,9 +16,8 @@ public class QueryMenu extends Menu {
                 "[1] Retrieve Team's Players.\n" +
                 "[2] List all sponsorships for a player\n" +
                 "[3] List all sponsorships for a team.\n" +
-                "[4] List all sponsorships for a league.\n" +
-                "[5] Retrieve a Player's contract.\n" +
-                "[6] Retrieve a Player's position.\n" +
+                "[4] Retrieve a Player's contract.\n" +
+                "[5] Retrieve a Player's current position.\n" +
                 "[b] Back the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -34,12 +33,9 @@ public class QueryMenu extends Menu {
                     querySponsorsOfTeam();
                     break;
                 case "4":
-                    querySponsorsOfLeague();
-                    break;
-                case "5":
                     queryPlayerContract();
                     break;
-                case "6":
+                case "5":
                     queryPlayerPosition();
                     break;
                 default:
@@ -76,13 +72,6 @@ public class QueryMenu extends Menu {
         int playerID = nextInteger();
 
         db.getPlayerSponsorships(playerID);
-    }
-
-    private void querySponsorsOfLeague() throws SQLException {
-        System.out.print("Enter league ID: ");
-        int leagueID = nextInteger();
-
-        db.getLeagueSponsorships(leagueID);
     }
 
 

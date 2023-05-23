@@ -98,27 +98,6 @@ public class Database {
         }
     }
 
-
-    // Insertion of leagues
-    public void insertLeague(int leagueID, String name, String country, Date startDate, Date endDate, int numTeams) throws SQLException {
-        boolean exists = recordExists("League", "leagueID", leagueID);
-        if (exists) {
-            System.out.println("League with ID " + leagueID + " already exists.");
-        } else {
-            String query = "INSERT INTO League (leagueID, name, country, startDate, endDate, numTeams) VALUES (?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, leagueID);
-                pstmt.setString(2, name);
-                pstmt.setString(3, country);
-                pstmt.setDate(4, startDate);
-                pstmt.setDate(5, endDate);
-                pstmt.setInt(6, numTeams);
-                pstmt.executeUpdate();
-            }
-        }
-    }
-
-
     // Insertion of sponsors
     public void insertSponsor(int sponsorID, String name, String industry, int foundationYear) throws SQLException {
         boolean exists = recordExists("Sponsor", "sponsorID", sponsorID);
@@ -172,16 +151,15 @@ public class Database {
     }
 
     // Insertion of coaching staff
-    public void insertCoachingStaff(int coachingStaffID, String role, int teamID) throws SQLException {
+    public void insertCoachingStaff(int coachingStaffID, String role) throws SQLException {
         boolean exists = recordExists("CoachingStaff", "coachingStaffID", coachingStaffID);
         if (exists) {
             System.out.println("Coaching staff with ID " + coachingStaffID + " already exists.");
         } else {
-            String query = "INSERT INTO CoachingStaff (coachingStaffID, role, teamID) VALUES (?, ?, ?)";
+            String query = "INSERT INTO CoachingStaff (coachingStaffID, role) VALUES (?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, coachingStaffID);
                 pstmt.setString(2, role);
-                pstmt.setInt(3, teamID);
                 pstmt.executeUpdate();
             }
         }
@@ -202,81 +180,134 @@ public class Database {
         }
     }
 
-    // Insertion of captains
-    public void insertCaptain(int captainID, Date captainSince, int seniority, int teamID) throws SQLException {
-        boolean exists = recordExists("Captain", "captainID", captainID);
+    public void insertTSponsorship(int tSponsorshipID, Date startDate, Date endDate, String type) throws SQLException {
+        boolean exists = recordExists("T-Sponsorship", "tSponsorshipID", tSponsorshipID);
         if (exists) {
-            System.out.println("Captain with ID " + captainID + " already exists.");
+            System.out.println("T-Sponsorship with ID " + tSponsorshipID + " already exists.");
         } else {
-            String query = "INSERT INTO Captain (captainID, captainSince, seniority, teamID) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO T_Sponsorship (tSponsorshipID, startDate, endDate, type) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, captainID);
-                pstmt.setDate(2, captainSince);
-                pstmt.setInt(3, seniority);
-                pstmt.setInt(4, teamID);
+                pstmt.setInt(1, tSponsorshipID);
+                pstmt.setDate(2, startDate);
+                pstmt.setDate(3, endDate);
+                pstmt.setString(4, type);
                 pstmt.executeUpdate();
             }
         }
     }
 
-    // Insertion of positions
-    public void insertPosition(int positionID, String type) throws SQLException {
-        boolean exists = recordExists("Position", "positionID", positionID);
+
+
+    public void insertPSponsorship(int pSponsorshipID, Date startDate, Date endDate, String type) throws SQLException {
+        boolean exists = recordExists("P-Sponsorship", "pSponsorshipID", pSponsorshipID);
         if (exists) {
-            System.out.println("Position with ID " + positionID + " already exists.");
+            System.out.println("P-Sponsorship with ID " + pSponsorshipID + " already exists.");
         } else {
-            String query = "INSERT INTO Position (positionID, type) VALUES (?, ?)";
+            String query = "INSERT INTO P_Sponsorship (pSponsorshipID, startDate, endDate, type) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, positionID);
-                pstmt.setString(2, type);
+                pstmt.setInt(1, pSponsorshipID);
+                pstmt.setDate(2, startDate);
+                pstmt.setDate(3, endDate);
+                pstmt.setString(4, type);
                 pstmt.executeUpdate();
             }
         }
     }
 
-    public void insertPlayerPosition(int playerID, int positionID) throws SQLException {
-        boolean playerPositionExists = recordExists("Plays", "playerID", playerID, "positionID", positionID);
-        if (playerPositionExists) {
-            System.out.println("Player with ID " + playerID + " already has the position with ID " + positionID + ".");
+    public void insertManager(int managerID, String firstName, String middleName, String lastName, Date dob, String nationality, int yearsOfExperience) throws SQLException {
+        insertPerson(managerID, firstName, middleName, lastName, dob, nationality);
+        String query = "INSERT INTO Manager (managerID, yearsOfExperience) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, managerID);
+            pstmt.setInt(2, yearsOfExperience);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void insertCoachingStaff(int coachingStaffID, String firstName, String middleName, String lastName, Date dob, String nationality, String role) throws SQLException {
+        insertPerson(coachingStaffID, firstName, middleName, lastName, dob, nationality);
+        String query = "INSERT INTO CoachingStaff (coachingStaffID, role) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, coachingStaffID);
+            pstmt.setString(2, role);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void insertPlayer(int playerID, String firstName, String middleName, String lastName, Date dob, String nationality, boolean startingXI, int appearances) throws SQLException {
+        insertPerson(playerID, firstName, middleName, lastName, dob, nationality);
+        String query = "INSERT INTO Player (playerID, startingXI, appearances) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, playerID);
+            pstmt.setBoolean(2, startingXI);
+            pstmt.setInt(3, appearances);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void insertContract(int contractID, int personID, int teamID, Date startDate, Date endDate, double salary, Integer jerseyNumber, String position) throws SQLException {
+        boolean exists = recordExists("Contract", "contractID", contractID);
+        if (exists) {
+            System.out.println("Contract with ID " + contractID + " already exists.");
         } else {
-            String query = "INSERT INTO Plays (playerID, positionID) VALUES (?, ?)";
+            String query = "INSERT INTO Contract (contractID, personID, teamID, startDate, endDate, salary, jerseyNumber, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, playerID);
-                pstmt.setInt(2, positionID);
+                pstmt.setInt(1, contractID);
+                pstmt.setInt(2, personID);
+                pstmt.setInt(3, teamID);
+                pstmt.setDate(4, startDate);
+                pstmt.setDate(5, endDate);
+                pstmt.setDouble(6, salary);
+
+                if (jerseyNumber == null) {
+                    pstmt.setNull(7, Types.INTEGER);
+                } else {
+                    pstmt.setInt(7, jerseyNumber);
+                }
+
+                if (position == null) {
+                    pstmt.setNull(8, Types.VARCHAR);
+                } else {
+                    pstmt.setString(8, position);
+                }
+
                 pstmt.executeUpdate();
             }
         }
     }
 
-    // Insertion or update of StateOfContract
-    public void updateInsertStateOfContract(int personID, int teamID, Date startDate, Date endDate, BigDecimal salary) throws SQLException {
-        String tableName = "StateOfContract";
-        String primaryKeyColumn = "personID";
-        List<String> columns = Arrays.asList("teamID", "startDate", "endDate", "salary");
-        List<Object> values = Arrays.asList(teamID, startDate, endDate, salary);
+    public void transferManager(int managerID, int newTeamID, double salary, Date startDate, Date endDate) throws SQLException {
+        // First, archive the manager's current contract
+        String sql = "UPDATE Contract SET endDate = CURRENT_DATE WHERE personID = ? AND endDate IS NULL";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerID);
+            ps.executeUpdate();
+        }
 
-        updateInsertHistoricizedEntity(tableName, primaryKeyColumn, personID, columns, values);
+        // Then, insert a new contract for the new team with new start and end dates
+        sql = "INSERT INTO Contract (personID, teamID, salary, startDate, endDate) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerID);
+            ps.setInt(2, newTeamID);
+            ps.setDouble(3, salary);
+            ps.setDate(4, startDate);
+            ps.setDate(5, endDate);
+            ps.executeUpdate();
+        }
     }
 
-    // Insertion or update of StateOfManage
-    public void updateInsertStateOfManage(int managerID, int teamID, Date startDate) throws SQLException {
-        String tableName = "StateOfManage";
-        String primaryKeyColumn = "managerID";
-        List<String> columns = Arrays.asList("teamID", "startDate");
-        List<Object> values = Arrays.asList(teamID, startDate);
 
-        updateInsertHistoricizedEntity(tableName, primaryKeyColumn, managerID, columns, values);
+    // Insertion of CaptainHistory
+    public void insertCaptainHistory(int playerID, String role, Date startDate, Date endDate) throws SQLException {
+        String query = "INSERT INTO CaptainHistory (playerID, startDate,  endDate) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, playerID);
+            pstmt.setDate(2, startDate);
+            pstmt.setDate(3, endDate);
+            pstmt.executeUpdate();
+        }
     }
 
-    // Insertion or update of StateOfPlaysFor
-    public void updateInsertStateOfPlaysFor(int playerID, int teamID, Date startDate, int jerseyNumber) throws SQLException {
-        String tableName = "StateOfPlaysFor";
-        String primaryKeyColumn = "playerID";
-        List<String> columns = Arrays.asList("teamID", "startDate", "jerseyNumber");
-        List<Object> values = Arrays.asList(teamID, startDate, jerseyNumber);
-
-        updateInsertHistoricizedEntity(tableName, primaryKeyColumn, playerID, columns, values);
-    }
 
     public void updateTeam(int teamID, String name, String city, String kitColors, Integer foundationYear) throws SQLException {
         String query = "UPDATE Team SET name = COALESCE(?, name), city = COALESCE(?, city), kitColors = COALESCE(?, kitColors)," +
@@ -330,79 +361,44 @@ public class Database {
         }
     }
 
-    /**
-     * Updates the position of a player based on their player ID and the new position provided.
-     * If the player already has a position, prompts the user to confirm whether they want to update it.
-     * If the user confirms, updates the player's position accordingly.
-     *
-     * @param playerID    the ID of the player whose position will be updated
-     * @param newPosition the new position for the player
-     * @throws SQLException if a database error occurs
-     */
-    public void updatePlayerPosition(int playerID, String newPosition) throws SQLException {
-        String query = "SELECT pos.type " +
-                "FROM Position pos " +
-                "JOIN Plays pl ON pos.positionID = pl.positionID " +
-                "WHERE pl.playerID = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, playerID);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    String currentPosition = rs.getString("type");
-                    System.out.println("The player already has a position: " + currentPosition);
-                    System.out.println("Do you want to update the position? (yes/no)");
+    public void archivePlayer(int playerID) throws SQLException {
+        // First, archive the player's contracts
+        String sql = "UPDATE Contract SET endDate = CURRENT_DATE WHERE playerID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, playerID);
+            ps.executeUpdate();
+        }
 
-                    Scanner scanner = new Scanner(System.in);
-                    String userInput = scanner.nextLine();
-
-                    if (userInput.equalsIgnoreCase("yes")) {
-                        String updateQuery = "UPDATE Plays SET positionID = " +
-                                "(SELECT positionID FROM Position WHERE type = ?) WHERE playerID = ?";
-                        try (PreparedStatement updatePstmt = conn.prepareStatement(updateQuery)) {
-                            updatePstmt.setString(1, newPosition);
-                            updatePstmt.setInt(2, playerID);
-                            int rowsAffected = updatePstmt.executeUpdate();
-                            if (rowsAffected > 0) {
-                                System.out.println("Player position updated successfully.");
-                            } else {
-                                System.out.println("Error updating player position.");
-                            }
-                        }
-                    } else {
-                        System.out.println("Player position not updated.");
-                    }
-                } else {
-                    System.out.println("The player does not have a position.");
-                }
-            }
+        // Then, archive the player
+        sql = "UPDATE Player SET endDate = CURRENT_DATE WHERE playerID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, playerID);
+            ps.executeUpdate();
         }
     }
 
+    // Method to transfer a player to a new team and update their contracts
+    public void transferPlayer(int playerID, int newTeamID, int jerseyNumber, String position, double salary) throws SQLException {
+        // First, archive the player's current contracts
+        String sql = "UPDATE Contract SET endDate = CURRENT_DATE WHERE playerID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, playerID);
+            ps.executeUpdate();
+        }
 
-    public void updateManagerOfTeam(int newManagerID, int teamID, Date startDate) throws SQLException {
-        String query = "INSERT INTO StateOfManage (managerID, teamID, startDate) VALUES (?, ?, ?)";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, newManagerID);
-            pstmt.setInt(2, teamID);
-            pstmt.setDate(3, startDate);
-            pstmt.executeUpdate();
+        // Then, insert a new contract for the new team with a new start date
+        sql = "INSERT INTO Contract (playerID, teamID, startDate, jerseyNumber, position, salary) VALUES (?, ?, CURRENT_DATE, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, playerID);
+            ps.setInt(2, newTeamID);
+            ps.setInt(3, jerseyNumber);
+            ps.setString(4, position);
+            ps.setDouble(5, salary);
+            ps.executeUpdate();
         }
     }
 
-    public void updateInsertCaptain(int captainID, Date captainSince, int seniority, int teamID) throws SQLException {
-        String query = "INSERT INTO Captain (captainID, captainSince, seniority, teamID) VALUES (?, ?, ?, ?) " +
-                "ON CONFLICT (teamID) DO UPDATE SET captainID = excluded.captainID, captainSince = excluded.captainSince, seniority = excluded.seniority";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, captainID);
-            stmt.setDate(2, captainSince);
-            stmt.setInt(3, seniority);
-            stmt.setInt(4, teamID);
-            stmt.executeUpdate();
-        }
-    }
 
 
     /**
@@ -430,32 +426,24 @@ public class Database {
         deleteRecord("Manager", "managerID", managerID);
     }
 
-    public void deleteCaptain(int captainID) throws SQLException {
-        deleteRecord("Captain", "captainID", captainID);
+    public void deleteContract(int contractID) throws SQLException {
+        deleteRecord("Contract", "contractID", contractID);
     }
 
-    public void deletePosition(int positionID) throws SQLException {
-        deleteRecord("Position", "positionID", positionID);
+    public void deleteCaptainHistory(Date startDate) throws SQLException {
+        deleteRecord("CaptainHistory", "startDate", startDate);
     }
 
     public void deleteSponsor(int sponsorID) throws SQLException {
         deleteRecord("Sponsor", "sponsorID", sponsorID);
     }
 
-    public void deleteLeague(int leagueID) throws SQLException {
-        deleteRecord("League", "leagueID", leagueID);
+    public void deleteTSponsorship(int tSponsorshipID) throws SQLException {
+        deleteRecord("T_Sponsorship", "tSponsorshipID", tSponsorshipID);
     }
 
-    public void deleteStateOfContract(int personID) throws SQLException {
-        deleteRecord("StateOfContract", "personID", personID);
-    }
-
-    public void deleteStateOfManage(int managerID) throws SQLException {
-        deleteRecord("StateOfManage", "managerID", managerID);
-    }
-
-    public void deleteStateOfPlaysFor(int playerID) throws SQLException {
-        deleteRecord("StateOfPlaysFor", "playerID", playerID);
+    public void deletePSponsorship(int pSponsorshipID) throws SQLException {
+        deleteRecord("P_Sponsorship", "pSponsorshipID", pSponsorshipID);
     }
 
 
@@ -505,14 +493,12 @@ public class Database {
      * @throws SQLException If a database access error occurs
      */
     public void getPlayerPosition(int playerID) throws SQLException {
-        String query = "SELECT P.playerID, pr.firstName, pr.middleName, pr.lastName, t.name as teamName, pos.type " +
-                "FROM Position pos " +
-                "JOIN Plays pl ON pos.positionID = pl.positionID " +
-                "JOIN Player P ON pl.playerID = P.playerID " +
+        String query = "SELECT P.playerID, pr.firstName, pr.middleName, pr.lastName, t.name as teamName, C.position " +
+                "FROM Contract C " +
+                "JOIN Player P ON C.personID = P.playerID " +
                 "JOIN Person pr ON P.playerID = pr.personID " +
-                "JOIN StateOfPlaysFor S ON P.playerID = S.playerID " +
-                "JOIN Team t ON S.teamID = t.teamID " +
-                "WHERE pl.playerID = ?";
+                "JOIN Team T ON C.teamID = T.teamID " +
+                "WHERE P.playerID = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, playerID);
@@ -530,8 +516,8 @@ public class Database {
      */
     public void getTeamPlayers(int teamID) throws SQLException {
         try (PreparedStatement pstmt = conn.prepareStatement("SELECT P.playerID, pr.firstName, pr.middleName, pr.lastName " +
-                "FROM StateOfPlaysFor S JOIN Player P ON S.playerID = P.playerID JOIN Person pr ON P.playerID = pr.personID " +
-                "WHERE S.teamID = ?")) {
+                "FROM Contract C JOIN Player P ON C.personID = P.playerID JOIN Person pr ON P.playerID = pr.personID " +
+                "WHERE C.teamID = ?")) {
             pstmt.setInt(1, teamID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
@@ -546,9 +532,9 @@ public class Database {
      * @throws SQLException If a database access error occurs
      */
     public void getPlayerContract(int playerID) throws SQLException {
-        try (PreparedStatement pstmt = conn.prepareStatement("SELECT S.*, pr.firstName, pr.middleName, pr.lastName " +
-                "FROM StateOfContract S JOIN Player P ON S.personID = P.playerID JOIN Person pr ON P.playerID = pr.personID " +
-                "WHERE S.personID = ?")) {
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT C.*, pr.firstName, pr.middleName, pr.lastName " +
+                "FROM Contract C JOIN Player P ON C.personID = P.playerID JOIN Person pr ON P.playerID = pr.personID " +
+                "WHERE C.personID = ?")) {
             pstmt.setInt(1, playerID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
@@ -587,23 +573,6 @@ public class Database {
                         "JOIN Person pr ON p.personID = pr.personID " +
                         "WHERE p.personID = ?")) {
             pstmt.setInt(1, playerID);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                new TablePrinter(rs);
-            }
-        }
-    }
-
-    /**
-     * Retrieves and prints the list of sponsorships for a given league ID.
-     *
-     * @param leagueID The ID of the league whose sponsorships will be retrieved
-     * @throws SQLException If a database access error occurs
-     */
-    public void getLeagueSponsorships(int leagueID) throws SQLException {
-        try (PreparedStatement pstmt = conn.prepareStatement("SELECT L.sponsorID, S.name as sponsorName, L.leagueID, L.startDate, L.endDate, L.type " +
-                "FROM L_Sponsorship L " +
-                "INNER JOIN Sponsor S ON L.sponsorID = S.sponsorID WHERE L.leagueID = ?")) {
-            pstmt.setInt(1, leagueID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
             }
@@ -655,22 +624,34 @@ public class Database {
     /**
      * Deletes a record from the specified table given the primary key column and value.
      *
-     * @param tableName The name of the table to delete the record from
+     * @param tableName        The name of the table to delete the record from
      * @param primaryKeyColumn The name of the primary key column
-     * @param primaryKeyValue The primary key value of the record to delete
+     * @param primaryKeyValue  The primary key value of the record to delete
      * @throws SQLException If a database access error occurs
      */
     public void deleteRecord(String tableName, String primaryKeyColumn, Object primaryKeyValue) throws SQLException {
         String query = "DELETE FROM " + tableName + " WHERE " + primaryKeyColumn + " = ?";
-
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setObject(1, primaryKeyValue);
             int rowsAffected = pstmt.executeUpdate();
-
             if (rowsAffected == 0) {
                 System.out.println("No record found with " + primaryKeyColumn + " = " + primaryKeyValue + " in table " + tableName);
             } else {
                 System.out.println("Record deleted successfully from table " + tableName + " with " + primaryKeyColumn + " = " + primaryKeyValue);
+            }
+        }
+    }
+
+    public void deleteRecord(String tableName, String primaryKeyColumn1, Object primaryKeyValue1, String primaryKeyColumn2, Object primaryKeyValue2) throws SQLException {
+        String query = "DELETE FROM " + tableName + " WHERE " + primaryKeyColumn1 + " = ? AND " + primaryKeyColumn2 + " = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setObject(1, primaryKeyValue1);
+            pstmt.setObject(2, primaryKeyValue2);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("No record found with " + primaryKeyColumn1 + " = " + primaryKeyValue1 + " and " + primaryKeyColumn2 + " = " + primaryKeyValue2 + " in table " + tableName);
+            } else {
+                System.out.println("Record deleted successfully from table " + tableName + " with " + primaryKeyColumn1 + " = " + primaryKeyValue1 + " and " + primaryKeyColumn2 + " = " + primaryKeyValue2);
             }
         }
     }

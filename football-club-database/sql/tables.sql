@@ -25,7 +25,7 @@ CREATE TABLE Person
     personID    INT PRIMARY KEY,
     firstName   VARCHAR(50) NOT NULL,
     middleName  VARCHAR(50),
-    lastName    VARCHAR(50) NOT NULL,
+    lastName    VARCHAR(50),
     dob         DATE,
     nationality VARCHAR(50)
 );
@@ -34,7 +34,8 @@ CREATE TABLE Player
 (
     playerID    INT PRIMARY KEY,
     startingXI  BOOLEAN,
-    appearances INT CHECK (appearances >= 0),
+    appearances INT,
+    CONSTRAINT appearancesCheck CHECK (appearances >= 0),
     CONSTRAINT playerInPerson FOREIGN KEY (playerID)
         REFERENCES Person (personID)
         ON UPDATE CASCADE
@@ -69,11 +70,13 @@ CREATE TABLE Contract
     contractID   INT PRIMARY KEY,
     personID     INT,
     teamID       INT,
-    startDate    DATE,
-    endDate      DATE CHECK (endDate > startDate),
+    startDate    DATE NOT NULL,
+    endDate      DATE NOT NULL,
     salary       DECIMAL(10, 2),
-    jerseyNumber INT CHECK (jerseyNumber BETWEEN 1 AND 99),
+    jerseyNumber INT  NULL,
     position     VARCHAR(50),
+    CONSTRAINT jerseyNumberCheck CHECK (jerseyNumber BETWEEN 1 AND 99),
+    CONSTRAINT endDateCheck CHECK (endDate > startDate),
     CONSTRAINT personInContract FOREIGN KEY (personID)
         REFERENCES Person (personID)
         ON UPDATE CASCADE
@@ -89,8 +92,8 @@ CREATE TABLE CaptainHistory
 (
     captainHistoryID INT PRIMARY KEY,
     playerID         INT,
-    startDate        DATE,
-    endDate          DATE,
+    startDate        DATE NOT NULL,
+    endDate          DATE NOT NULL,
     CONSTRAINT playerInCaptainHistory FOREIGN KEY (playerID)
         REFERENCES Player (playerID)
         ON UPDATE CASCADE
@@ -103,8 +106,8 @@ CREATE TABLE T_Sponsorship
     tSponsorshipID INT PRIMARY KEY,
     teamID         INT,
     sponsorID      INT,
-    startDate      DATE,
-    endDate        DATE,
+    startDate      DATE NOT NULL,
+    endDate        DATE NOT NULL,
     type           VARCHAR(50),
     CONSTRAINT teamInTSponsorship FOREIGN KEY (teamID)
         REFERENCES Team (teamID)
@@ -121,8 +124,8 @@ CREATE TABLE P_Sponsorship
     pSponsorshipID INT PRIMARY KEY,
     playerID       INT,
     sponsorID      INT,
-    startDate      DATE,
-    endDate        DATE,
+    startDate      DATE NOT NULL,
+    endDate        DATE NOT NULL,
     type           VARCHAR(50),
     CONSTRAINT playerInPSponsorship FOREIGN KEY (playerID)
         REFERENCES Player (playerID)
