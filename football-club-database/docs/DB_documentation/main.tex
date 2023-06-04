@@ -1,0 +1,59 @@
+\documentclass{article}[h]
+
+% Package usages and their settings
+\usepackage{authblk}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hyphens]{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[binary-units,per-mode=symbol]{siunitx}
+\usepackage[margin=1.3in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{{../Diagrams}}
+\usepackage{listings}
+\usepackage{imakeidx}
+\usepackage{array}
+\usepackage[section]{placeins}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{enumitem}
+\definecolor{myColor}{RGB}{27,161,226}
+\usepackage{svg}
+
+
+\makeindex[columns=3, title=Alphabetical Index, intoc]
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breaklines=true,
+  postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+
+\title{\huge Introduction to Database Project\\
+    \vspace{6px}
+    \huge \textbf {Project Title: Football Clubs Database}}
+\author{Student: Maxwell Aboagye}
+% \date{01/09/2021}
+
+% Start of document
+
+% Header of document
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\pagebreak
+% Body of document
+
+\input{1-conceptual-design}
+% \input{2-restructuring_of_conceptual_schema}
+% \input{3-direct_translation}
+% \input{4-restructuring_of_the_relational_schema}
+% \include{5-conclusion}
+
+\end{document}

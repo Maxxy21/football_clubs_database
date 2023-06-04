@@ -1,0 +1,461 @@
+\section{Direct translation}
+
+\subsection{Relational schema}
+
+\vspace{12px}
+
+{\color{ForestGreen}SnowstopProduct(\underline{Code},Name,Material,Price,Color*)}\\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} SnowstopProduct[Code] $\subseteq $ SnowRetainer[Code] $\cup$ RetainerHolder[Code] $\cup$ }} \\
+{{\color{Magenta}\hspace{39mm} RetainerAccessory[Code] }} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Material is 'Zink Steel' or 'Stainless Steel' or 'Painted Steel' or 'Aluminium' or 'Copper'}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Color is NULL if and only if Material is not 'Painted Steeel'}} \\
+
+{\color{ForestGreen}SnowRetainer(\underline{Code},LinearResistance)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}SnowRetainer[Code] $\subseteq$ SnowstopProduct[Code]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}SnowRetainer[Code] $\subseteq$ H-Compatible[RetainerCode]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}SnowRetainer[Code] $\subseteq$ A-Compatible[RetainerCode]}} \\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} SnowRetainer[Code] $\cap $ RetainerHolder[Code] $\cap$ RetainerAccessory[Code] = $\varnothing $}} \\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} SnowRetainer[Code] $\subseteq $ GridRetainer[Code] $\cup$ TubeRetainer[Code] }} \\
+
+
+
+{\color{ForestGreen}GridRetainer(\underline{Code},Height,Profile)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}GridRetainer[Code] $\subseteq$ SnowRetainer[Code]}} \\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} GridRetainer[Code] $\cap $ TubeRetainer[Code] = $\varnothing$ }} \\
+
+{\color{ForestGreen}TubeRetainer(\underline{Code},Diameter)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}TubeRetainer[Code] $\subseteq$ SnowRetainer[Code]}} \\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} TubeRetainer[Code]  $\cap $ GridRetainer[Code]  = $\varnothing$ }} \\
+
+{\color{ForestGreen}RetainerHolder(\underline{Code},Resistance,RoofType)}\\
+{\hspace{15mm}{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}RetainerHolder[Code] $\subseteq$ SnowstopProduct[Code]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}RetainerHolder[Code] $\subseteq$ H-Compatible[HolderCode]}} \\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} RetainerHolder[Code] $\cap $ SnowRetainer[Code] $\cap$ RetainerAccessory[Code] = $\varnothing $}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Rooftype is 'Concrete Tile' or 'Ondulated Plate' or 'Trapezoidal Sheet' or}} \\
+{\color{Magenta}\hspace{19.5mm}'Standing Seam Sheet' or 'Flat Tile'}\\
+
+{\color{ForestGreen}H-Compatible(\underline{HolderCode,RetainerCode})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}H-Compatible[HolderCode] $\subseteq$ RetainerHolder[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}H-Compatible[RetainerCode] $\subseteq$ SnowRetainer[Code]}} \\
+
+{\color{ForestGreen}RetainerAccessory(\underline{Code},Measure,Type)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}RetainerAccessory[Code] $\subseteq$ SnowstopProduct[Code]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}RetainerAccessory[Code] $\subseteq$ A-Compatible[AccessoryCode]}} \\
+{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} RetainerAccessory[Code] $\cap $ SnowRetainer[Code] $\cap$ RetainerHolder[Code] = $\varnothing $}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Type is 'Connection' or 'Ice Retainer'}} \\
+
+{\color{ForestGreen}A-Compatible(\underline{AccessoryCode,RetainerCode})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}A-Compatible[AccessoryCode] $\subseteq$ RetainerAccessory[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}A-Compatible[RetainerCode] $\subseteq$ SnowRetainer[Code]}} \\
+
+{\color{ForestGreen}SupplyOffer(\underline{Code},Date,TotalPrice)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}SupplyOffer[Code] $\subseteq$ Has-Computation[OfferCode]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}SupplyOffer[Code] $\subseteq$ For-Customer[OfferCode]}} \\
+
+{\color{ForestGreen}For-Customer(\underline{OfferCode,CustomerCode})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}For-Customer[OfferCode] $\subseteq$ SupplyOffer[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}For-Customer[CustomerCode] $\subseteq$ Customer[Code]}} \\
+
+{\color{ForestGreen}Offer-Prod(\underline{OfferCode,ProductCode},Quantity)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Offer-Prod[OfferCode] $\subseteq$ SupplyOffer[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Offer-Prod[ProductCode] $\subseteq$ SnowstopProduct[Code]}} \\
+
+{\color{ForestGreen}Has-Computation(\underline{OfferCode,ComputationCode},TotalResistance,Rows,Distance)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Has-Computation[OfferCode] $\subseteq$ SupplyOffer[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Has-Computation[ComputationCode] $\subseteq$ SnowloadComputation[Code]}} \\
+
+{\color{ForestGreen}Customer(\underline{Code},Name,Discount)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Customer[Code] $\subseteq$ Loc-Customer[CustomerCode]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}Customer[Code] $\subseteq$ Num-Customer[CustomerCode]} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Discount $\geqslant$  0 and $\leqslant$ 30}} \\
+
+{\color{ForestGreen}Phone(\underline{Number})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Phone[Number] $\subseteq$ Num-Customer[PhoneNumber]}} \\
+
+{\color{ForestGreen}Num-Customer(\underline{PhoneNumber},CustomerCode)}}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Num-Customer[PhoneNumber] $\subseteq$ Phone[Number]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Num-Customer[CustomerCode] $\subseteq$ Customer[Code]}} \\
+
+{\color{ForestGreen}Loc-Customer(\underline{CustomerCode},Zip,City)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Loc-Customer[CustomerCode] $\subseteq$ Customer[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Loc-Customer[Zip,City] $\subseteq$ City[Zip,Name]}} \\
+
+{\color{ForestGreen}SnowloadComputation(\underline{Code},Date,GroundLoad,RoofLoad)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}SnowloadComputation[Code] $\subseteq$ Comp-For-BS[ComputationCode]}} \\
+
+{\color{ForestGreen}Comp-For-BS(\underline{ComputationCode},RoofName,Zip,City)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Comp-For-BS[ComputationCode] $\subseteq$ SnowloadComputation[Code]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Comp-For-BS[RoofName,Zip,City] $\subseteq$ BuildingSite[Name,Zip,City]}} \\
+{\color{Orange}\hspace{2mm} key: {\color{Magenta}RoofName,Zip,City}} \\
+
+{\color{ForestGreen}BuildingSite(\underline{Name,Zip,City},Length,Width,Steepness,Covering)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}BuildingSite[Zip,City] $\subseteq$ City[Zip,Name]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}BuildingSite[Name,Zip,City] $\subseteq$ Comp-For-BS[RoofName,Zip,City]}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Covering is 'Concrete Tile' or 'Ondulated Plate' or 'Trapezoidal Sheet' or}} \\
+{\color{Magenta}\hspace{22.5mm}'Standing Seam Sheet' or 'Flat Tile'}\\
+
+{\color{ForestGreen}City(\underline{Zip,Name},Altitude)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}City[Zip,Name] $\subseteq$ Is-In-Prov[Zip,Name]}} \\
+
+{\color{ForestGreen}Province(\underline{Shorthand},Name,Zone,BaseLoad)}\\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Zone is 'I-A' or 'I-M' or 'II' or 'III}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}BaseLoad $>$ 0}} \\
+
+{\color{ForestGreen}Is-In-Prov(\underline{Zip,City},Province)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Is-In-Prov[Zip,City] $\subseteq$ City[Zip,Name]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Is-In-Prov[Province] $\subseteq$ Province[Shorthand]}} \\
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{1.5cm} | m{13.5cm}| }
+    \hline
+    \multicolumn{2}{| c |} {\textbf{\large External integrity constraints in terms of the relational schema}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{1} & The TotalResistance attribute in the Has-Computation relationship must be higher than the RoofLoad attribute of its associated SnowloadComputation \\
+    \hline
+    \color[HTML]{3531FF} \textbf{2a} & The Code of the RetainerHolder and the Code of the SnowRetainer associated to the same SupplyOffer through the Offer-Prod relationship must appear as an instance in the H-Compatible relationship \\
+    \hline
+    \color[HTML]{3531FF} \textbf{2b} & The Code of the RetainerAccessory and the Code of the SnowRetainer associated to the same SupplyOffer through the Offer-Prod relationship must appear as an instance in the A-Compatible relationship \\
+    \hline
+    \color[HTML]{3531FF} \textbf{3} & The RoofType attribute of a RetainerHolder associated to a SupplyOffer must have the same value as the Covering attribute of the BuildingSite associated to it following the relationships path by passing through SnowloadComputation entity.  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{4} & The Code of the SupplyOffer must participate between 2 and 4 times to the Offer-Prod relationship. In addition, the same Code being present as an instance in the Offer-Prod relationship must be associated with exactly one RetainerHolder, one SnowRetainer and between zero and two different types of RetainerAccessory \\
+    \hline
+    \color[HTML]{3531FF} \textbf{5} & The TotalPrice attribute of a SupplyOffer must be equal to the sum of the prices of the SnowstopProduct entities associated to it through the Offer-Prod relationship multiplied by their price\\
+    \hline
+  \end{tabular}
+\end{table}
+
+\vspace{12px}
+
+\pagebreak
+
+\subsection{Application load in terms of the relational schema}
+
+\vspace{12px}
+
+\subsubsection{Table of volumes and operations}
+
+{\centering \textbf{Table of volumes after the direct translation}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4.5cm} | m{4.5cm}| m{4.5cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Volume}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowstopProduct} & Entity & 500  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowRetainer} & Entity & 50 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{GridRetainer} & Entity & 25 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{TubeRetainer} & Entity & 25 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{RetainerHolder} & Entity & 400 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{RetainerAccessory} & Entity & 50 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SupplyOffer} & Entity & 5000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Customer} & Entity & 2500\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Phone} & Entity & 3750 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowloadComputation} & Entity & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{BuildingSite} & Entity & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{City} & Entity & 8000 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Province} & Entity & 100 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{H-Compatible} & Relationship & 10000* \\
+    \hline
+    \color[HTML]{3531FF} \textbf{A-Compatible} & Relationship & 1250* \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Offer-Prod} & Relationship & 15000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{For-Customer} & Relationship & 6000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Loc-Customer} & Relationship & 2500\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Num-Customer} & Relationship & 3750 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Has-Computation} & Relationship & 5000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Comp-For-BS} & Relationship & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Loc-Roof} & Relationship & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Is-In-Prov} & Relationship & 8000 \\
+    \hline
+  \end{tabular}
+\end{table}
+\small{* Each RetainerHolder is on average compatible with half of the SnowRetainer, same reasoning applies to the RetainerAccessory.}
+
+\pagebreak
+
+\textbf{Operations of interest:}
+
+\begin{enumerate}
+  \item Insert a new customer.
+  \item Insert a new snowstop product, defining also the type and the compatibility.
+  \item Insert a new city.
+  \item Create a snowload computation on a given building site.
+  \item Create a supply offer.
+  \item List all the supply offers made for a given customer.
+  \item Update prices of snowstop products.
+  \item Update zip code and name of cities.
+\end{enumerate}
+
+\vspace{12px}
+
+{\centering \textbf{Table of Operations}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{2.5cm} | m{3.5cm}| m{3.5cm} |}
+    \hline
+    {\textbf{\large Operation}} & {\textbf{\large Type}} & {\textbf{\large Frequency}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{1} & Interactive & 20/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{2} & Interactive & 10/month  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{3} & Interactive & 5/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{4} & Interactive & 40/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{5} & Interactive & 50/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{6} & Batch & 10/week  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{7} & Interactive & 2/year  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{8} & Batch & 1/month  \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\pagebreak
+
+\subsubsection{Access tables}
+
+In the total cost evaluation we assume that a write access costs like two read accesses.
+
+\vspace{12px}
+
+
+{\centering \textbf{Access table for Operation 1}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} Customer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Phone & Entity & 1.5* & W \\
+    \hline
+    \color[HTML]{3531FF} Num-Customer & Relationship & 1.5 & W \\
+    \hline
+    \color[HTML]{3531FF} Loc-Customer & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+  * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
+\end{table}
+Total: 5*20 write accesses = 200 accesses per day
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 2a (RetainerHolder or RetainerAccessory)}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} RetainerHolder /\newline RetainerAccessory & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} SnowRetainer & Entity & 50 & R \\
+    \hline
+    \color[HTML]{3531FF} H-Compatible /\newline A-Compatible & Relationship & 25 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 27*10 write accesses + 50*10 read accesses per month = 1.040 accesses per month
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 2b (SnowRetainer)}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} SnowRetainer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} GridRetainer /\newline TubeRetainer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} RetainerHolder & Entity & 400 & R \\
+    \hline
+    \color[HTML]{3531FF} RetainerAccessory & Entity & 50 & R \\
+    \hline
+    \color[HTML]{3531FF} H-Compatible & Relationship & 200 & W \\
+    \hline
+    \color[HTML]{3531FF} A-Compatible & Relationship & 25 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 228*10 write accesses + 450*10 read accesses = 9.060 accesses per month
+
+\pagebreak
+
+{\centering \textbf{Access table for Operation 3}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} City & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Is-In-Prov & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 2*5 write accesses = 20 accesses per day
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 4}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} BuildingSite & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} SnowloadComputation & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Comp-For-BS & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 3*40 write accesses = 240 accesses per day
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 5}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowloadComputation & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} Comp-For-BS & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} BuildingSite & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} RetainerHolder & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} GridRetainer /\newline TubeRetainer & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} SnowRetainer & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} RetainerAccessory & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} H-Compatible & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} A-Compatible & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 3 & R \\
+    \hline
+    \color[HTML]{3531FF} SupplyOffer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Offer-Prod & Relationship & 3* & W \\
+    \hline
+    \color[HTML]{3531FF} For Customer & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+  \small{* On average three products offered}
+\end{table}
+Total: 5*50 write accesses + 12*50 read accesses = 1.100 accesses per day
+
+\pagebreak
+
+{\centering \textbf{Access table for Operation 6}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} Customer & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} For-Customer & Relation & 5 & R \\
+    \hline
+    \color[HTML]{3531FF} SupplyOffer & Entity & 5* & R \\
+    \hline
+  \end{tabular}
+  \small{* We suppose on average 5 supply offers for customer}
+\end{table}
+Total: 11*10 read accesses = 110 read accesses per week
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 7}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 500 & R \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 500 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 500*2 read accesses + 500*2 write accesses = 3.000 accesses per year
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 8}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} City & Entity & 8000 & R \\
+    \hline
+    \color[HTML]{3531FF} City & Entity & 50* & W \\
+    \hline
+  \end{tabular}
+  \small{* We assume only a small percentage of city have their zip code changed}
+\end{table}
+Total: 8000*1 read accesses + 50*1 write accesses = 8.100 accesses per month
+
+\pagebreak

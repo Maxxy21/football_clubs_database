@@ -2,7 +2,7 @@ Entities and Relationships:
 Person(1,n) --- HasContract --- Contract(1,1)
 Team(0,n) --- HasTsponsorship --- T-Sponsorship(1,n)
 Team(0,n) --- ContractWith --- Contract(1,1)
-Team(1,1) --- HasCaptainHistory --- CaptainHistory(1,1)
+Team(0,n) --- HasCaptainHistory --- CaptainHistory(1,1)
 T-Sponsorship(1,1) --- WithSponsor--- Sponsor(0,n)
 Player(0,n)--- HasCaptainRole --- CaptainHistory(1,1)
 Player(0,n) --- HasPSponsorship --- P-Sponsorship(1,n)
@@ -21,7 +21,7 @@ CaptainHistory(startDate, endDate)
 Contract(contractID, startDate, endDate, salary, jerseyNumber, position)
 Manager(yearsOfExperience)
 CoachingStaff(role)
-Person(name(firstName, lastName, middleName), personID, dob, nationality)
+Person(firstName, lastName, middleName, personID, dob, nationality)
 Player(startingXI, appearances)
 
 Primary Keys:
@@ -48,6 +48,22 @@ Manager(personID) --- References --- CoachingStaff(personID)
 Person(personID) --- References --- Player(personID)
 Person(personID) --- References --- CoachingStaff(personID)
 
+
+Restructuring the ER Diagram:
+Entities and Relationships:
+Person(1,n) --- HasContract --- Contract(1,1)
+Team(0,n) --- HasTsponsorship --- T-Sponsorship(1,n)
+Team(0,n) --- ContractWith --- Contract(1,1)
+Team(0,n) --- HasCaptainHistory --- CaptainHistory(1,1)
+T-Sponsorship(1,1) --- TeamWithSponsor--- Sponsor(0,n)
+Player(0,n)--- HasCaptainRole --- CaptainHistory(1,1)
+Player(0,n) --- HasPSponsorship --- P-Sponsorship(1,n)
+P-Sponsorship(1,1) --- PlayerWithSponsor --- Sponsor(0,n)
+CoachingStaff(1,n) --- Trains --- Player(1,n)
+Player(1,1) --- ISA-P-P --- Person(0,1)
+CoachingStaff(1,1) --- ISA-CS-P --- Person(0,1)
+Manager(1,1) --- ISA-M-CS --- CoachingStaff(0,1)
+Team(1,n) --- HasKitColor --- KitColors(0,n)
 
 
 General statements: We want to realize a database for football clubs, aiming to represent data related to a team; its players and their positions, captain history, coaching staff, manager, sponsor, and contracts between a team and a person. The database will track historical data for contracts, team memberships, and managerial positions over time.

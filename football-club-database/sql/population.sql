@@ -1,125 +1,78 @@
--- Populating Teams
-INSERT INTO Team (teamID, name, city, kitColors, foundationYear)
-VALUES (1, 'FC Barcelona', 'Barcelona', 'Blue, Red', 1899),
-       (2, 'Real Madrid', 'Madrid', 'White', 1902),
-       (3, 'Atletico Madrid', 'Madrid', 'Red, White', 1903);
+-- Insert Person
+INSERT INTO Person VALUES
+                          (1,'Lionel','Andres','Messi','1987-06-24','Argentina'),
+                          (2,'Cristiano',' ','Ronaldo','1985-02-05','Portugal'),
+                          (3,'Neymar',' ','Jr.','1992-02-05','Brazil'),
+                          (4,'Robert',' ','Lewandowski','1988-08-21','Poland'),
+                          (5,'Zinedine',' ','Zidane','1972-06-23','France');
 
--- Populating Leagues
-INSERT INTO League (leagueID, name, country, startDate, endDate, numTeams)
-VALUES (1, 'La Liga', 'Spain', '2023-08-13', '2024-05-26', 20);
+-- Insert Team
+INSERT INTO Team VALUES
+                        (1,'FC Barcelona','Barcelona','Blue and Red',1899),
+                        (2,'Real Madrid','Madrid','White',1902),
+                        (3,'Paris Saint-Germain','Paris','Blue and Red',1970),
+                        (4,'Bayern Munich','Munich','Red and White',1900),
+                        (5,'Juventus','Turin','Black and White',1897);
 
--- Populating Sponsors
-INSERT INTO Sponsor (sponsorID, name, industry, foundationYear)
-VALUES (1, 'Nike', 'Sportswear', 1964),
-       (2, 'Adidas', 'Sportswear', 1949);
+-- Insert Sponsor
+INSERT INTO Sponsor VALUES
+                           (1,'Nike','Sportswear',1964),
+                           (2,'Adidas','Sportswear',1949),
+                           (3,'Puma','Sportswear',1948),
+                           (4,'Under Armour','Sportswear',1996),
+                           (5,'New Balance','Sportswear',1906);
 
--- Populating Persons
-INSERT INTO Person (personID, firstName, middleName, lastName, dob, nationality)
-VALUES (1, 'Lionel', '', 'Messi', '1987-06-24', 'Argentina'),
-       (2, 'Cristiano', '', 'Ronaldo', '1985-02-05', 'Portugal'),
-       (3, 'Gerard', '', 'Piqué', '1987-02-02', 'Spain'),
-       (4, 'Sergio', '', 'Ramos', '1986-03-30', 'Spain'),
-       (5, 'Assistant', '', 'Coach1', '1975-06-24', 'Country1'),
-       (6, 'Goalkeeper', '', 'Coach2', '1970-02-05', 'Country2'),
-       (7, 'Manager', '', '1', '1975-02-02', 'Country3'),
-       (8, 'Manager', '', '2', '1976-03-30', 'Country4');
-	  
+-- Insert Player
+INSERT INTO Player VALUES
+                          (1,true,700),
+                          (2,true,800),
+                          (3,true,600),
+                          (4,true,650),
+                          (5,false,100);
 
--- Populating Players
-INSERT INTO Player (playerID, startingXI, appearances)
-VALUES (1, TRUE, 50),
-       (2, TRUE, 45),
-       (3, TRUE, 40),
-       (4, TRUE, 35);
+-- Insert CoachingStaff
+INSERT INTO CoachingStaff VALUES
+       (5,'Manager');
 
--- Populating CoachingStaff
-INSERT INTO CoachingStaff (coachingStaffID, role, teamID)
-VALUES (5, 'Assistant Coach', 1),
-       (6, 'Goalkeeper Coach', 2);
+-- Insert Manager
+INSERT INTO Manager VALUES
+       (5,20);
 
--- Populating Managers
-INSERT INTO Manager (managerID, yearsOfExperience)
-VALUES (7, 15),
-       (8, 12);
+-- Insert Contract
+INSERT INTO Contract VALUES
+                            (1,1,1,'2020-08-25','2023-06-30',71000000,10,'Forward'),
+                            (2,2,2,'2018-07-10','2022-06-30',31000000,7,'Forward'),
+                            (3,3,3,'2017-08-03','2022-06-30',36000000,10,'Forward'),
+                            (4,4,4,'2014-07-09','2023-06-30',23000000,9,'Forward'),
+                            (5,5,2,'2016-01-04','2022-06-30',14000000,null,null);
 
--- Populating Captains
-INSERT INTO Captain (captainID, captainSince, seniority, teamID)
-VALUES (3, '2018-08-15', 5, 1),
-       (4, '2010-08-25', 9, 2);
+-- Insert CaptainHistory
+INSERT INTO CaptainHistory VALUES
+                                  (1,1,'2020-08-25','2021-08-24'),
+                                  (2,2,'2018-07-10','2021-07-09'),
+                                  (3,3,'2017-08-03','2021-08-02'),
+                                  (4,4,'2014-07-09','2021-07-08'),
+                                  (5,5,'2016-01-04','2021-01-03');
 
--- Populating Positions
-INSERT INTO Position (positionID, type)
-VALUES (1, 'Forward'),
-       (2, 'Midfielder'),
-       (3, 'Defender'),
-       (4, 'Goalkeeper');
+-- Insert P_Sponsorship
+INSERT INTO P_Sponsorship VALUES
+                                 (1,1,1,'2020-01-01','2022-12-31','Boot Sponsorship'),
+                                 (2,2,2,'2018-01-01','2022-12-31','Boot Sponsorship'),
+                                 (3,3,3,'2019-01-01','2023-12-31','Boot Sponsorship'),
+                                 (4,4,4,'2016-01-01','2024-12-31','Boot Sponsorship');
 
--- Populating StateOfContract
-INSERT INTO StateOfContract (personID, teamID, startDate, endDate, salary)
-VALUES (1, 1, '2018-07-01', '2023-06-30', 40000000),
-       (2, 2, '2018-07-01', '2023-06-30', 30000000),
-       (3, 1, '2018-07-01', '2023-06-30', 20000000),
-       (4, 2, '2018-07-01', '2023-06-30', 15000000);
+-- Insert T_Sponsorship
+INSERT INTO T_Sponsorship VALUES
+                                 (1,1,1,'2020-01-01','2023-12-31','Kit Sponsorship'),
+                                 (2,2,2,'2019-01-01','2023-12-31','Kit Sponsorship'),
+                                 (3,3,3,'2018-01-01','2022-12-31','Kit Sponsorship'),
+                                 (4,4,4,'2017-01-01','2021-12-31','Kit Sponsorship'),
+                                 (5,5,5,'2020-01-01','2024-12-31','Kit Sponsorship');
 
--- Populating StateOfPlaysFor
-INSERT INTO StateOfPlaysFor (playerID, startDate, jerseyNumber, teamID)
-VALUES (1, '2018-07-01', 10, 1),
-       (2, '2018-07-01', 7, 2),
-       (3, '2018-07-01', 3, 1),
-       (4, '2018-07-01', 4, 2);
 
--- Populating StateOfManage
-INSERT INTO StateOfManage (managerID, startDate, teamID)
-VALUES (7, '2018-07-01', 1),
-       (8, '2018-07-01', 2);
-
--- Populating HasStateM
-INSERT INTO HasStateM (managerID, startDate)
-VALUES (7, '2018-07-01'),
-       (8, '2018-07-01');
-
--- Populating HasStateP
-INSERT INTO HasStateP (playerID, startDate)
-VALUES (1, '2018-07-01'),
-       (2, '2018-07-01'),
-       (3, '2018-07-01'),
-       (4, '2018-07-01');
-
--- Populating ContractWith
-INSERT INTO ContractWith (teamID, personID, startDate)
-VALUES (1, 1, '2018-07-01'),
-       (2, 2, '2018-07-01'),
-       (1, 3, '2018-07-01'),
-       (2, 4, '2018-07-01');
-
--- Populating Plays
-INSERT INTO Plays (playerID, positionID)
-VALUES (1, 1),
-       (2, 1),
-       (3, 3),
-       (4, 3);
-
--- Populating Trains
-INSERT INTO Trains (personID, playerID)
-VALUES (5, 1),
-       (6, 2);
-
--- Populating L_Sponsorship
-INSERT INTO L_Sponsorship (sponsorID, leagueID, startDate, endDate, type)
-VALUES (1, 1, '2018-08-01', '2023-07-31', 'Title Sponsor');
-
--- Populating T_Sponsorship
-INSERT INTO T_Sponsorship (sponsorID, teamID, startDate, endDate, type)
-VALUES (1, 1, '2018-07-01', '2023-06-30', 'Kit Sponsor'),
-       (2, 2, '2018-07-01', '2023-06-30', 'Kit Sponsor');
-
--- Populating P_Sponsorship
-INSERT INTO P_Sponsorship (sponsorID, personID, startDate, endDate, type)
-VALUES (1, 1, '2018-07-01', '2023-06-30', 'Boot Sponsor'),
-       (2, 2, '2018-07-01', '2023-06-30', 'Boot Sponsor');
-
--- -- Populating ParticipatesIn
-INSERT INTO ParticipatesIn (teamID, leagueID, season)
-VALUES (1, 1, '2023-2024'),
-       (2, 1, '2023-2024'),
-       (3, 1, '2023-2024');
+-- Insert Trains
+INSERT INTO Trains VALUES
+                          (5,1),
+                          (5,2),
+                          (5,3),
+                          (5,4);

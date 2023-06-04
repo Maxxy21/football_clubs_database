@@ -103,12 +103,13 @@ CREATE TABLE CaptainHistory
 
 CREATE TABLE T_Sponsorship
 (
-    tSponsorshipID INT PRIMARY KEY,
+    tSponsorshipID INT,
     teamID         INT,
     sponsorID      INT,
     startDate      DATE NOT NULL,
     endDate        DATE NOT NULL,
     type           VARCHAR(50),
+    PRIMARY KEY (tSponsorshipID, sponsorID),
     CONSTRAINT teamInTSponsorship FOREIGN KEY (teamID)
         REFERENCES Team (teamID)
         ON UPDATE CASCADE
@@ -121,12 +122,13 @@ CREATE TABLE T_Sponsorship
 
 CREATE TABLE P_Sponsorship
 (
-    pSponsorshipID INT PRIMARY KEY,
+    pSponsorshipID INT,
     playerID       INT,
     sponsorID      INT,
     startDate      DATE NOT NULL,
     endDate        DATE NOT NULL,
     type           VARCHAR(50),
+    PRIMARY KEY (pSponsorshipID, sponsorID),
     CONSTRAINT playerInPSponsorship FOREIGN KEY (playerID)
         REFERENCES Player (playerID)
         ON UPDATE CASCADE

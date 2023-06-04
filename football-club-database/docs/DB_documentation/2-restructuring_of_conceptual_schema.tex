@@ -1,0 +1,483 @@
+
+\section{Restructuring of the conceptual schema}
+
+\subsection{Restructured conceptual schema}
+% \begin{figure}[H]\label{RestructuredConceptualSchema}
+%   \centering
+%   \includegraphics[scale=0.26, angle=270]{RestructuredConceptualSchema.jpg}
+%   \caption{Restructured Conceptual schema}
+% \end{figure}
+
+\textbf{Notes on the restructured conceptual schema diagram (\ref{RestructuredConceptualSchema}):\\}
+\begin{itemize}
+  \item \textbf{Redundancy analysis:}
+  The only apparent redundancy in the schema is the TotalPrice attribute in the SupplyOffer entity, which depends on the values of the Price attribute in the SnowstopProduct and the Quantity attribute in the Offer-Prod relationship. In this case we decide to keep the redundancy and express it through an external constraint, otherwise the schema would become less readable.
+  \item \textbf{Elimination of multi-valued attributes:}
+  We transform the Phone attribute of the Customer entity into an entity associated to Customer through the new relationship Num-Customer, adding the appropriate cardinalities.
+  \item \textbf{Elimination of composite attributes:}
+  In order to simplify the schema and reduce the load on operations, instead of creating a Roof Type entity to express the composite attribute, we incorporate the different attributes directly into the BuildingSite entity.
+  \item \textbf{Elimination of ISA and generalization between entities:}
+  We replace the complete generalizations on SnowstopProduct and SnowRetainer by the corresponding binary relations and by specifying the correct cardinaltites on the new relations. Additional constraint will need to be added in order to make sure that the generalization is complete.
+  \item \textbf{Elimination of ISA and generalizations between relations:}
+  No generalizations between relations were present in the first schema, nothing has to be done.
+  \item \textbf{Choice of the primary identifiers of entities:}
+  No apparent identification cycle was present in the first schema, thus we do not need to break one. For the entities having more than one identifier we give precedence to the internal identifiers where possible.
+  \item \textbf{Choice of the primary identifiers of relationships:}
+  Where we have to choose between primary identifiers for relationships we choose as primary identifier the simpler of the two entities. For example in the relation Comp-For-BS we choose the participation of the SnowloadComputation entity as primary identifier, since that specific entity, compared to the BuildingSite entity, has a primary identifier which does not involve any participation to a relation.
+\end{itemize}
+
+\pagebreak
+
+\subsection{Restructured data dictionary}
+
+\vspace{12px}
+
+{\centering \textbf{Restructured data dictionary: Entities}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{3cm} |}
+    \hline
+    {\textbf{\large Entity}} & {\textbf{\large Description}} & {\textbf{\large Attributes}} & {\textbf{\large Identifiers}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowstopProduct} & Snow retaining product for roofs & Code\newline Name\newline Material\newline Price\newline Color & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowRetainer} & Retainer of snow on the roof & LinearResistance & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{GridRetainer} & Retainer in the form of a grid & Height\newline Profile & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{TubeRetainer} & Retainer in the form of a tube & Diameter & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{RetainerHolder} & Support for a retainer & Resistance\newline Rooftype & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{RetainerAccessory}& Accessory for a retainer & Measure\newline Type & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SupplyOffer} & Snowstop products offered to customer & Code\newline Date\newline TotalPrice & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Customer} & Company that is offered products to & Code\newline Name\newline  Discount & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Phone} & Office or mobile phone number & Number & \{Number\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowloadComputation} & Computation of the amount of snow load on bulding site & Code\newline Date\newline GroundLoad\newline RoofLoad & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{BuildingSite} & A roof for which a supply offer is made & Name\newline Length\newline Width\newline Steepness\newline Covering & \{Name, City\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{City} & A municipality of interest for customers and snow fall & Zip\newline Name\newline Altitude & \{Zip,Name\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Province} & The province in which a city is located & Shorthand\newline Name\newline Zone\newline BaseLoad & \{Shorthand\} \\
+    \hline
+
+  \end{tabular}
+\end{table}
+
+\pagebreak
+
+{\centering \textbf{Restructured data dictionary: Relationships}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{3cm} | m{2.5cm}| m{3.5cm} | m{2.5cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Relationship}} & {\textbf{\large Description}} & {\textbf{\large Components}} & {\textbf{\large Attributes}} & {\textbf{\large Identifiers}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{H-Compatible} & Compatibility between retainer and holder & RetainerHolder,\newline SnowRetainer & & \{Code,Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{A-Compatible} & Compatibility between retainer and accessory & RetainerAccessory,\newline SnowRetainer & & \{Code,Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Offer-Prod} & Products in a supply offer & SnowstopProduct,\newline SupplyOffer & Quantity  & \{Code,Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{For-Customer} & Supply offer for a customer & SupplyOffer,\newline Customer &  & \{Code,Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Loc-Customer} & Customer located in city & Customer,\newline City &  & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Num-Customer} & Phone number of customer & Customer,\newline Phone &  & \{Num\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Has-Computation} & Computation associated to SupplyOffer & SnowloadComputation,\newline SupplyOffer & TotalResistance,\newline Rows,\newline Distance & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Comp-For-BS} & Computation for a building site & SnowloadComputation,\newline BuildingSite & & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Loc-Roof} & Building site located in city & BuildingSite, City &  & \{Name, City\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Is-In-Prov} & City located in province & City,\newline Province &  & \{Zip, Name\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-H-P} & Is a retainer holder snowstop product & SnowstopProduct,\newline RetainerHolder &  & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-R-P} & Is a snow retainer snowstop product & SnowstopProduct,\newline SnowRetainer &  & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-A-P} & Is a retainer accessory snowstop product & SnowstopProduct,\newline RetainerAccessory &  & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-G-R} & Is a grid snow retainer & SnowRetainer,\newline GridRetainer &  & \{Code\} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-T-R} & Is a tube snow retainer & SnowRetainer,\newline TubeRetainer &  & \{Code\} \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\pagebreak
+
+{\centering \textbf{Restructured data dictionary: External constraints}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{1.5cm} | m{13.5cm}| }
+    \hline
+    \multicolumn{2}{| c |} {\textbf{\large External integrity constraints}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{1} & The total resistance of the system in a supply offer must be higher or equal to the roof load of its associated snowload computation  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{2} & The retainer holder and accessories listed in a supply offer must be compatible with the type of snow retainer listed in the same offer  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{3} & The roof type of a retainer holder listed in a supply offer must be the same as the covering type of the building site associated to it through the snowload computation.  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{4} & A supply offer has to be associated with exactly one retainer holder, one snow retainer and between zero and two different types of accessory  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{5} & The total price of a supply offer must be equal to the sum of the prices of the associated snowstop products multiplied by their price\\
+    \hline
+    \color[HTML]{3531FF} \textbf{6} & Each instance of SnowstopProduct must participate either to ISA-H-P, ISA-R-P or ISA-A-P, but not to more than one of them \\
+    \hline
+    \color[HTML]{3531FF} \textbf{7} & Each instance of SnowRetainer must participate either to ISA-G-R or ISA-A-P, but not to both of them \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\pagebreak
+
+\subsection{Restructured table of volumes and operations}
+
+\vspace{12px}
+
+{\centering \textbf{Restructured table of volumes}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4.5cm} | m{4.5cm}| m{4.5cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Volume}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowstopProduct} & Entity & 500  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowRetainer} & Entity & 50 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{GridRetainer} & Entity & 25 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{TubeRetainer} & Entity & 25 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{RetainerHolder} & Entity & 400 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{RetainerAccessory} & Entity & 50 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SupplyOffer} & Entity & 5000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Customer} & Entity & 2500\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Phone} & Entity & 3750 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{SnowloadComputation} & Entity & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{BuildingSite} & Entity & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{City} & Entity & 8000 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Province} & Entity & 100 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{H-Compatible} & Relationship & 10000* \\
+    \hline
+    \color[HTML]{3531FF} \textbf{A-Compatible} & Relationship & 1250* \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Offer-Prod} & Relationship & 15000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{For-Customer} & Relationship & 6000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Loc-Customer} & Relationship & 2500\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Num-Customer} & Relationship & 3750 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{Has-Computation} & Relationship & 5000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Comp-For-BS} & Relationship & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Loc-Roof} & Relationship & 4000\\
+    \hline
+    \color[HTML]{3531FF} \textbf{Is-In-Prov} & Relationship & 8000 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-H-P} & Relationship & 400 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-R-P} & Relationship & 50 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-A-P} & Relationship & 50 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-G-R} & Relationship & 25 \\
+    \hline
+    \color[HTML]{3531FF} \textbf{ISA-T-R} & Relationship & 25 \\
+    \hline
+  \end{tabular}
+\end{table}
+\small{* Each RetainerHolder is on average compatible with half of the SnowRetainer, same reasoning applies to the RetainerAccessory.}
+
+\pagebreak
+
+\textbf{Operations of interest:}\label{TableOperations}
+\begin{enumerate}
+  \item Insert a new customer.
+  \item Insert a new snowstop product, defining also the type and the compatibility.
+  \item Insert a new city.
+  \item Create a snowload computation on a given building site.
+  \item Create a supply offer.
+  \item List all the supply offers made for a given customer.
+  \item Update prices of snowstop products.
+  \item Update zip code and name of cities.
+\end{enumerate}
+
+\vspace{12px}
+
+{\centering \textbf{Table of Operations}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{2.5cm} | m{3.5cm}| m{3.5cm} |}
+    \hline
+    {\textbf{\large Operation}} & {\textbf{\large Type}} & {\textbf{\large Frequency}} \\
+    \hline
+    \color[HTML]{3531FF} \textbf{1} & Interactive & 20/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{2} & Interactive & 10/month  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{3} & Interactive & 5/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{4} & Interactive & 40/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{5} & Interactive & 50/day  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{6} & Batch & 10/week  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{7} & Interactive & 2/year  \\
+    \hline
+    \color[HTML]{3531FF} \textbf{8} & Batch & 1/month  \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\pagebreak
+
+\subsection{Access tables}
+
+In the total cost evaluation we assume that a write access costs like two read accesses.
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 1}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} Customer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Phone & Entity & 1.5* & W \\
+    \hline
+    \color[HTML]{3531FF} Num-Customer & Relationship & 1.5 & W \\
+    \hline
+    \color[HTML]{3531FF} Loc-Customer & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+  * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
+\end{table}
+Total: 5*20 write accesses = 200 accesses per day
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 2a (RetainerHolder or RetainerAccessory)}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} RetainerHolder /\newline RetainerAccessory & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} ISA-H-P / ISA-A-P & Relationship & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} SnowRetainer & Entity & 50 & R \\
+    \hline
+    \color[HTML]{3531FF} H-Compatible /\newline A-Compatible & Relationship & 25 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 28*10 write accesses + 50*10 read accesses per month = 1.060 accesses per month
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 2b (SnowRetainer)}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} SnowRetainer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} ISA-R-P & Relationship & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} GridRetainer /\newline TubeRetainer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} ISA-G-R / ISA-T-R & Relationship & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} RetainerHolder & Entity & 400 & R \\
+    \hline
+    \color[HTML]{3531FF} RetainerAccessory & Entity & 50 & R \\
+    \hline
+    \color[HTML]{3531FF} H-Compatible & Relationship & 200 & W \\
+    \hline
+    \color[HTML]{3531FF} A-Compatible & Relationship & 25 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 230*10 write accesses + 450*10 read accesses = 9.100 accesses per month
+
+\pagebreak
+
+{\centering \textbf{Access table for Operation 3}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} City & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Is-In-Prov & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 2*5 write accesses = 20 accesses per day
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 4}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} BuildingSite & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Loc-Roof & Relationship & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} SnowloadComputation & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Comp-For-BS & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 4*40 write accesses = 320 accesses per day
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 5}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowloadComputation & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} H-Compatible & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} A-Compatible & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} ISA-H-P & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} ISA-R-P  & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} ISA-A-P  & Relationship & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 3 & R \\
+    \hline
+    \color[HTML]{3531FF} SupplyOffer & Entity & 1 & W \\
+    \hline
+    \color[HTML]{3531FF} Offer-Prod & Relationship & 3* & W \\
+    \hline
+    \color[HTML]{3531FF} For Customer & Relationship & 1 & W \\
+    \hline
+  \end{tabular}
+  \small{* On average three products offered}
+\end{table}
+Total: 5*50 write accesses + 16*50 read accesses = 1.300 accesses per day
+
+\pagebreak
+
+{\centering \textbf{Access table for Operation 6}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} Customer & Entity & 1 & R \\
+    \hline
+    \color[HTML]{3531FF} For-Customer & Relation & 5 & R \\
+    \hline
+    \color[HTML]{3531FF} SupplyOffer & Entity & 5* & R \\
+    \hline
+  \end{tabular}
+  \small{* We suppose on average 5 supply offers for customer}
+\end{table}
+Total: 11*10 read accesses = 110 read accesses per week
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 7}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 500 & R \\
+    \hline
+    \color[HTML]{3531FF} SnowstopProduct & Entity & 500 & W \\
+    \hline
+  \end{tabular}
+\end{table}
+Total: 500*2 read accesses + 500*2 write accesses = 3.000 accesses per year
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 8}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \hline
+    \color[HTML]{3531FF} City & Entity & 8000 & R \\
+    \hline
+    \color[HTML]{3531FF} City & Entity & 50* & W \\
+    \hline
+  \end{tabular}
+  \small{* We assume only a small percentage of city have their zip code changed}
+\end{table}
+Total: 8000*1 read accesses + 50*1 write accesses = 8.100 accesses per month
+
+\pagebreak

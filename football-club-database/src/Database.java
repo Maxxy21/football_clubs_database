@@ -1,9 +1,6 @@
-import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.sql.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Database {
@@ -197,7 +194,6 @@ public class Database {
     }
 
 
-
     public void insertPSponsorship(int pSponsorshipID, Date startDate, Date endDate, String type) throws SQLException {
         boolean exists = recordExists("P-Sponsorship", "pSponsorshipID", pSponsorshipID);
         if (exists) {
@@ -250,6 +246,13 @@ public class Database {
         if (exists) {
             System.out.println("Contract with ID " + contractID + " already exists.");
         } else {
+            // Check if the person is a player or a member of the coaching staff based on jerseyNumber and position
+            boolean isPlayer = jerseyNumber != null && position != null;
+            if (!isValidContract(personID, startDate, endDate, isPlayer)) {
+                System.out.println("Contract dates conflict with an existing contract.");
+                return;
+            }
+
             String query = "INSERT INTO Contract (contractID, personID, teamID, startDate, endDate, salary, jerseyNumber, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, contractID);
@@ -276,26 +279,26 @@ public class Database {
         }
     }
 
+
     public void transferManager(int managerID, int newTeamID, double salary, Date startDate, Date endDate) throws SQLException {
         // First, archive the manager's current contract
-        String sql = "UPDATE Contract SET endDate = CURRENT_DATE WHERE personID = ? AND endDate IS NULL";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, managerID);
-            ps.executeUpdate();
+        String query = "UPDATE Contract SET endDate = CURRENT_DATE WHERE personID = ? AND endDate IS NULL";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, managerID);
+            pstmt.executeUpdate();
         }
 
         // Then, insert a new contract for the new team with new start and end dates
-        sql = "INSERT INTO Contract (personID, teamID, salary, startDate, endDate) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, managerID);
-            ps.setInt(2, newTeamID);
-            ps.setDouble(3, salary);
-            ps.setDate(4, startDate);
-            ps.setDate(5, endDate);
-            ps.executeUpdate();
+        query = "INSERT INTO Contract (personID, teamID, salary, startDate, endDate) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, managerID);
+            pstmt.setInt(2, newTeamID);
+            pstmt.setDouble(3, salary);
+            pstmt.setDate(4, startDate);
+            pstmt.setDate(5, endDate);
+            pstmt.executeUpdate();
         }
     }
-
 
     // Insertion of CaptainHistory
     public void insertCaptainHistory(int playerID, String role, Date startDate, Date endDate) throws SQLException {
@@ -362,43 +365,26 @@ public class Database {
     }
 
 
-    public void archivePlayer(int playerID) throws SQLException {
-        // First, archive the player's contracts
-        String sql = "UPDATE Contract SET endDate = CURRENT_DATE WHERE playerID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, playerID);
-            ps.executeUpdate();
-        }
-
-        // Then, archive the player
-        sql = "UPDATE Player SET endDate = CURRENT_DATE WHERE playerID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, playerID);
-            ps.executeUpdate();
-        }
-    }
-
     // Method to transfer a player to a new team and update their contracts
     public void transferPlayer(int playerID, int newTeamID, int jerseyNumber, String position, double salary) throws SQLException {
         // First, archive the player's current contracts
-        String sql = "UPDATE Contract SET endDate = CURRENT_DATE WHERE playerID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, playerID);
-            ps.executeUpdate();
+        String query = "UPDATE Contract SET endDate = CURRENT_DATE WHERE personID = ? AND endDate IS NULL";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, playerID);
+            pstmt.executeUpdate();
         }
 
         // Then, insert a new contract for the new team with a new start date
-        sql = "INSERT INTO Contract (playerID, teamID, startDate, jerseyNumber, position, salary) VALUES (?, ?, CURRENT_DATE, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, playerID);
-            ps.setInt(2, newTeamID);
-            ps.setInt(3, jerseyNumber);
-            ps.setString(4, position);
-            ps.setDouble(5, salary);
-            ps.executeUpdate();
+        query = "INSERT INTO Contract (personID, teamID, startDate, jerseyNumber, position, salary) VALUES (?, ?, CURRENT_DATE, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, playerID);
+            pstmt.setInt(2, newTeamID);
+            pstmt.setInt(3, jerseyNumber);
+            pstmt.setString(4, position);
+            pstmt.setDouble(5, salary);
+            pstmt.executeUpdate();
         }
     }
-
 
 
     /**
@@ -656,4 +642,44 @@ public class Database {
         }
     }
 
+    public List<Map<String, Object>> getContractsByPersonId(int personID, boolean isPlayer) throws SQLException {
+        String query = isPlayer
+                ? "SELECT * FROM Contract WHERE personID = ? AND jerseyNumber IS NOT NULL AND position IS NOT NULL"
+                : "SELECT * FROM Contract WHERE personID = ? AND jerseyNumber IS NULL AND position IS NULL";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, personID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                List<Map<String, Object>> contracts = new ArrayList<>();
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("contractID", rs.getInt("contractID"));
+                    row.put("personID", rs.getInt("personID"));
+                    row.put("teamID", rs.getInt("teamID"));
+                    row.put("startDate", rs.getDate("startDate"));
+                    row.put("endDate", rs.getDate("endDate"));
+                    row.put("position", rs.getString("position"));
+                    contracts.add(row);
+                }
+                return contracts;
+            }
+        }
+    }
+
+    public boolean isValidContract(int personID, Date newStartDate, Date newEndDate, boolean isPlayer) throws SQLException {
+        // Fetch all existing contracts for the opposite role.
+        boolean oppositeRole = !isPlayer;
+        List<Map<String, Object>> existingContracts = getContractsByPersonId(personID, oppositeRole);
+
+        for (Map<String, Object> contract : existingContracts) {
+            Date startDate = (Date) contract.get("startDate");
+            Date endDate = (Date) contract.get("endDate");
+
+            if (newStartDate.before(endDate) && newEndDate.after(startDate)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

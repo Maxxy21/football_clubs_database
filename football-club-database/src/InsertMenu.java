@@ -14,11 +14,12 @@ public class InsertMenu extends Menu {
 
     @Override
     public State show() {
-        String question = "\nIn which table would you like to insert something?\n" +
+        String question = "\nIn which table would you like to insert a record?\n" +
                 "[1] Team.\n" +
                 "[2] Player.\n" +
                 "[3] Person.\n" +
                 "[4] Contract.\n" +
+                "[5] Sponsor.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -35,6 +36,9 @@ public class InsertMenu extends Menu {
                     break;
                 case "4":
                     insertNewContract();
+                    break;
+                case "5":
+                    insertNewSponsor();
                     break;
                 default:
                     return State.Invalid;
@@ -134,6 +138,22 @@ public class InsertMenu extends Menu {
         }
 
         db.insertContract(contractID, personID, teamID, startDate, endDate, salary, jerseyNumber, position);
+    }
+
+    public void insertNewSponsor() throws SQLException {
+        System.out.print("Enter sponsorID: ");
+        int sponsorID = nextInteger();
+
+        System.out.print("Enter sponsor name: ");
+        String name = nextString();
+
+        System.out.print("Enter sponsor industry: ");
+        String industry = nextString();
+
+        System.out.print("Enter sponsor foundation year: ");
+        int foundationYear = nextInteger();
+
+        db.insertSponsor(sponsorID, name, industry, foundationYear);
     }
 
 }

@@ -1,0 +1,331 @@
+
+\section{Conceptual design}\label{sec:conceptual-design}
+
+\subsection{Structured requirements}\label{subsec:structured-requirements}
+
+\setlength{\parindent}{0cm}
+\vspace{12px}
+\textbf{General statements:\\}
+We want to realize a database for football clubs, aiming to represent data related to a team, its players and their positions, captain, coaching staff, manager, sponsor, and contracts between a team and a person. The database will track historical data for contracts, team captaincies, and managerial positions over time.
+
+\vspace{12px}
+\textbf{Statements concerning teams:\\}
+For the teams, we identify them uniquely by a team ID and also record the name, the city they are located in, their year of foundation, and kit colours which are optional.
+
+\vspace{12px}
+\textbf{Statements concerning persons:\\}
+ For the persons, each of them is identified uniquely by an ID together with the name. We represent their date of birth and nationality. We want to keep track of the contract’s date and salaries they have received over time with a team.
+
+ \vspace{12px}
+\textbf{Statements concerning contracts:\\}
+For the contracts, we track the contract ID, the start and end dates, salary, and the person and team associated with each contract. Jersey number and position are optional attributes, relevant only when the person is a player.
+
+\vspace{12px}
+\textbf{Statements concerning players:\\}
+For the players, who are persons in a team, we are interested in their status in the starting XI and the number of appearances they have made.
+
+\vspace{12px}
+\textbf{Statements concerning captains:\\}
+For the captains, we maintain a historical record of their captaincies, including the start and end date of each tenure.
+
+\vspace{12px}
+\textbf{Statements concerning coaching staff:\\}
+For the coaching staff, who are also persons in a team, we are interested in their specific roles. They are responsible for training the players.
+
+\vspace{12px}
+\textbf{Statements concerning managers:\\}
+ For the managers, who are part of the coaching staff, we represent the years of experience they have in management.
+
+\vspace{12px}
+\textbf{Statements concerning sponsorships:\\}
+We track the sponsorships for both teams and players. For each sponsorship, we record its start date, end date, and type. It is identified by the combination of the team ID or player ID and the sponsor ID.
+
+\vspace{12px}
+\textbf{Statements concerning sponsors:\\}
+For the sponsors, we are interested in the sponsor ID that uniquely identifies them, along with their name, industry, and foundation year.
+
+\pagebreak
+
+
+\subsection{Glossary of terms}\label{subsec:glossary}
+  \begin{table}[H]
+    \centering
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \begin{tabular}{|>{\columncolor{myColor}} m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
+    \hline
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Term}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Synonyms}}} & {\textcolor{white}{\large \textbf{Connections}}} \\
+    \hline
+     {\textcolor{white}{\textbf{Team}}} & A collection of team personnel, including players, manager, and coaching staff. & Football\phantom{,,}team, Club 
+     & Contract, Captain\phantom{,}History, T-Sponsorship  \\
+    \hline
+    {\textcolor{white}{\textbf{Person}}} & A member of a team.
+    & Member,\phantom{,,}Individual & 
+    Player,\phantom{,,}Manager, Coaching\phantom{,,}Staff, Contract  \\
+    \hline
+   {\textcolor{white}{\textbf{Player}}} & A person who plays for a team.
+   & Footballer & Team,\phantom{,,}Person, P-Sponsorsip, Coaching\phantom{,,}Staff, CaptainHistory\\
+    \hline
+    {\textcolor{white}{\textbf{Coaching Staff}}} & A person who is a  non-playing team member listed on the official team list.
+    & Trainers, Technical Staff & Player,\phantom{,,}Person, Manager\\
+    \hline
+    {\textcolor{white}{\textbf{Manager}}} & A coaching staff member who manages a team.
+    & Head Coach & Team,\phantom{,,}Person, Coaching Staff \\
+    \hline
+   {\textcolor{white}{\textbf{Contract}}} & A legal agreement between a team and a person.
+   & Agreement, Deal 
+   & Team, Person \\
+    \hline
+    {\textcolor{white}{\textbf{CaptainHistory}}} & A record of the players who have been captain of a team.
+    & Captaincy record, Captain's term
+    & Team, Player \\
+    \hline
+   {\textcolor{white}{\textbf{Sponsor}}} & A company or organization that provides funds to a team or player.
+   & Official\phantom{,,}Sponsor, Partner & 
+   P-Sponsorship, T-Sponsorship \\
+    \hline
+    {\textcolor{white}{\textbf{T-Sponsorship}}} & An agreement where a sponsor provides funds to a team. 
+    & Team Sponsorship,
+    & Sponsor, Team \\
+    \hline
+    {\textcolor{white}{\textbf{P-Sponsorship}}} & An agreement where a sponsor provides funds to a player. 
+    & Player Sponsorship 
+    & Sponsor, Player\\
+    \hline
+  \end{tabular}\label{tab:table}
+  \end{table}
+  
+\subsection{Conceptual schema}\label{subsec:conceptual-schema}
+\begin{figure}[H]
+  % \centering
+  % \includegraphics[scale=0.39, angle=270]{images/conceptual-schema.drawio.png}
+  \centerline{\includesvg[inkscapelatex=false,width=1.4\columnwidth]{images/conceptual-schema.svg}}
+  \caption{Conceptual schema}\label{fig:figure}
+\end{figure}
+
+\pagebreak
+
+\subsection{Data dictionaries}\label{subsec:data-dictionaries}
+\vspace{12px}
+
+{\centering \textbf{Data dictionary: Entities}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.20}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}}  m{3cm} | m{4cm}| m{3cm} | m{3cm} |}
+    \hline
+      \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Entity}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}} \\
+    \hline
+     {\textcolor{white}{\textbf{Team}}} & Represents\phantom{,,}a\phantom{,,}football team & name\newline teamID\newline city\newline foundationYear\newline kitColors \newline & \{teamID\} \\
+    \hline
+    {\textcolor{white}{\textbf{Person}}}  & Represents a person involved in a football club & personID \newline dob \newline nationality\newline name\phantom{,,}(firstName,\newline \phantom{,,,,,,,,}middleName,\newline \phantom{,,,,,,,,,,,,}lastName) & \{personID\} \\
+    \hline
+    {\textcolor{white}{\textbf{Player}}} & 	Represents a player in a team.
+    & startingXI \newline appearances & \{personID\} \\
+    \hline
+    {\textcolor{white}{\textbf{CaptainHistory}}} & Represents a captain of a team.
+    & startDate \newline endDate & \{startDate\} \\
+    \hline
+    {\textcolor{white}{\textbf{Contract}}} & Represents an agreement between a person and a team.
+    & contractID\newline startDate\newline endDate\newline salary\newline jerseyNumber\newline position
+    & \{contractID\} \\
+    \hline
+    {\textcolor{white}{\textbf{CoachingStaff}}} &  Represents a coaching staff member of a team 
+    & role 
+    & \{personID\} \\
+    \hline
+    {\textcolor{white}{\textbf{Manager}}} & Represents a manager of a team & yearsOfExperience & \{personID\} \\
+    \hline
+    {\textcolor{white}{\textbf{Sponsor}}} & Represents a sponsor for a team,or a player 
+    & name \newline industry\newline sponsorID \newline industry \newline foundationYear & \{sponsorID\} \\
+    \hline
+     {\textcolor{white}{\textbf{T-Sponsorship}}} & Represents an agreement between a team and a sponsor 
+     & tSponsorshipID\newline startDate\newline endDate\newline type 
+     & \{tSponsorshipID, Sponsor\} \\
+    \hline
+   {\textcolor{white}{\textbf{P-Sponsorship}}} & Represents an agreement between a player and a sponsor 
+     & pSponsorshipID\newline startDate\newline endDate\newline type 
+     & \{pSponsorshipID, Sponsor\} \\
+    \hline
+    
+
+  \end{tabular}\label{tab:table2}
+\end{table}
+
+\pagebreak
+
+{\centering \textbf{Data dictionary: Relationships}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}}  m{3.5cm} | m{4cm}| m{3cm} | m{2.5cm} | m{2cm} |}
+    \hline
+    \rowcolor{myColor}
+   {\textcolor{white}{\large \textbf{Relationship}}} & {\textcolor{white}{\large \textbf{Description}}} & {\textcolor{white}{\large \textbf{Components}}} & {\textcolor{white}{\large \textbf{Attributes}}} & {\textcolor{white}{\large \textbf{Identifiers}}}  \\
+    \hline
+    {\textcolor{white}{\textbf{HasContract}}} & Connects a person with a contract. It represents the contract a person has.
+    & Person,\newline Contract & & \\
+    \hline
+   {\textcolor{white}{\textbf{HasTSponsorship}}} & Connects a team with its sponsorship agreement. It represents the sponsorship agreement a team has with a sponsor.
+   & Team,\newline T-Sponsorship, & & \\
+    \hline
+    {\textcolor{white}{\textbf{HasPSponsorship}}} & Connects a player with its sponsorship agreement. It represents the sponsorship agreement a player has with a sponsor. 
+   & Player,\newline P-Sponsorship & & \\
+    \hline
+    {\textcolor{white}{\textbf{HasCaptainHistory}}} & Connects a team with its captain history records. It represents the history of captains for a team.
+    & Team,\newline CaptainHistory &  &  \\
+    \hline
+    {\textcolor{white}{\textbf{HasCaptainRole}}} & Connects a player with their captain role. It represents the captain role of a player.
+    & Player,\newline CaptainHistory & & \\
+    \hline
+    {\textcolor{white}{\textbf{WithSponsor}}} & Connects a T-Sponsorship or P-Sponsorship with a sponsor. It represents the relationship between a sponsor and a sponsorship.
+    & T-Sponsorship/P-Sponsorship,\newline Sponsor &  &  \\
+    \hline
+     {\textcolor{white}{\textbf{Trains}}} & Connects a coaching staff member with the players they train.
+    & Coaching Staff,\newline Player &  &  \\
+    \hline
+
+  \end{tabular}\label{tab:table4}
+\end{table}
+
+
+\pagebreak
+
+{\centering \textbf{Data dictionary: External constraints}\\}
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}}  m{1.5cm} | m{13.5cm}| }
+    \hline
+    \rowcolor{myColor}
+    \multicolumn{2}{| c |}  {\textcolor{white}{\large \textbf{External Integrity Constraints}}} \\
+    \hline
+     {\textcolor{white}{\textbf{1}}} & A player cannot be a part of two different teams simultaneously. The start and end dates in the Contract should not overlap for the same player. \\
+    \hline
+     {\textcolor{white}{\textbf{2}}} & A person can have only one active Contract with a team at any given time. The end date of a Contract must be greater than its start date.\\
+    \hline
+     {\textcolor{white}{\textbf{3}}} & A team can have only one Captain at any given time. The start and end dates in the CaptainHistory should not overlap. \\
+    \hline
+     {\textcolor{white}{\textbf{4}}} & A player’s number of appearances cannot be negative.\\
+    \hline
+     {\textcolor{white}{\textbf{5}}} & A Person cannot hold the roles of Player and Coaching Staff concurrently. The start and end dates in the Contract should not overlap for the same person when they hold different roles\\
+    \hline
+     {\textcolor{white}{\textbf{6}}} &A Player’s jersey number should be within a predefined range (e.g., 1-99) \\
+    \hline
+     {\textcolor{white}{\textbf{7}}} & The start date of a Captain’s tenure (in CaptainHistory) cannot be in the future or earlier than the player’s contract start date with the team.\\
+    \hline
+    {\textcolor{white}{\textbf{8}}} & A Sponsor cannot sponsor the same team or player twice at the same time. The start and end dates in the T-Sponsorship or P-Sponsorship should not overlap for the same Sponsor \\
+    \hline
+  \end{tabular}\label{tab:table5}
+\end{table}
+
+\pagebreak
+
+\subsection{Table of volumes and operations}\label{subsec:table-of-volumes-and-operations}
+
+\vspace{12px}
+
+{\centering \textbf{Table of Volumes}\\}
+
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}} m{4.5cm} | m{4.5cm}| m{4.5cm} |}
+    \hline
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} &  {\textcolor{white}{\large \textbf{Construct}}} &  {\textcolor{white}{\large \textbf{Volume}}} \\
+    \hline
+{\textcolor{white}{\textbf{Team}}} & Entity & 50 \\
+\hline
+{\textcolor{white}{\textbf{Person}}} & Entity & 1400 \\
+\hline
+{\textcolor{white}{\textbf{Player}}} & Entity & 1250 \\
+\hline
+{\textcolor{white}{\textbf{CoachingStaff}}} & Entity & 150 \\
+\hline
+{\textcolor{white}{\textbf{Manager}}} & Entity & 50 \\
+\hline
+{\textcolor{white}{\textbf{Sponsor}}} & Entity & 100 \\
+\hline
+{\textcolor{white}{\textbf{Contract}}} & Entity & 1400 \\
+\hline
+{\textcolor{white}{\textbf{CaptainHistory}}} & Entity & 50 \\
+\hline
+{\textcolor{white}{\textbf{T-Sponsorship}}} & Entity & 200 \\
+\hline
+{\textcolor{white}{\textbf{P-Sponsorship}}} & Entity & 300 \\
+\hline
+{\textcolor{white}{\textbf{ContractWith}}} & Relationship & 1400 \\
+\hline
+{\textcolor{white}{\textbf{HasContract}}} & Relationship & 1400 \\
+\hline
+{\textcolor{white}{\textbf{Trains}}} & Relationship & 150 \\
+\hline
+{\textcolor{white}{\textbf{HasCaptainHistory}}} & Relationship & 50 \\
+\hline
+{\textcolor{white}{\textbf{HasCaptainRole}}} & Relationship & 50 \\
+\hline
+{\textcolor{white}{\textbf{HasPSponsorship}}} & Relationship & 1250 \\
+\hline
+{\textcolor{white}{\textbf{HasTSponsorship}}} & Relationship & 200 \\
+\hline
+{\textcolor{white}{\textbf{TeamWithSponsor}}} & Relationship & 200 \\
+\hline
+{\textcolor{white}{\textbf{PlayerWithSponsor}}} & Relationship & 300 \\
+\hline
+
+  \end{tabular}\label{tab:table6}
+\end{table}
+
+\pagebreak
+
+\textbf{Operations of interest:}
+\begin{enumerate}
+  \item Insert a new player to a team.
+  \item Update team's coaching staff (including manager).
+  \item Update player's contract.
+  \item Assign a new captain.
+  \item Insert a new sponsorship  (team or player).
+  \item Retrieve team's players.
+  \item Retrieve a player's contract.
+  \item List all sponsorships for a player.
+  \item List all sponsorships for a team.
+  \item Transfer of a player to another team.
+\end{enumerate}
+
+\vspace{12px}
+
+{\centering \textbf{Table of Operations}\\}
+\begin{table}[H]
+  \def\arraystretch{1.25}%  1 is the default, change whatever you need
+  \centering
+ \begin{tabular}{|>{\columncolor{myColor}} m{2cm} | m{3.5cm}| m{3.5cm} |}
+    \hline
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Operation}}} &  {\textcolor{white}{\large \textbf{Type}}} &  {\textcolor{white}{\large \textbf{Frequency}}} \\
+    \hline
+    {\textcolor{white}{\textbf{1}}} & Interactive & 10/month  \\
+    \hline
+    {\textcolor{white}{\textbf{2}}} & Interactive & 3/month  \\
+    \hline
+   {\textcolor{white}{\textbf{3}}} & Interactive & 20/month  \\
+    \hline
+    {\textcolor{white}{\textbf{4}}} & Interactive & 1/year  \\
+    \hline
+    {\textcolor{white}{\textbf{5}}} & Interactive & 5/month  \\
+    \hline
+   {\textcolor{white}{\textbf{6}}} & Interactive & 100/day  \\
+    \hline
+    {\textcolor{white}{\textbf{7}}} & Interactive & 50/day  \\
+    \hline
+    {\textcolor{white}{\textbf{8}}} & Batch & 10/month  \\
+    \hline
+    {\textcolor{white}{\textbf{9}}} & Batch & 1/week  \\
+    \hline
+    {\textcolor{white}{\textbf{10}}} & Interactive & 2/year  \\
+    \hline
+  \end{tabular}\label{tab:table7}
+\end{table}

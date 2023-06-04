@@ -1,4 +1,3 @@
-import java.sql.SQLException;
 
 /**
  * A functional interface.

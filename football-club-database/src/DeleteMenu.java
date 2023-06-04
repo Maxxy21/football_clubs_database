@@ -12,7 +12,7 @@ public class DeleteMenu extends Menu {
 
     @Override
     public State show() {
-        String question = "\nFrom which table would you like to delete something?\n" +
+        String question = "\nFrom which table would you like to delete a record?\n" +
                 "[1] Team.\n" +
                 "[2] Player.\n" +
                 "[b] Back the main menu.\n" +
