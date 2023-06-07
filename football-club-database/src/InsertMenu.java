@@ -16,10 +16,11 @@ public class InsertMenu extends Menu {
     public State show() {
         String question = "\nIn which table would you like to insert a record?\n" +
                 "[1] Team.\n" +
-                "[2] Player.\n" +
-                "[3] Person.\n" +
-                "[4] Contract.\n" +
-                "[5] Sponsor.\n" +
+                "[2] Person.\n" +
+                "[3] Player.\n" +
+                "[4] PersonContract.\n" +
+                "[5] CoachingStaffContract.\n" +
+                "[6] Sponsor.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -29,15 +30,18 @@ public class InsertMenu extends Menu {
                     insertTeam();
                     break;
                 case "2":
-                    insertNewPlayer();
-                    break;
-                case "3":
                     insertNewPerson();
                     break;
+                case "3":
+                    insertNewPlayer();
+                    break;
                 case "4":
-                    insertNewContract();
+                    insertNewPlayerContract();
                     break;
                 case "5":
+                    insertNewCoachingStaffContract();
+                    break;
+                case "6":
                     insertNewSponsor();
                     break;
                 default:
@@ -57,13 +61,10 @@ public class InsertMenu extends Menu {
         System.out.print("Enter team city: ");
         String city = nextString();
 
-        System.out.print("Enter team kitColors: ");
-        String kitColors = nextString();
-
         System.out.print("Enter team foundationYear: ");
         int foundationYear = nextInteger();
 
-        db.insertTeam(teamId, name, city, kitColors, foundationYear);
+        db.insertTeam(teamId, name, city, foundationYear);
     }
 
     public void insertNewPlayer() throws SQLException {
@@ -101,11 +102,39 @@ public class InsertMenu extends Menu {
         db.insertPerson(personID, firstName, middleName, lastName, dob, nationality);
     }
 
-    public void insertNewContract() throws SQLException {
+    public void insertNewPlayerContract() throws SQLException {
         System.out.print("Enter contractID: ");
         int contractID = nextInteger();
 
-        System.out.print("Enter personID: ");
+        System.out.print("Enter playerID: ");
+        int playerID = nextInteger();
+
+        System.out.print("Enter teamID: ");
+        int teamID = nextInteger();
+
+        System.out.print("Enter startDate (format: dd-MM-yyyy): ");
+        Date startDate = nextDate();
+
+        System.out.print("Enter endDate (format: dd-MM-yyyy): ");
+        Date endDate = nextDate();
+
+        System.out.print("Enter salary: ");
+        double salary = nextDouble();
+
+        System.out.print("Enter jerseyNumber: ");
+        int jerseyNumber = nextInteger();
+
+        System.out.print("Enter position: ");
+        String position = nextString();
+
+        db.insertPlayerContract(contractID, playerID, teamID, startDate, endDate, salary, jerseyNumber, position);
+    }
+
+    public void insertNewCoachingStaffContract() throws SQLException {
+        System.out.print("Enter contractID: ");
+        int contractID = nextInteger();
+
+        System.out.print("Enter coachingStaffID: ");
         int personID = nextInteger();
 
         System.out.print("Enter teamID: ");
@@ -120,25 +149,9 @@ public class InsertMenu extends Menu {
         System.out.print("Enter salary: ");
         double salary = nextDouble();
 
-        String role = null;
-        while (role == null || (!role.equalsIgnoreCase("player") && !role.equalsIgnoreCase("coachingStaff"))) {
-            System.out.print("Is this person a player or coaching staff (enter 'player' or 'coachingStaff'): ");
-            role = nextString();
-        }
-
-        Integer jerseyNumber = null;
-        String position = null;
-
-        if (role.equalsIgnoreCase("player")) {
-            System.out.print("Enter jerseyNumber: ");
-            jerseyNumber = nextNullableInteger(); // Nullable
-
-            System.out.print("Enter position: ");
-            position = nextNullableString(); // Nullable
-        }
-
-        db.insertContract(contractID, personID, teamID, startDate, endDate, salary, jerseyNumber, position);
+        db.insertCoachingStaffContract(contractID, personID, teamID, startDate, endDate, salary);
     }
+
 
     public void insertNewSponsor() throws SQLException {
         System.out.print("Enter sponsorID: ");

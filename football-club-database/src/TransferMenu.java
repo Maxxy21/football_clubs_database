@@ -50,7 +50,13 @@ public class TransferMenu extends Menu {
         System.out.print("Enter new salary: ");
         double salary = nextDouble();
 
-        db.transferPlayer(playerID, newTeamID, jerseyNumber, position, salary);
+        System.out.print("Enter new contract start date (format: dd-MM-yyyy): ");
+        Date startDate = nextDate();
+
+        System.out.print("Enter new contract end date (format: dd-MM-yyyy): ");
+        Date endDate = nextDate();
+
+        db.transferPlayer(playerID, newTeamID, jerseyNumber, position, salary, startDate, endDate);
         System.out.println("Player transferred successfully.");
     }
 
@@ -64,13 +70,13 @@ public class TransferMenu extends Menu {
         System.out.print("Enter new salary: ");
         double salary = nextDouble();
 
-        System.out.print("Enter new start date (format yyyy-mm-dd): ");
-        Date startDate = Date.valueOf(nextString());
+        System.out.print("Enter new start date (format dd-MM-yyyy): ");
+        Date startDate = nextDate();
 
-        System.out.print("Enter new end date (format yyyy-mm-dd): ");
-        Date endDate = Date.valueOf(nextString());
+        System.out.print("Enter new end date (format dd-MM-yyyy): ");
+        Date endDate = nextDate();
 
         db.transferManager(managerID, newTeamID, salary, startDate, endDate);
-        System.out.println("Manager transferred successfully.");
+        System.out.println("Coaching staff transferred successfully.");
     }
 }

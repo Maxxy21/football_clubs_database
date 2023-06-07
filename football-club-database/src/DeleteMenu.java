@@ -15,6 +15,8 @@ public class DeleteMenu extends Menu {
         String question = "\nFrom which table would you like to delete a record?\n" +
                 "[1] Team.\n" +
                 "[2] Player.\n" +
+                "[3] Person.\n" +
+                "[4] Sponsor.\n" +
                 "[b] Back the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -25,6 +27,12 @@ public class DeleteMenu extends Menu {
                     break;
                 case "2":
                     deletePlayer();
+                    break;
+                case "3":
+                    deletePerson();
+                    break;
+                case "4":
+                    deleteSponsor();
                     break;
                 default:
                     return State.Invalid;
@@ -45,5 +53,19 @@ public class DeleteMenu extends Menu {
         int ID = nextInteger();
 
         db.deletePlayer(ID);
+    }
+
+    private void deletePerson() throws SQLException {
+        System.out.print("Enter Person ID: ");
+        int ID = nextInteger();
+
+        db.deletePerson(ID);
+    }
+
+    private void deleteSponsor() throws SQLException {
+        System.out.print("Enter Sponsor ID: ");
+        int ID = nextInteger();
+
+        db.deleteSponsor(ID);
     }
 }
