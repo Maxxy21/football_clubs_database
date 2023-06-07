@@ -15,7 +15,6 @@ public class TransferMenu extends Menu {
     public State show() {
         String question = "\nWhich transfer action would you like to take?\n" +
                 "[1] Transfer player.\n" +
-                "[2] Transfer manager.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -23,9 +22,6 @@ public class TransferMenu extends Menu {
             switch (cmd) {
                 case "1":
                     transferPlayer();
-                    break;
-                case "2":
-                    transferManager();
                     break;
                 default:
                     return State.Invalid;
@@ -60,23 +56,4 @@ public class TransferMenu extends Menu {
         System.out.println("Player transferred successfully.");
     }
 
-    private void transferManager() throws SQLException {
-        System.out.print("Enter Manager ID: ");
-        int managerID = nextInteger();
-
-        System.out.print("Enter new Team ID: ");
-        int newTeamID = nextInteger();
-
-        System.out.print("Enter new salary: ");
-        double salary = nextDouble();
-
-        System.out.print("Enter new start date (format dd-MM-yyyy): ");
-        Date startDate = nextDate();
-
-        System.out.print("Enter new end date (format dd-MM-yyyy): ");
-        Date endDate = nextDate();
-
-        db.transferManager(managerID, newTeamID, salary, startDate, endDate);
-        System.out.println("Coaching staff transferred successfully.");
-    }
 }

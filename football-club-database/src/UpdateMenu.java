@@ -95,11 +95,11 @@ public class UpdateMenu extends Menu {
         String teamIDStr = nextString();
         Integer teamID = teamIDStr.isEmpty() ? null : Integer.parseInt(teamIDStr);
 
-        System.out.print("Enter the new Start Date in yyyy-[m]m-[d]d format (leave empty if not changing): ");
+        System.out.print("Enter the new Start Date in in format: dd-MM-yyyy (leave empty if not changing): ");
         String startDateStr = nextString();
         Date startDate = startDateStr.isEmpty() ? null : Date.valueOf(startDateStr);
 
-        System.out.print("Enter the new End Date in yyyy-[m]m-[d]d format (leave empty if not changing): ");
+        System.out.print("Enter the new End Date in in format: dd-MM-yyyy (leave empty if not changing): ");
         String endDateStr = nextString();
         Date endDate = endDateStr.isEmpty() ? null : Date.valueOf(endDateStr);
 
@@ -133,11 +133,11 @@ public class UpdateMenu extends Menu {
         String teamIDStr = nextString();
         Integer teamID = teamIDStr.isEmpty() ? null : Integer.parseInt(teamIDStr);
 
-        System.out.print("Enter the new Start Date in yyyy-[m]m-[d]d format (leave empty if not changing): ");
+        System.out.print("Enter the new Start Date in format: dd-MM-yyyy (leave empty if not changing): ");
         String startDateStr = nextString();
         Date startDate = startDateStr.isEmpty() ? null : Date.valueOf(startDateStr);
 
-        System.out.print("Enter the new End Date in yyyy-[m]m-[d]d format (leave empty if not changing): ");
+        System.out.print("Enter the new End Date in format: dd-MM-yyyy (leave empty if not changing): ");
         String endDateStr = nextString();
         Date endDate = endDateStr.isEmpty() ? null : Date.valueOf(endDateStr);
 

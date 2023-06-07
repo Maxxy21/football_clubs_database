@@ -8,7 +8,7 @@ CREATE TABLE Team
     teamID         INT PRIMARY KEY,
     name           VARCHAR(50) NOT NULL,
     city           VARCHAR(50) NOT NULL,
-    foundationYear SMALLINT
+    foundationYear SMALLINT NOT NULL
 );
 
 CREATE TABLE Sponsor
@@ -46,6 +46,8 @@ CREATE TABLE CoachingStaff
 (
     coachingStaffID INT PRIMARY KEY NOT NULL,
     role            VARCHAR(50) NOT NULL,
+    yearsOfExperience INT NOT NULL,
+    CONSTRAINT yearsOfExperienceCheck CHECK (yearsOfExperience >= 0),
     CONSTRAINT coachingStaffInPerson FOREIGN KEY (coachingStaffID)
         REFERENCES Person (personID)
         ON UPDATE CASCADE
@@ -53,24 +55,15 @@ CREATE TABLE CoachingStaff
         DEFERRABLE INITIALLY DEFERRED
 );
 
-CREATE TABLE Manager
-(
-    managerID         INT PRIMARY KEY NOT NULL,
-    yearsOfExperience INT NOT NULL,
-    CONSTRAINT managerInCoachingStaff FOREIGN KEY (managerID)
-        REFERENCES CoachingStaff (coachingStaffID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-        DEFERRABLE INITIALLY DEFERRED
-);
+
 
 CREATE TABLE CoachingStaffContract
 (
-    contractID      INT PRIMARY KEY,
+    contractID      SERIAL PRIMARY KEY,
     coachingStaffID INT NOT NULL,
     teamID          INT NOT NULL,
     startDate       DATE NOT NULL,
-    endDate         DATE NOT NULL,
+    endDate         DATE ,
     salary          DECIMAL(10, 2) NOT NULL,
     CONSTRAINT endDateCheck CHECK (endDate > startDate),
     CONSTRAINT personInCoachingStaffContract FOREIGN KEY (coachingStaffID)
@@ -88,17 +81,17 @@ CREATE TABLE CoachingStaffContract
 
 CREATE TABLE PlayerContract
 (
-    contractID   INT PRIMARY KEY,
-    personID     INT NOT NULL,
+    contractID   SERIAL PRIMARY KEY,
+    playerID     INT NOT NULL,
     teamID       INT NOT NULL,
     startDate    DATE NOT NULL,
-    endDate      DATE NOT NULL,
+    endDate      DATE ,
     salary       DECIMAL(10, 2),
     jerseyNumber INT NOT NULL,
     position     VARCHAR(50) NOT NULL,
     CONSTRAINT jerseyNumberCheck CHECK (jerseyNumber BETWEEN 1 AND 99),
     CONSTRAINT endDateCheck CHECK (endDate > startDate),
-    CONSTRAINT personInPlayerContract FOREIGN KEY (personID)
+    CONSTRAINT personInPlayerContract FOREIGN KEY (playerID)
         REFERENCES Person (personID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
@@ -113,9 +106,9 @@ CREATE TABLE PlayerContract
 CREATE TABLE CaptainHistory
 (
     playerID  INT NOT NULL,
+    teamID    INT NOT NULL,
     startDate DATE NOT NULL,
     endDate   DATE NOT NULL,
-    teamID    INT NOT NULL,
     CONSTRAINT playerInCaptainHistory FOREIGN KEY (playerID)
         REFERENCES Player (playerID)
         ON UPDATE CASCADE

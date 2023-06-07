@@ -1,4 +1,3 @@
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 
@@ -18,9 +17,10 @@ public class InsertMenu extends Menu {
                 "[1] Team.\n" +
                 "[2] Person.\n" +
                 "[3] Player.\n" +
-                "[4] PersonContract.\n" +
-                "[5] CoachingStaffContract.\n" +
-                "[6] Sponsor.\n" +
+                "[4] CoachingStaff.\n" +
+                "[5] PersonContract.\n" +
+                "[6] CoachingStaffContract.\n" +
+                "[7] Sponsor.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -39,9 +39,12 @@ public class InsertMenu extends Menu {
                     insertNewPlayerContract();
                     break;
                 case "5":
-                    insertNewCoachingStaffContract();
+                    insertNewCoachingStaff();
                     break;
                 case "6":
+                    insertNewCoachingStaffContract();
+                    break;
+                case "7":
                     insertNewSponsor();
                     break;
                 default:
@@ -103,53 +106,69 @@ public class InsertMenu extends Menu {
     }
 
     public void insertNewPlayerContract() throws SQLException {
-        System.out.print("Enter contractID: ");
-        int contractID = nextInteger();
-
         System.out.print("Enter playerID: ");
         int playerID = nextInteger();
 
-        System.out.print("Enter teamID: ");
-        int teamID = nextInteger();
+        if (db.isUnderContract(playerID, "PlayerContract")) {
+            System.out.println("The coaching staff member is already under contract.");
+        } else {
+            System.out.print("Enter teamID: ");
+            int teamID = nextInteger();
 
-        System.out.print("Enter startDate (format: dd-MM-yyyy): ");
-        Date startDate = nextDate();
+            System.out.print("Enter startDate (format: dd-MM-yyyy): ");
+            Date startDate = nextDate();
 
-        System.out.print("Enter endDate (format: dd-MM-yyyy): ");
-        Date endDate = nextDate();
+            System.out.print("Enter endDate (format: dd-MM-yyyy): ");
+            Date endDate = nextDate();
 
-        System.out.print("Enter salary: ");
-        double salary = nextDouble();
+            System.out.print("Enter salary: ");
+            double salary = nextDouble();
 
-        System.out.print("Enter jerseyNumber: ");
-        int jerseyNumber = nextInteger();
+            System.out.print("Enter jerseyNumber: ");
+            int jerseyNumber = nextInteger();
 
-        System.out.print("Enter position: ");
-        String position = nextString();
+            System.out.print("Enter position: ");
+            String position = nextString();
 
-        db.insertPlayerContract(contractID, playerID, teamID, startDate, endDate, salary, jerseyNumber, position);
+            db.insertPlayerContract(playerID, teamID, startDate, endDate, salary, jerseyNumber, position);
+        }
     }
 
     public void insertNewCoachingStaffContract() throws SQLException {
-        System.out.print("Enter contractID: ");
-        int contractID = nextInteger();
-
         System.out.print("Enter coachingStaffID: ");
-        int personID = nextInteger();
+        int coachingStaffID = nextInteger();
 
-        System.out.print("Enter teamID: ");
-        int teamID = nextInteger();
+        if (db.isUnderContract(coachingStaffID, "CoachingStaffContract")) {
+            System.out.println("The coaching staff member is already under contract.");
+        } else {
 
-        System.out.print("Enter startDate (format: dd-MM-yyyy): ");
-        Date startDate = nextDate();
+            System.out.print("Enter teamID: ");
+            int teamID = nextInteger();
 
-        System.out.print("Enter endDate (format: dd-MM-yyyy): ");
-        Date endDate = nextDate();
+            System.out.print("Enter startDate (format: dd-MM-yyyy): ");
+            Date startDate = nextDate();
 
-        System.out.print("Enter salary: ");
-        double salary = nextDouble();
+            System.out.print("Enter endDate (format: dd-MM-yyyy): ");
+            Date endDate = nextDate();
 
-        db.insertCoachingStaffContract(contractID, personID, teamID, startDate, endDate, salary);
+            System.out.print("Enter salary: ");
+            double salary = nextDouble();
+
+            db.insertCoachingStaffContract(coachingStaffID, teamID, startDate, endDate, salary);
+        }
+    }
+
+    public void insertNewCoachingStaff() throws SQLException {
+        System.out.print("Enter coachingStaffID: ");
+        int coachingStaffID = nextInteger();
+
+        System.out.print("Enter coachingStaff role: ");
+        String role = nextString();
+
+        System.out.print("Enter years of experienc: ");
+        int yearsOfExperience = nextInteger();
+
+        db.insertCoachingStaff(coachingStaffID, role, yearsOfExperience);
     }
 
 

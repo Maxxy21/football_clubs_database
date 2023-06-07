@@ -14,7 +14,7 @@ public class EditMenu extends Menu {
                 "[1] Insert.\n" +
                 "[2] Delete.\n" +
                 "[3] Update.\n" +
-                "[4] Transfer.\n" + // Added this line
+                "[4] Transfer.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 

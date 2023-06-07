@@ -1,8 +1,8 @@
 -- View of all players and their current team:
 CREATE VIEW Players_Teams AS
-SELECT P.playerID, P.firstName, P.middleName, P.lastName, T.name AS Team
-FROM Player AS P
-         JOIN PlayerContract AS PC ON P.playerID = PC.personID
+SELECT P.personid, P.firstName, P.middleName, P.lastName, T.name AS Team
+FROM Person AS P
+         JOIN PlayerContract AS PC ON P.personid = PC.playerid
          JOIN Team AS T ON PC.teamID = T.teamID
 WHERE CURRENT_DATE BETWEEN PC.startDate AND PC.endDate;
 
@@ -25,8 +25,17 @@ WHERE CURRENT_DATE BETWEEN CSC.startDate AND CSC.endDate;
 
 -- View of all players and their sponsors
 CREATE VIEW Players_Sponsors AS
-SELECT P.playerID, P.firstName, P.middleName, P.lastName, S.name AS Sponsor
-FROM Player AS P
-         JOIN P_Sponsorship AS PS ON P.playerID = PS.playerID
+SELECT P.personid, P.firstName, P.middleName, P.lastName, S.name AS Sponsor
+FROM Person AS P
+         JOIN P_Sponsorship AS PS ON P.personID = PS.playerID
          JOIN Sponsor AS S ON PS.sponsorID = S.sponsorID
 WHERE CURRENT_DATE BETWEEN PS.startDate AND PS.endDate;
+
+-- View of all managers and their current team:
+CREATE VIEW Managers_Teams AS
+SELECT CS.coachingStaffID, P.firstName, P.middleName, P.lastName, CS.role, CS.yearsOfExperience, T.name AS Team
+FROM Person AS P
+         JOIN CoachingStaff AS CS ON P.personID = CS.coachingStaffID
+         JOIN CoachingStaffContract AS CSC ON CS.coachingStaffID = CSC.coachingStaffID
+         JOIN Team AS T ON CSC.teamID = T.teamID
+WHERE CURRENT_DATE BETWEEN CSC.startDate AND CSC.endDate AND CS.role = 'Manager';
