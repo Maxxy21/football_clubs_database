@@ -37,6 +37,28 @@ public abstract class Menu {
         return state;
     }
 
+
+    protected Integer nextNullableInteger() {
+        String input = nextString().trim();
+        if (input.isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid integer or leave it empty.");
+            return nextNullableInteger();
+        }
+    }
+
+    protected String nextNullableString() {
+        String input = nextString().trim();
+        if (input.isEmpty()) {
+            return null;
+        }
+        return input;
+    }
+
     protected static String nextString() {
         return sc.nextLine();
     }
@@ -78,27 +100,6 @@ public abstract class Menu {
         } catch (NumberFormatException ignored) {
         }
         return value;
-    }
-
-    protected Integer nextNullableInteger() {
-        String input = nextString().trim();
-        if (input.isEmpty()) {
-            return null;
-        }
-        try {
-            return Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid integer or leave it empty.");
-            return nextNullableInteger();
-        }
-    }
-
-    protected String nextNullableString() {
-        String input = nextString().trim();
-        if (input.isEmpty()) {
-            return null;
-        }
-        return input;
     }
 
     protected Date nextDate() {

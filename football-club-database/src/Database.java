@@ -146,24 +146,77 @@ public class Database {
         }
     }
 
-    public void insertTSponsorship(int tSponsorshipID, int sponsorID, int teamID, Date startDate, Date endDate, String type) throws SQLException {
-        boolean exists = recordExists("T_Sponsorship", "tSponsorshipID", tSponsorshipID);
-        if (exists) {
-            System.out.println("T_Sponsorship with ID " + tSponsorshipID + " already exists.");
-        } else {
-            String query = "INSERT INTO T_Sponsorship (tSponsorshipID, sponsorID, teamID, startDate, endDate, type) VALUES (?, ?, ?, ?, ?, ?)";
-            insertSponsorship(tSponsorshipID, sponsorID, teamID, startDate, endDate, type, query);
+    public void insertTSponsorship(int tSponsorshipID, int sponsorID, Date startDate, Date endDate, String type, int teamID) throws SQLException {
+        try {
+            conn.setAutoCommit(false);
+
+            boolean exists = recordExists("T_Sponsorship", "tSponsorshipID", tSponsorshipID);
+            if (exists) {
+                System.out.println("T_Sponsorship with ID " + tSponsorshipID + " already exists.");
+            } else {
+                String query = "INSERT INTO T_Sponsorship (tSponsorshipID, sponsorID, startDate, endDate, type) VALUES (?, ?, ?, ?, ?)";
+                insertSponsorship(tSponsorshipID, sponsorID, startDate, endDate, type, query);
+
+                query = "INSERT INTO HasTSponsorship (teamID, tSponsorshipID, sponsor) VALUES (?, ?, ?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                    pstmt.setInt(1, teamID);
+                    pstmt.setInt(2, tSponsorshipID);
+                    pstmt.setInt(3, sponsorID);
+                    pstmt.executeUpdate();
+                }
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            assert conn != null;
+            conn.setAutoCommit(true);
         }
     }
 
+    private void insertSponsorship(int sponsorshipID, int sponsorID, Date startDate, Date endDate, String type, String query) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, sponsorshipID);
+            pstmt.setInt(2, sponsorID);
+            pstmt.setDate(3, startDate);
+            pstmt.setDate(4, endDate);
+            pstmt.setString(5, type);
+            pstmt.executeUpdate();
+        }
+    }
 
-    public void insertPSponsorship(int pSponsorshipID, int sponsorID, int playerID, Date startDate, Date endDate, String type) throws SQLException {
-        boolean exists = recordExists("P_Sponsorship", "pSponsorshipID", pSponsorshipID);
-        if (exists) {
-            System.out.println("P_Sponsorship with ID " + pSponsorshipID + " already exists.");
-        } else {
-            String query = "INSERT INTO P_Sponsorship (pSponsorshipID, sponsorID, playerID, startDate, endDate, type) VALUES (?, ?, ?, ?, ?, ?)";
-            insertSponsorship(pSponsorshipID, sponsorID, playerID, startDate, endDate, type, query);
+    public void insertPSponsorship(int pSponsorshipID, int sponsorID, Date startDate, Date endDate, String type, int playerID) throws SQLException {
+        try {
+            conn.setAutoCommit(false);
+
+            boolean exists = recordExists("P_Sponsorship", "pSponsorshipID", pSponsorshipID);
+            if (exists) {
+                System.out.println("P_Sponsorship with ID " + pSponsorshipID + " already exists.");
+            } else {
+                String query = "INSERT INTO P_Sponsorship (pSponsorshipID, sponsorID, startDate, endDate, type) VALUES (?, ?, ?, ?, ?)";
+                insertSponsorship(pSponsorshipID, sponsorID, startDate, endDate, type, query);
+
+                query = "INSERT INTO HasPSponsorship (playerID, pSponsorshipID, sponsor) VALUES (?, ?, ?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                    pstmt.setInt(1, playerID);
+                    pstmt.setInt(2, pSponsorshipID);
+                    pstmt.setInt(3, sponsorID);
+                    pstmt.executeUpdate();
+                }
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            assert conn != null;
+            conn.setAutoCommit(true);
         }
     }
 
@@ -241,7 +294,6 @@ public class Database {
     }
 
 
-
     public void transferPlayer(int playerID, int newTeamID, int jerseyNumber, String position, double salary, Date startDate, Date endDate) throws SQLException {
         // Archive the player's current contracts
         String query = "UPDATE PlayerContract SET endDate = CURRENT_DATE WHERE playerID = ? AND endDate IS NULL";
@@ -316,7 +368,6 @@ public class Database {
     }
 
 
-
     public void updateSponsor(int sponsorID, String name, String industry, Integer foundationYear) throws SQLException {
         String query = "UPDATE Sponsor SET name = COALESCE(?, name), industry = COALESCE(?, industry)," +
                 " foundationYear = COALESCE(?, foundationYear) WHERE sponsorID = ?";
@@ -355,7 +406,34 @@ public class Database {
         }
     }
 
-
+    public void insertKitColor(String color, int teamID) throws SQLException {
+        boolean exists = recordExists("KitColor", "color", color);
+        conn.setAutoCommit(false);
+        try {
+            if (exists) {
+                System.out.println("KitColor " + color + " already exists.");
+            } else {
+                String query = "INSERT INTO KitColor (color) VALUES (?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                    pstmt.setString(1, color);
+                    pstmt.executeUpdate();
+                }
+            }
+            // After color has been inserted, establish relationship with team in HasKitColor table
+            String query = "INSERT INTO HasKitColor (color, team) VALUES (?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, color);
+                pstmt.setInt(2, teamID);
+                pstmt.executeUpdate();
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
+        } finally {
+            conn.setAutoCommit(true);
+        }
+    }
 
 
     /**
@@ -480,9 +558,10 @@ public class Database {
      */
     public void getTeamSponsorships(int teamID) throws SQLException {
         try (PreparedStatement pstmt = conn.prepareStatement(
-                "SELECT t.*, sp.name as sponsorName " +
-                        "FROM T_Sponsorship t JOIN Sponsor sp ON t.sponsorID = sp.sponsorID " +
-                        "WHERE t.teamID = ?")) {
+                "SELECT ts.*, sp.name as sponsorName " +
+                        "FROM HasTSponsorship hst JOIN T_Sponsorship ts ON hst.tSponsorshipID = ts.tSponsorshipID " +
+                        "JOIN Sponsor sp ON ts.sponsor = sp.sponsorID " +
+                        "WHERE hst.teamID = ?")) {
             pstmt.setInt(1, teamID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
@@ -498,10 +577,11 @@ public class Database {
      */
     public void getPlayerSponsorships(int playerID) throws SQLException {
         try (PreparedStatement pstmt = conn.prepareStatement(
-                "SELECT p.*, sp.name as sponsorName, pr.firstName, pr.middleName, pr.lastName " +
-                        "FROM P_Sponsorship p JOIN Sponsor sp ON p.sponsorID = sp.sponsorID " +
-                        "JOIN Person pr ON p.playerID = pr.personID " +
-                        "WHERE p.playerID = ?")) {
+                "SELECT ps.*, sp.name as sponsorName, pr.firstName, pr.middleName, pr.lastName " +
+                        "FROM HasPSponsorship hsp JOIN P_Sponsorship ps ON hsp.pSponsorshipID = ps.pSponsorshipID " +
+                        "JOIN Sponsor sp ON ps.sponsor = sp.sponsorID " +
+                        "JOIN Person pr ON hsp.playerID = pr.personID " +
+                        "WHERE hsp.playerID = ?")) {
             pstmt.setInt(1, playerID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
@@ -542,7 +622,6 @@ public class Database {
             return rs.next();
         }
     }
-
 
 
     /**
@@ -591,18 +670,6 @@ public class Database {
             }
         }
         return false;
-    }
-
-    private void insertSponsorship(int sponsorshipID, int sponsorID, int playerID, Date startDate, Date endDate, String type, String query) throws SQLException {
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, sponsorshipID);
-            pstmt.setInt(2, sponsorID);
-            pstmt.setInt(3, playerID);
-            pstmt.setDate(4, startDate);
-            pstmt.setDate(5, endDate);
-            pstmt.setString(6, type);
-            pstmt.executeUpdate();
-        }
     }
 
 

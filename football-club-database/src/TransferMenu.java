@@ -14,7 +14,7 @@ public class TransferMenu extends Menu {
     @Override
     public State show() {
         String question = "\nWhich transfer action would you like to take?\n" +
-                "[1] Transfer player.\n" +
+                "[1] Transfer a player.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
