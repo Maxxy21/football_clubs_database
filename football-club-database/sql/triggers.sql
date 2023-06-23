@@ -2,139 +2,106 @@
 -- Triggers for inclusion constraints.
 -----------------------------------------------------
 
--- Trigger for inclusion constraint on Team's kit Color: a team must have at least one kit color
+-- Trigger to ensure each team has at least one kit color
 CREATE OR REPLACE FUNCTION teamKitColorsInclusionCheck() RETURNS TRIGGER AS
 $$
 BEGIN
-    IF NEW.teamid NOT IN (SELECT teamid FROM KitColors) THEN
-        RAISE EXCEPTION 'Inclusion error on %, a Team must have at least one kit Color';
+    IF NOT EXISTS (SELECT 1 FROM HasKitColor WHERE teamID = NEW.teamID) THEN
+        RAISE EXCEPTION 'Inclusion error on %, a Team must have at least one kit Color', NEW.teamID;
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE CONSTRAINT TRIGGER teamKitColorsInclusionCheck
-    BEFORE INSERT OR UPDATE
+    AFTER INSERT OR UPDATE
     ON Team
     DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW
-EXECUTE PROCEDURE teamKitColorsInclusionCheck();
+EXECUTE FUNCTION teamKitColorsInclusionCheck();
 
-CREATE OR REPLACE FUNCTION deleteKitColorsCheck() RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION deleteKitColorCheck() RETURNS TRIGGER AS
 $$
 BEGIN
-    IF OLD.teamid IN (SELECT teamid FROM Team) THEN
-        RAISE EXCEPTION 'Deleting this row would violate inclusion constraint on Team and KitColors';
+    IF EXISTS (SELECT 1 FROM HasKitColor WHERE color = OLD.color) THEN
+        RAISE EXCEPTION 'Deleting this row would violate inclusion constraint on KitColor and HasKitColor, this color is still used by a team';
     END IF;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE CONSTRAINT TRIGGER deleteKitColorsCheck
+CREATE TRIGGER deleteKitColorCheck
     BEFORE DELETE
     ON KitColors
-    DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW
-EXECUTE PROCEDURE deleteKitColorsCheck();
+EXECUTE FUNCTION deleteKitColorCheck();
 
--- Trigger for inclusion constraint on Train for Player: a team must have at least one trainer
--- Check for Player
-CREATE OR REPLACE FUNCTION trainerForPlayerInclusionCheck() RETURNS TRIGGER AS
+-- Trigger for inclusion constraint on `HasPSponsorship`
+CREATE OR REPLACE FUNCTION pSponsorshipInsertCheck() RETURNS TRIGGER AS
 $$
 BEGIN
-    IF NEW.playerID NOT IN (SELECT playerID FROM Trains) THEN
-        RAISE EXCEPTION 'Inclusion error on %, Player must have Trainers';
-    END IF;
-
-    RETURN NEW;
-END;
-$$
-    LANGUAGE plpgsql;
-
-CREATE CONSTRAINT TRIGGER trainerForPlayerInclusionCheck
-    BEFORE INSERT OR UPDATE
-    ON Player
-    DEFERRABLE INITIALLY DEFERRED
-    FOR EACH ROW
-EXECUTE PROCEDURE trainerForPlayerInclusionCheck();
-
-
--- Check for CoachingStaff
-CREATE OR REPLACE FUNCTION coachingStaffTrainerInclusionCheck() RETURNS TRIGGER AS
-$$
-BEGIN
-    IF NEW.coachingstaffID NOT IN (SELECT coachingstaffID FROM Trains) THEN
-        RAISE EXCEPTION 'Inclusion error on %, Coaching Staff should Train a Player';
-    END IF;
-
-    RETURN NEW;
-END;
-$$
-    LANGUAGE plpgsql;
-
-CREATE CONSTRAINT TRIGGER coachingStaffTrainerInclusionCheck
-    BEFORE INSERT OR UPDATE
-    ON CoachingStaff
-    DEFERRABLE INITIALLY DEFERRED
-    FOR EACH ROW
-EXECUTE PROCEDURE coachingStaffTrainerInclusionCheck();
-
--- Check for DELETE operations on Trains
-CREATE OR REPLACE FUNCTION deleteTrainsCheck() RETURNS TRIGGER AS
-$$
-BEGIN
-    IF OLD.playerID IN (SELECT playerID FROM Player) OR
-       OLD.coachingstaffID IN (SELECT coachingstaffID FROM CoachingStaff) THEN
-        RAISE EXCEPTION 'Deleting this row would violate inclusion constraint on Trains';
-    END IF;
-
-    RETURN OLD;
-END;
-$$
-    LANGUAGE plpgsql;
-
-CREATE CONSTRAINT TRIGGER deleteTrainsCheck
-    BEFORE DELETE
-    ON Trains
-    DEFERRABLE INITIALLY DEFERRED
-    FOR EACH ROW
-EXECUTE PROCEDURE deleteTrainsCheck();
-
--- Triggers for inclusion constraint on `HasPSponsorship` and `PSponsorship`
-CREATE OR REPLACE FUNCTION pSponsorshipInclusionCheck() RETURNS TRIGGER AS
-$$
-BEGIN
-    IF NEW.sponsorshipid NOT IN (SELECT sponsorshipid FROM P_Sponsorship) THEN
-        RAISE EXCEPTION 'Inclusion error on %, a Sponsorship must be present in PSponsorship';
+    IF NEW.psponsorshipid NOT IN (SELECT psponsorshipid FROM P_Sponsorship) THEN
+        RAISE EXCEPTION 'Inclusion error on %, a Sponsorship must be present in PSponsorship', NEW.psponsorshipid;
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE CONSTRAINT TRIGGER pSponsorshipInclusionCheck
-    BEFORE INSERT OR UPDATE
+CREATE TRIGGER pSponsorshipInsertTrigger
+    BEFORE INSERT
     ON HasPSponsorship
-    DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW
-EXECUTE PROCEDURE pSponsorshipInclusionCheck();
+EXECUTE FUNCTION pSponsorshipInsertCheck();
 
--- Triggers for inclusion constraint on `HasTSponsorship` and `TSponsorship`
-CREATE OR REPLACE FUNCTION tSponsorshipInclusionCheck() RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION pSponsorshipUpdateCheck() RETURNS TRIGGER AS
 $$
 BEGIN
-    IF NEW.sponsorshipid NOT IN (SELECT sponsorshipid FROM T_Sponsorship) THEN
-        RAISE EXCEPTION 'Inclusion error on %, a Sponsorship must be present in TSponsorship';
+    IF NEW.psponsorshipid NOT IN (SELECT psponsorshipid FROM P_Sponsorship) THEN
+        RAISE EXCEPTION 'Inclusion error on %, a Sponsorship must be present in PSponsorship', NEW.psponsorshipid;
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE CONSTRAINT TRIGGER tSponsorshipInclusionCheck
-    BEFORE INSERT OR UPDATE
-    ON HasTSponsorship
-    DEFERRABLE INITIALLY DEFERRED
+CREATE TRIGGER pSponsorshipUpdateTrigger
+    BEFORE UPDATE
+    ON HasPSponsorship
     FOR EACH ROW
-EXECUTE PROCEDURE tSponsorshipInclusionCheck();
+EXECUTE FUNCTION pSponsorshipUpdateCheck();
+
+
+-- Trigger for inclusion constraint on `HasTSponsorship`
+CREATE OR REPLACE FUNCTION tSponsorshipInsertCheck() RETURNS TRIGGER AS
+$$
+BEGIN
+    IF NEW.tsponsorshipid NOT IN (SELECT tsponsorshipid FROM T_Sponsorship) THEN
+        RAISE EXCEPTION 'Inclusion error on %, a Sponsorship must be present in TSponsorship', NEW.tsponsorshipid;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tSponsorshipInsertTrigger
+    BEFORE INSERT
+    ON HasTSponsorship
+    FOR EACH ROW
+EXECUTE FUNCTION tSponsorshipInsertCheck();
+
+CREATE OR REPLACE FUNCTION tSponsorshipUpdateCheck() RETURNS TRIGGER AS
+$$
+BEGIN
+    IF NEW.tsponsorshipid NOT IN (SELECT tsponsorshipid FROM T_Sponsorship) THEN
+        RAISE EXCEPTION 'Inclusion error on %, a Sponsorship must be present in TSponsorship', NEW.tsponsorshipid;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tSponsorshipUpdateTrigger
+    BEFORE UPDATE
+    ON HasTSponsorship
+    FOR EACH ROW
+EXECUTE FUNCTION tSponsorshipUpdateCheck();
 
 
 -----------------------------------------------------
@@ -156,7 +123,7 @@ CREATE TRIGGER PlayerAppearances
     BEFORE INSERT OR UPDATE
     ON Player
     FOR EACH ROW
-EXECUTE PROCEDURE check_appearances();
+EXECUTE FUNCTION check_appearances();
 
 -- Check for player's JerseyNumber attribute range: 1-99
 CREATE OR REPLACE FUNCTION check_jersey_number() RETURNS TRIGGER AS
@@ -173,69 +140,7 @@ CREATE TRIGGER jerseyNumberRange
     BEFORE INSERT OR UPDATE
     ON PlayerContract
     FOR EACH ROW
-EXECUTE PROCEDURE check_jersey_number();
-
--- Check for sponsor's duplicate sponsorship: cannot sponsor the same team twice at the same time
-CREATE OR REPLACE FUNCTION check_team_sponsorship() RETURNS TRIGGER AS
-$$
-BEGIN
-    IF (SELECT COUNT(*)
-        FROM T_Sponsorship
-        WHERE sponsorID = NEW.sponsorID
-          AND ((NEW.startDate BETWEEN startDate AND endDate) OR (NEW.endDate BETWEEN startDate AND endDate))) > 0 THEN
-        RAISE EXCEPTION 'A Sponsor cannot sponsor the same Team twice at the same time.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER teamSponsorshipOverlap
-    BEFORE INSERT OR UPDATE
-    ON T_Sponsorship
-    FOR EACH ROW
-EXECUTE PROCEDURE check_team_sponsorship();
-
--- Check for sponsor's duplicate sponsorship: cannot sponsor the same player twice at the same time
-CREATE OR REPLACE FUNCTION check_player_sponsorships() RETURNS TRIGGER AS
-$$
-BEGIN
-    IF (SELECT COUNT(*)
-        FROM P_Sponsorship
-        WHERE sponsorID = NEW.sponsorID
-          AND ((NEW.startDate BETWEEN startDate AND endDate) OR (NEW.endDate BETWEEN startDate AND endDate))) > 0 THEN
-        RAISE EXCEPTION 'A Sponsor cannot sponsor the same Player twice at the same time.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER playerSponsorshipOverlap
-    BEFORE INSERT OR UPDATE
-    ON P_Sponsorship
-    FOR EACH ROW
-EXECUTE PROCEDURE check_player_sponsorships();
-
-
--- Check for unique TypeOfKit for each team in a given season: cannot have two kits of the same type
-CREATE OR REPLACE FUNCTION check_kit_type_season() RETURNS TRIGGER AS
-$$
-BEGIN
-    IF (SELECT COUNT(*)
-        FROM KitColors
-        WHERE teamID = NEW.teamID
-          AND typeOfKit = NEW.typeOfKit
-          AND season = NEW.season) > 0 THEN
-        RAISE EXCEPTION 'A Team cannot have two kits of the same type in a given season.';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER kitTypeSeason
-    BEFORE INSERT OR UPDATE
-    ON KitColors
-    FOR EACH ROW
-EXECUTE PROCEDURE check_kit_type_season();
+EXECUTE FUNCTION check_jersey_number();
 
 
 -- Check contract overlap: a player cannot have two contracts at the same time
@@ -257,33 +162,35 @@ CREATE TRIGGER contract_overlap_trigger
     BEFORE INSERT OR UPDATE
     ON PlayerContract
     FOR EACH ROW
-EXECUTE PROCEDURE check_contract_overlap();
+EXECUTE FUNCTION check_contract_overlap();
 
 -- Check if a player is currently part of a team for them to be a captain
 CREATE OR REPLACE FUNCTION check_captain_tenure() RETURNS TRIGGER AS
 $$
 DECLARE
     contract_start_date DATE;
+    contract_end_date   DATE;
 BEGIN
-    SELECT startDate
-    INTO contract_start_date
+    SELECT startDate, endDate
+    INTO contract_start_date, contract_end_date
     FROM PlayerContract
     WHERE playerID = NEW.playerID
       AND NEW.startDate >= startDate
-      AND NEW.startDate <= endDate;
+      AND NEW.endDate <= endDate;
 
-    IF contract_start_date IS NULL OR NEW.startDate < contract_start_date THEN
-        RAISE EXCEPTION 'A Captain’s tenure cannot start in the future or earlier than the player’s contract start date with the team.';
+    IF contract_start_date IS NULL OR NEW.startDate < contract_start_date OR NEW.endDate > contract_end_date THEN
+        RAISE EXCEPTION 'A Captain’s tenure cannot start in the future or earlier than the player’s contract start date with the team, and must end before or at the same time as the contract.';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+
 CREATE TRIGGER captainTenureCheck
     BEFORE INSERT OR UPDATE
     ON CaptainHistory
     FOR EACH ROW
-EXECUTE PROCEDURE check_captain_tenure();
+EXECUTE FUNCTION check_captain_tenure();
 
 --Check if a player is part of two different teams simultaneously
 CREATE OR REPLACE FUNCTION check_player_team_overlap() RETURNS TRIGGER AS
@@ -309,7 +216,7 @@ CREATE TRIGGER playerTeamOverlap
     BEFORE INSERT OR UPDATE
     ON PlayerContract
     FOR EACH ROW
-EXECUTE PROCEDURE check_player_team_overlap();
+EXECUTE FUNCTION check_player_team_overlap();
 
 
 CREATE OR REPLACE FUNCTION check_person_role_on_player_contract()
@@ -331,11 +238,9 @@ CREATE TRIGGER check_person_role_trigger_on_player_contract
     BEFORE INSERT OR UPDATE
     ON PlayerContract
     FOR EACH ROW
-EXECUTE PROCEDURE check_person_role_on_player_contract();
+EXECUTE FUNCTION check_person_role_on_player_contract();
 
 
-
---
 CREATE OR REPLACE FUNCTION check_person_role_on_coaching_staff_contract()
     RETURNS TRIGGER AS
 $$
@@ -355,6 +260,6 @@ CREATE TRIGGER check_person_role_trigger_on_coaching_staff_contract
     BEFORE INSERT OR UPDATE
     ON CoachingStaffContract
     FOR EACH ROW
-EXECUTE PROCEDURE check_person_role_on_coaching_staff_contract();
+EXECUTE FUNCTION check_person_role_on_coaching_staff_contract();
 
 

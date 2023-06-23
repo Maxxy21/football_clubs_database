@@ -77,18 +77,48 @@ public class Database {
      */
 
     // Insertion of teams
-    public void insertTeam(int teamID, String name, String city, int foundationYear) throws SQLException {
+    public void insertTeam(int teamID, String name, String city, int foundationYear, String[] kitColors) throws SQLException {
         boolean exists = recordExists("Team", "teamID", teamID);
         if (exists) {
             System.out.println("Team with ID " + teamID + " already exists.");
         } else {
-            String query = "INSERT INTO Team (teamID, name, city, foundationYear) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, teamID);
-                pstmt.setString(2, name);
-                pstmt.setString(3, city);
-                pstmt.setInt(4, foundationYear);
-                pstmt.executeUpdate();
+            conn.setAutoCommit(false);
+            try {
+                String query = "INSERT INTO Team (teamID, name, city, foundationYear) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                    pstmt.setInt(1, teamID);
+                    pstmt.setString(2, name);
+                    pstmt.setString(3, city);
+                    pstmt.setInt(4, foundationYear);
+                    pstmt.executeUpdate();
+                }
+
+                // Insert kit colors and establish relationship with the team in HasKitColor table
+                for (String color : kitColors) {
+                    exists = recordExists("KitColors", "color", color);
+                    if (exists) {
+                        System.out.println("Kit color " + color + " already exists.");
+                    } else {
+                        query = "INSERT INTO KitColors (color) VALUES (?)";
+                        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                            pstmt.setString(1, color);
+                            pstmt.executeUpdate();
+                        }
+                    }
+                    query = "INSERT INTO HasKitColor (teamID, color) VALUES (?, ?)";
+                    try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                        pstmt.setInt(1, teamID);
+                        pstmt.setString(2, color);
+                        pstmt.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.printf("Could not disconnect properly from the database.%n%s%n", e.getMessage());
+            } finally {
+                conn.setAutoCommit(true);
             }
         }
     }
@@ -170,7 +200,7 @@ public class Database {
             if (conn != null) {
                 conn.rollback();
             }
-            throw e;
+            System.out.printf("Could not disconnect properly from the database.%n%s%n", e.getMessage());
         } finally {
             assert conn != null;
             conn.setAutoCommit(true);
@@ -213,7 +243,7 @@ public class Database {
             if (conn != null) {
                 conn.rollback();
             }
-            throw e;
+            System.out.printf("Could not disconnect properly from the database.%n%s%n", e.getMessage());
         } finally {
             assert conn != null;
             conn.setAutoCommit(true);
@@ -235,17 +265,6 @@ public class Database {
         }
     }
 
-
-    public void insertPlayer(int playerID, String firstName, String middleName, String lastName, Date dob, String nationality, boolean startingXI, int appearances) throws SQLException {
-        insertPerson(playerID, firstName, middleName, lastName, dob, nationality);
-        String query = "INSERT INTO Player (playerID, startingXI, appearances) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, playerID);
-            pstmt.setBoolean(2, startingXI);
-            pstmt.setInt(3, appearances);
-            pstmt.executeUpdate();
-        }
-    }
 
     public void insertPlayerContract(int playerID, int teamID, Date startDate, Date endDate, double salary, int jerseyNumber, String position) throws SQLException {
         String query = "INSERT INTO PlayerContract (playerID, teamID, startDate, endDate, salary, jerseyNumber, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -290,6 +309,44 @@ public class Database {
                 pstmt.setInt(4, teamID);
                 pstmt.executeUpdate();
             }
+        }
+    }
+
+    public void insertKitColor(String color, int teamID) throws SQLException {
+        boolean exists = recordExists("KitColor", "color", color);
+        conn.setAutoCommit(false);
+        try {
+            if (exists) {
+                System.out.println("KitColor " + color + " already exists.");
+            } else {
+                String query = "INSERT INTO KitColor (color) VALUES (?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                    pstmt.setString(1, color);
+                    pstmt.executeUpdate();
+                }
+            }
+            // After color has been inserted, establish relationship with team in HasKitColor table
+            String query = "INSERT INTO HasKitColor (color, team) VALUES (?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, color);
+                pstmt.setInt(2, teamID);
+                pstmt.executeUpdate();
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            conn.rollback();
+            System.out.printf("Could not disconnect properly from the database.%n%s%n", e.getMessage());
+        } finally {
+            conn.setAutoCommit(true);
+        }
+    }
+
+    public void insertTrains(int coachingStaffID, int playerID) throws SQLException {
+        String query = "INSERT INTO Trains (coachingStaffID, playerID) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, coachingStaffID);
+            pstmt.setInt(2, playerID);
+            pstmt.executeUpdate();
         }
     }
 
@@ -406,35 +463,6 @@ public class Database {
         }
     }
 
-    public void insertKitColor(String color, int teamID) throws SQLException {
-        boolean exists = recordExists("KitColor", "color", color);
-        conn.setAutoCommit(false);
-        try {
-            if (exists) {
-                System.out.println("KitColor " + color + " already exists.");
-            } else {
-                String query = "INSERT INTO KitColor (color) VALUES (?)";
-                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                    pstmt.setString(1, color);
-                    pstmt.executeUpdate();
-                }
-            }
-            // After color has been inserted, establish relationship with team in HasKitColor table
-            String query = "INSERT INTO HasKitColor (color, team) VALUES (?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, color);
-                pstmt.setInt(2, teamID);
-                pstmt.executeUpdate();
-            }
-            conn.commit();
-        } catch (SQLException e) {
-            conn.rollback();
-            throw e;
-        } finally {
-            conn.setAutoCommit(true);
-        }
-    }
-
 
     /**
      * =================================================================== --
@@ -474,10 +502,6 @@ public class Database {
         deleteRecord("Sponsor", "sponsorID", sponsorID);
     }
 
-    public void deleteKitColor(int kitColorID) throws SQLException {
-        deleteRecord("KitColor", "kitColorID", kitColorID);
-    }
-
     public void deleteTSponsorship(int tSponsorshipID) throws SQLException {
         deleteRecord("T-Sponsorship", "tSponsorshipID", tSponsorshipID);
     }
@@ -510,7 +534,8 @@ public class Database {
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, playerID);
             try (ResultSet rs = pstmt.executeQuery()) {
-                new TablePrinter(rs);
+                TablePrinter tp = new TablePrinter(rs);
+                tp.close();
             }
         }
     }
@@ -527,7 +552,8 @@ public class Database {
                 "WHERE PC.teamID = ?")) {
             pstmt.setInt(1, teamID);
             try (ResultSet rs = pstmt.executeQuery()) {
-                new TablePrinter(rs);
+                TablePrinter tp = new TablePrinter(rs);
+                tp.close();
             }
         }
     }
@@ -559,9 +585,9 @@ public class Database {
     public void getTeamSponsorships(int teamID) throws SQLException {
         try (PreparedStatement pstmt = conn.prepareStatement(
                 "SELECT ts.*, sp.name as sponsorName " +
-                        "FROM HasTSponsorship hst JOIN T_Sponsorship ts ON hst.tSponsorshipID = ts.tSponsorshipID " +
+                        "FROM HasTSponsorship hs JOIN T_Sponsorship ts ON hs.tSponsorshipID = ts.tSponsorshipID " +
                         "JOIN Sponsor sp ON ts.sponsor = sp.sponsorID " +
-                        "WHERE hst.teamID = ?")) {
+                        "WHERE hs.teamID = ?")) {
             pstmt.setInt(1, teamID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
@@ -583,6 +609,42 @@ public class Database {
                         "JOIN Person pr ON hsp.playerID = pr.personID " +
                         "WHERE hsp.playerID = ?")) {
             pstmt.setInt(1, playerID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
+            }
+        }
+    }
+
+    /**
+     * Retrieves and prints the list of teams that a player has played for given their player ID.
+     *
+     * @param playerID The ID of the player whose teams will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
+    public void getPlayerTeams(int playerID) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "SELECT T.* " +
+                        "FROM PlayerContract PC JOIN Team T ON PC.teamID = T.teamID " +
+                        "WHERE PC.playerID = ?")) {
+            pstmt.setInt(1, playerID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                new TablePrinter(rs);
+            }
+        }
+    }
+
+    /**
+     * Retrieves and prints the list of teams that a manager has managed given their manager ID.
+     *
+     * @param managerID The ID of the manager whose teams will be retrieved
+     * @throws SQLException If a database access error occurs
+     */
+    public void getManagerTeams(int managerID) throws SQLException {
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "SELECT T.* " +
+                        "FROM CoachingStaffContract CC JOIN Team T ON CC.teamID = T.teamID " +
+                        "WHERE CC.coachingStaffID = ? AND CC.role = 'manager'")) {
+            pstmt.setInt(1, managerID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 new TablePrinter(rs);
             }

@@ -4,106 +4,158 @@
 \subsection{Restructured relational schema}
 
 \vspace{12px}
+{\color{ForestGreen}Team(\underline{teamID},name,city,foundationYear)}\\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}Team[teamID] $\subseteq$ HasKitColor[teamID]}} \\
 
-{\color{ForestGreen}SnowstopProduct(\underline{Code},Name,Material,Color*,Price)}\\
-{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} SnowstopProduct[Code] $\subseteq $ SnowRetainer[Code] $\cup$ RetainerHolder[Code] $\cup$ }} \\
-{{\color{Magenta}\hspace{39mm} RetainerAccessory[Code] }} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Material is 'Zink Steel' or 'Stainless Steel' or 'Painted Steel' or 'Aluminium' or 'Copper'}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Color is NULL if and only if Material is not 'Painted Steeel'}} \\
+{\color{ForestGreen}Person(\underline{personID},firstName,middleName,lastName,dob,nationality)}\\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta} Person[personID] $\subseteq $ PlayerContract[playerID] $\cup$ CoachingStaffContract[coachingStaffID]}} \\ 
 
-{\color{ForestGreen}SnowRetainer(\underline{Code},LinearResistance,RetainerType,Measure,Profile*)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}SnowRetainer[Code] $\subseteq$ SnowstopProduct[Code]}} \\
-{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} SnowRetainer[Code] $\cap $ RetainerHolder[Code] $\cap$ RetainerAccessory[Code] = $\varnothing $}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}RetainerType is 'Grid' or 'Tube'}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Profile is NULL if RetainerType is 'Tube', otherwise Profile is not NULL}} \\
+{\color{ForestGreen}Player(\underline{playerID},startingXI,appearances)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Player[playerID] $\subseteq$ Person[personID]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}Player[playerID] $\subseteq$ Trains[playerID]}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}appearances $\geqslant$  0 }} \\
 
-{\color{ForestGreen}RetainerHolder(\underline{Code},Resistance,RoofType,RetainerType)}\\
-{\hspace{15mm}{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}RetainerHolder[Code] $\subseteq$ SnowstopProduct[Code]}} \\
-{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} RetainerHolder[Code] $\cap $ SnowRetainer[Code] $\cap$ RetainerAccessory[Code] = $\varnothing $}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Rooftype is 'Concrete Tile' or 'Ondulated Plate' or 'Trapezoidal Sheet' or}} \\
-{\color{Magenta}\hspace{19.5mm}'Standing Seam Sheet' or 'Flat Tile'}\\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}RetainerType is 'Grid' or 'Tube'}} \\
+{\color{ForestGreen}CoachingStaff(\underline{coachingStaffID},role,yearsOfExperience)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}CoachingStaff[coachingStaffID] $\subseteq$ Person[personID]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}CoachingStaff[coachingStaffID] $\subseteq$ Trains[coachingStaffID]}} \\
 
-{\color{ForestGreen}RetainerAccessory(\underline{Code},Measure,Type,RetainerType)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}RetainerAccessory[Code] $\subseteq$ SnowstopProduct[Code]}} \\
-{\color{Orange}\hspace{2mm} generalization constraint: {\color{Magenta} RetainerAccessory[Code] $\cap $ SnowRetainer[Code] $\cap$ RetainerHolder[Code] = $\varnothing $}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Type is 'Connection' or 'Ice Retainer'}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}RetainerType is 'Grid' or 'Tube'}} \\
+{\color{ForestGreen}Trains(\underline{coachingStaffID},\underline{playerID})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Trains[coachingStaffID] $\subseteq$ CoachingStaff[coachingStaffID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Trains[playerID] $\subseteq$ Person[playerID]}} \\
 
-{\color{ForestGreen}SupplyOffer(\underline{Code},ComputationCode,Date,TotalPrice,TotalResistance,Rows,Distance)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}SupplyOffer[ComputationCode] $\subseteq$ SnowloadComputation[Code]}} \\
-{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}SupplyOffer[Code] $\subseteq$ For-Customer[OfferCode]}} \\
 
-{\color{ForestGreen}For-Customer(\underline{OfferCode,CustomerCode})}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}For-Customer[OfferCode] $\subseteq$ SupplyOffer[Code]}} \\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}For-Customer[CustomerCode] $\subseteq$ Customer[Code]}} \\
+% {\color{ForestGreen}Contract(\underline{contractID},team,startDate,endDate,salary)}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Contract[person] $\subseteq$ Person[personID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Contract[team] $\subseteq$ Team[teamID]}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}jerseyNumber and position is NULL if Person is not Player}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}jerseyNumber $\geqslant$  1 and $\leqslant$ 99}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}endDate $>$ startDate}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}No overlapping start dates and end dates for the same Person}} \\
 
-{\color{ForestGreen}Offer-Prod(\underline{OfferCode,ProductCode},Quantity)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Offer-Prod[OfferCode] $\subseteq$ SupplyOffer[Code]}} \\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Offer-Prod[ProductCode] $\subseteq$ SnowstopProduct[Code]}} \\
+{\color{ForestGreen}CoachingStaffContract(\underline{contractID},coachingStaff,team,startDate,endDate,salary)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}CoachingStaffContract[coachingStaff] $\subseteq$ CoachingStaff[coachingStaffID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}CoachingStaffContract[team] $\subseteq$ Team[teamID]}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}jerseyNumber and position is NULL if Person is not Player}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}jerseyNumber $\geqslant$  1 and $\leqslant$ 99}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}endDate $>$ startDate}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}No overlapping start dates and end dates for the same Coaching Staff}} \\
 
-{\color{ForestGreen}Customer(\underline{Code},Name,Zip,City,Discount)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Customer[Zip,City] $\subseteq$ City[Zip,Name]}} \\
-{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}Customer[Code] $\subseteq$ Phone[CustomerCode]} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Discount $\geqslant$  0 and $\leqslant$ 30}} \\
+{\color{ForestGreen}PlayerContract(\underline{contractID},player,team,startDate,endDate,salary,jerseyNumber,position)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}PlayerContract[player] $\subseteq$ Player[playerID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}PlayerContract[team] $\subseteq$ Team[teamID]}} \\
+% {\color{Orange}\hspace{2mm} constraint: {\color{Magenta}jerseyNumber and position is NULL if Person is not Player}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}jerseyNumber $\geqslant$  1 and $\leqslant$ 99}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}endDate $>$ startDate}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}No overlapping start dates and end dates for the same Player}} \\
 
-{\color{ForestGreen}Phone(\underline{Number},CustomerCode)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}Phone[CustomerCode] $\subseteq$ Customer[Code]}} \\
+{\color{ForestGreen}Sponsor(\underline{sponsorID},name,industry,foundationYear)}\\
 
-{\color{ForestGreen}SnowloadComputation(\underline{Code},Date,GroundLoad,RoofLoad)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}SnowloadComputation[Code] $\subseteq$ BuildingSite[ComputationCode]}} \\
+{\color{ForestGreen}P-Sponsorship(\underline{pSponsorshipID},\underline{sponsor},startDate,endDate,type)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}P-Sponsorship[sponsor] $\subseteq$ Sponsor[sponsorID]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}P-Sponsorship[sponsor] $\subseteq$ HasPSponsorship[sponsor]}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}No overlapping start dates and end dates for the same Sponsor with a Player}} \\
+
+{\color{ForestGreen}HasPSponsorship(\underline{playerID},\underline{pSponsorshipID},\underline{sponsor})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasPSponsorship[playerID] $\subseteq$ Player[PlayerID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasPSponsorship[pSponsorshipID] $\subseteq$ P-Sponsorship[pSponsorshipID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasPSponsorship[sponsor] $\subseteq$ Sponsor[sponsor]}} \\
 
 \pagebreak
 
-{\color{ForestGreen}BuildingSite(\underline{Name,Zip,City},ComputationCode,Length,Width,Steepness,Covering)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}BuildingSite[Zip,City] $\subseteq$ City[Zip,Name]}} \\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}BuildingSite[ComputationCode] $\subseteq$ SnowloadComputation[Code]}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Covering is 'Concrete Tile' or 'Ondulated Plate' or 'Trapezoidal Sheet' or}} \\
-{\color{Magenta}\hspace{19.5mm}'Standing Seam Sheet' or 'Flat Tile'}}\\
-{\color{Orange}\hspace{2mm} key: {\color{Magenta}ComputationCode}} \\
+{\color{ForestGreen}T-Sponsorship(\underline{tSponsorshipID},\underline{sponsor},startDate,endDate,type)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}T-Sponsorship[sponsor] $\subseteq$ Sponsor[sponsorID]}} \\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}T-Sponsorship[sponsor] $\subseteq$ HasTSponsorship[sponsor]}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}No overlapping start dates and end dates for the same Sponsor with a Team}} \\
 
-{\color{ForestGreen}City(\underline{Zip,Name},Province,Altitude)}\\
-{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}City[Province] $\subseteq$ Province[Shorthand]}} \\
+{\color{ForestGreen}HasTSponsorship(\underline{teamID},\underline{tSponsorshipID},\underline{sponsor}))}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasTSponsorship[teamID] $\subseteq$ Team[teamID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasTSponsorship[tSponsorshipID] $\subseteq$ T-Sponsorship[tSponsorshipID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasTSponsorship[sponsor] $\subseteq$ Sponsor[sponsor]}} \\
 
-{\color{ForestGreen}Province(\underline{Shorthand},Name,Zone,BaseLoad)}\\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}Zone is 'I-A' or 'I-M' or 'II' or 'III}} \\
-{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}BaseLoad $>$ 0}} \\
+{\color{ForestGreen}CaptainHistory(\underline{startDate},\underline{player},\underline{team},endDate)}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}CaptainHistory[player] $\subseteq$ Player[playerID]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}CaptainHistory[team] $\subseteq$ Team[teamID]}} \\
+% {\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}CoachingStaff[startDate] $\subseteq$ HasCaptainHistory[]}} \\
+{\color{Orange}\hspace{2mm} constraint: {\color{Magenta}No overlapping start dates and end dates for the same Captain for the same Team}} \\
+
+{\color{ForestGreen}KitColor(\underline{color})}\\
+{\color{Orange}\hspace{2mm} inclusion: {\color{Magenta}KitColor[color] $\subseteq$ HasKitColor[color]}} \\
+
+{\color{ForestGreen}HasKitColor(\underline{color},\underline{team})}\\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasKitColor[color] $\subseteq$ KitColor[color]}} \\
+{\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasKitColor[teamID] $\subseteq$ Team[teamID]}} \\
+
+% {\color{ForestGreen}ContractWith(\underline{contractID},\underline{teamID})}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}ContractWith[contractID] $\subseteq$ Contract[contractID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}ContractWith[teamID] $\subseteq$ Team[teamID]}} \\
+
+% {\color{ForestGreen}HasContract(\underline{contractID},\underline{personID})}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasContract[contractID] $\subseteq$ Contract[contractID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasContract[personID] $\subseteq$ Person[personID]}} \\
+
+% {\color{ForestGreen}HasCaptainHistory(\underline{teamID},\underline{playerID},\underline{startDate})}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasCaptainHistory([teamID] $\subseteq$ Team[teamID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasCaptainHistory([playerID] $\subseteq$ PlayerplayerID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasCaptainHistory([startDate] $\subseteq$ CaptainHistory[startDate]}} \\
+
+% {\color{ForestGreen}HasCaptainRole(\underline{playerID})}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasCaptainRole[playerID] $\subseteq$ Player[playerID]}} \\
+
+% {\color{ForestGreen}PlayerWithSponsor(\underline{pSponsorshipID},\underline{sponsorID})}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}PlayerWithSponsor[pSponsorshipID] $\subseteq$ P-Sponsorship[pSponsorshipID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}PlayerWithSponsor[sponsorID] $\subseteq$ Sponsor[sponsorID]}} \\
+
+% {\color{ForestGreen}TeamWithSponsor(\underline{tSponsorshipID},\underline{sponsorID})}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}TeamWithSponsor[tSponsorshipID] $\subseteq$ T-Sponsorship[tSponsorshipID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}TeamWithSponsor[sponsorID] $\subseteq$ Sponsor[sponsorID]}} \\
+
+% {\color{ForestGreen}HasKitColor(\underline{kitColorID},teamID)}\\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasKitColor[kitColorID] $\subseteq$ KitColor[kitColorID]}} \\
+% {\color{Orange}\hspace{2mm} foreign key: {\color{Magenta}HasKitColor[teamID] $\subseteq$ Team[teamID]}} \\
 
 \vspace{12px}
 
 \begin{table}[H]
   \def\arraystretch{1.25}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{1.5cm} | m{13.5cm}| }
+  \begin{tabular}{|>{\columncolor{myColor}}  m{1.5cm} | m{13.5cm}| }
     \hline
-    \multicolumn{2}{| c |} {\textbf{\large External integrity constraints in terms of the restructured relational schema}} \\
+    \rowcolor{myColor}
+    \multicolumn{2}{| c |}  {\textcolor{white}{\large \textbf{External integrity constraints in terms of the restructured relational schema}}} \\
     \hline
-    \color[HTML]{3531FF} \textbf{1} & The TotalResistance attribute of SupplyOffer must be higher than the RoofLoad attribute of its associated SnowloadComputation \\
+     {\textcolor{white}{\textbf{1}}} & A Player cannot be a part of two different Teams simultaneously. The StartDate attribute and EndDate attribute in the Contract should not overlap for the same Player. \\
     \hline
-    \color[HTML]{3531FF} \textbf{2a} & The RetainerType attribute of RetainerHolder and SnowRetainer associated to the same SupplyOffer through the Offer-Prod relationship must have the same value \\
+     {\textcolor{white}{\textbf{2}}} & A Person can have only one active Contract with a team at any given time. The EndDate attribute of a Contract must be greater than its StartDate.\\
     \hline
-    \color[HTML]{3531FF} \textbf{2b} & The RetainerType attribute of RetainerAccessory and SnowRetainer associated to the same SupplyOffer through the Offer-Prod relationship must have the same value \\
+     {\textcolor{white}{\textbf{3}}} & A Team can have only one Captain at any given time. TStartDate attribute and EndDate attribute in the CaptainHistory should not overlap. \\
     \hline
-    \color[HTML]{3531FF} \textbf{3} & The RoofType attribute of RetainerHolder associated to a SupplyOffer must have the same value as the Covering attribute of the BuildingSite associated to it following the relationships path by passing through SnowloadComputation entity.  \\
+     {\textcolor{white}{\textbf{4}}} & A player’s number of appearances cannot be negative.\\
     \hline
-    \color[HTML]{3531FF} \textbf{4} & The Code of SupplyOffer must participate between 2 and 4 times to the Offer-Prod relationship. In addition, the same Code being present as an instance in the Offer-Prod relationship must be associated with exactly one RetainerHolder, one SnowRetainer and between zero and two different types of RetainerAccessory \\
+     {\textcolor{white}{\textbf{5}}} & A Person cannot hold the roles of Player and Coaching Staff concurrently. StartDate attribute and EndDate attribute in the Contract should not overlap for the same Person when they hold different roles\\
     \hline
-    \color[HTML]{3531FF} \textbf{5} & The TotalPrice attribute of a SupplyOffer must be equal to the sum of the prices of the SnowstopProduct entities associated to it through the Offer-Prod relationship multiplied by their price\\
+     {\textcolor{white}{\textbf{6}}} & A Player’s JerseyNumber attribute should be within a predefined range (e.g., 1-99) \\
     \hline
-  \end{tabular}
+     {\textcolor{white}{\textbf{7}}} & The start date of a Captain’s tenure (in CaptainHistory) cannot be in the future or earlier than the Player’s Contract StartDate with the Team.\\
+    \hline
+    {\textcolor{white}{\textbf{8}}} & A Sponsor cannot sponsor the same Team or Player twice at the same time. StartDate attribute and EndDate attribute in the T-Sponsorship or P-Sponsorship should not overlap for the same Sponsor. \\
+    \hline
+  \end{tabular}\label{tab:table10}
 \end{table}
+
 
 \pagebreak
 
-\subsection{Reasons for the restructuring steps}
+\subsection{Reasons for the restructuring}
 \begin{itemize}
-  \item By carefully analysing the domain of the database, it follows that a SnowRetainer can only be of two types, namely Grid or Tube, we can avoid to represent the GridRetainer and TubeRetainer relations and instead add an Attribute to SnowRetainer with the constraint of it being either 'Grid' or 'Tube'. Instead of having the attributes 'Height' and 'Diameter' (which we have on GridRetainer and TubeRetainer) we can create a new attribute to represent them both and call it 'Measure', in addition we can also add the attribute 'Profile' (previously on GridRetainer) and make it optional, by also adding a constraint on it being null only if the attribute 'Type' has the value 'Tube'. In this way we avoid one write in operation 2b.
-  \item By extending the same concept explained in the last point also to RetainerHolder and RetainerAccessory we can add the same 'Type' attribute to these two relations. In this way we can avoid creating the relationships H-Compatible and A-Compatible by modifying the external constraint nr 4 on the SupplyOffer to check that the Type attributes correspond. As a result, operation 2a will need respectively 25 and 225 less writes and in addition 50 and 450 less reads. Operation 5 will need 2 less reads and in addition the satisfaction of the external constraint on SupplyOffer will become easier to manage.
-  \item We merge Customer with Loc-Customer relationship, by adding Zip and City attributes to the relation Customer. This avoids one write in operation 1.
-  \item We merge Phone with Num-Customer relationship, by adding CustomerCode attribute to the relation Phone. Similarly as above, this decreases the number of writes needed for operation 1 by an average of 1.5.
-  \item We merge City with Is-In-Prov relationship, by adding new attribute Province to the relation City, in this way reduce the numbers of joins needed to obtain the climatic zone of a city from 3 to 2.
-  \item We merge SupplyOffer with Has-Computation relationship, by adding all the attributes of the relationship to the relation SupplyOffer. In this way we avoid creating an additional relationship when creating a SupplyOffer and we need to perform one less join operation when accessing a SnowloadComputation that is associated to a SupplyOffer.
-  \item We merge BuildingSite with Comp-For-BS relationship, by adding the Code of SnowloadComputation relation to the  attributes of BuildingSite relation. Since the two relations are usually accessed together we can merge them in order to have one less write on operation 4.
+ \item \textbf{Merging of Contract and HasContract:} 
+\newline We merged these relations and added their attributes to their respective entities. This helps decrease write operations required when inserting a Contract (decomposed to PlayerContract and CoachingStaffContract) record.
+  \item \textbf{Decomposition of Contract into CoachingStaffContract and PlayerContract:} 
+\newline This modification helps in managing null values in contracts. It also offers semantic clarity, as we can differentiate between contracts for coaching staff and players. This can improve data access when performing operations like updating contracts or transferring players.
+    \item \textbf{Merging of CaptainHistory and HasCaptainHistory } 
+\newline We merged these relations and added their attributes to their respective entities. This helps decrease write operations required when inserting a CaptainHistory record.
+ \item \textbf{Merging of Manager and CoachingStaff:} 
+\newline The Manager entity was deemed redundant as the role could be derived from Coaching Staff and also incorporated the yearsOfExperience attribute to Coaching Staff.
+  
 \end{itemize}
 
 \pagebreak
@@ -119,50 +171,83 @@
 \begin{table}[H]
   \def\arraystretch{1.25}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4.5cm} | m{4.5cm}| m{4.5cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4.5cm} | m{4.5cm}| m{4.5cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Volume}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} &  {\textcolor{white}{\large \textbf{Construct}}} &  {\textcolor{white}{\large \textbf{Volume}}} \\
     \hline
-    \color[HTML]{3531FF} \textbf{SnowstopProduct} & Entity & 500  \\
-    \hline
-    \color[HTML]{3531FF} \textbf{SnowRetainer} & Entity & 50 \\
-    \hline
-    \color[HTML]{3531FF} \textbf{RetainerHolder} & Entity & 400 \\
-    \hline
-    \color[HTML]{3531FF} \textbf{RetainerAccessory} & Entity & 50 \\
-    \hline
-    \color[HTML]{3531FF} \textbf{SupplyOffer} & Entity & 5000\\
-    \hline
-    \color[HTML]{3531FF} \textbf{Customer} & Entity & 2500\\
-    \hline
-    \color[HTML]{3531FF} \textbf{Phone} & Entity & 3750 \\
-    \hline
-    \color[HTML]{3531FF} \textbf{SnowloadComputation} & Entity & 4000\\
-    \hline
-    \color[HTML]{3531FF} \textbf{BuildingSite} & Entity & 4000\\
-    \hline
-    \color[HTML]{3531FF} \textbf{City} & Entity & 8000 \\
-    \hline
-    \color[HTML]{3531FF} \textbf{Province} & Entity & 100 \\
-    \hline
-    \color[HTML]{3531FF} \textbf{Offer-Prod} & Relationship & 15000\\
-    \hline
-    \color[HTML]{3531FF} \textbf{For-Customer} & Relationship & 6000\\
-    \hline
-  \end{tabular}
+{\textcolor{white}{\textbf{Team}}} & Entity & 50 \\
+\hline
+{\textcolor{white}{\textbf{Person}}} & Entity & 1400 \\
+\hline
+{\textcolor{white}{\textbf{Player}}} & Entity & 1250 \\
+\hline
+{\textcolor{white}{\textbf{CoachingStaff}}} & Entity & 200 \\
+\hline
+{\textcolor{white}{\textbf{Sponsor}}} & Entity & 100 \\
+\hline
+{\textcolor{white}{\textbf{PlayerContract}}} & Entity & 1250 \\
+\hline
+{\textcolor{white}{\textbf{CoachingStaffContract}}} & Entity & 150 \\
+\hline
+{\textcolor{white}{\textbf{CaptainHistory}}} & Entity & 50 \\
+\hline
+{\textcolor{white}{\textbf{T-Sponsorship}}} & Entity & 200 \\
+\hline
+{\textcolor{white}{\textbf{P-Sponsorship}}} & Entity & 300 \\
+\hline
+{\textcolor{white}{\textbf{KitColor}}} & Entity & 150 \\
+\hline
+% {\textcolor{white}{\textbf{ContractWith}}} & Relationship & 1400 \\
+% \hline
+% {\textcolor{white}{\textbf{HasContract}}} & Relationship & 1400 \\
+% \hline
+{\textcolor{white}{\textbf{Trains}}} & Relationship & 150 \\
+\hline
+% {\textcolor{white}{\textbf{HasCaptainHistory}}} & Relationship & 50 \\
+% \hline
+% {\textcolor{white}{\textbf{HasCaptainRole}}} & Relationship & 50 \\
+% \hline
+{\textcolor{white}{\textbf{HasPSponsorship}}} & Relationship & 1250 \\
+\hline
+{\textcolor{white}{\textbf{HasTSponsorship}}} & Relationship & 200 \\
+\hline
+% {\textcolor{white}{\textbf{TeamWithSponsor}}} & Relationship & 200 \\
+% \hline
+% {\textcolor{white}{\textbf{PlayerWithSponsor}}} & Relationship & 300 \\
+% \hline
+% {\textcolor{white}{\textbf{ISA-P-P}}} & Relationship & 1250 \\
+% \hline
+% {\textcolor{white}{\textbf{ISA-CS-P}}} & Relationship & 150 \\
+% \hline
+% {\textcolor{white}{\textbf{ISA-M-CS}}} & Relationship & 50 \\
+{\textcolor{white}{\textbf{HasKitColor}}} & Relationship & 150 \\
+\hline
+  \end{tabular}\label{tab:table15}
 \end{table}
+\textbf{Notes:}
+\begin{itemize}
+    \item The Contract entity was decomposed into two entities, namely, CoachingStaffContract and PlayerContract. Their volumes correspond to the number of coaching staff and players, respectively.
+      \item The relation HasContract, was eliminated due to merging.
+    \item The relation HasCaptainHistory, was eliminated due to merging.
+    \item The volume of KitColor entity was adjusted to match the volume of Team entity as every Team has at least a  kit color.
+    \item The volume of Coaching Staff was adjusted since Manager relation was removed.
+\end{itemize}
 
-\textbf{Operations of interest:}
+\pagebreak
 
+\textbf{Operations of interest:}\label{TableOperations}
 \begin{enumerate}
-  \item Insert a new customer.
-  \item Insert a new snowstop product, defining also the type and the compatibility.
-  \item Insert a new city.
-  \item Create a snowload computation on a given building site.
-  \item Create a supply offer.
-  \item List all the supply offers made for a given customer.
-  \item Update prices of snowstop products.
-  \item Update zip code and name of cities.
+  \item Insert a new player to a team.
+  \item Update team's coaching staff(including manager).
+  \item Update player's contract.
+  \item Assign a new captain.
+  \item Insert a new sponsorship  (team or player).
+  \item Retrieve team's players.
+  \item Retrieve a player's contract.
+  \item List all sponsorships for a player.
+  \item List all sponsorships for a team.
+  \item Transfer of a player to another team.
 \end{enumerate}
 
 \vspace{12px}
@@ -172,35 +257,39 @@
 \begin{table}[H]
   \def\arraystretch{1.25}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{2.5cm} | m{3.5cm}| m{3.5cm} |}
+ \begin{tabular}{|>{\columncolor{myColor}} m{2cm} | m{3.5cm}| m{3.5cm} |}
     \hline
-    {\textbf{\large Operation}} & {\textbf{\large Type}} & {\textbf{\large Frequency}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Operation}}} &  {\textcolor{white}{\large \textbf{Type}}} &  {\textcolor{white}{\large \textbf{Frequency}}} \\
     \hline
-    \color[HTML]{3531FF} \textbf{1} & Interactive & 20/day  \\
+    {\textcolor{white}{\textbf{1}}} & Interactive & 10/month  \\
     \hline
-    \color[HTML]{3531FF} \textbf{2} & Interactive & 10/month  \\
+    {\textcolor{white}{\textbf{2}}} & Interactive & 3/month  \\
     \hline
-    \color[HTML]{3531FF} \textbf{3} & Interactive & 5/day  \\
+   {\textcolor{white}{\textbf{3}}} & Interactive & 20/month  \\
     \hline
-    \color[HTML]{3531FF} \textbf{4} & Interactive & 40/day  \\
+    {\textcolor{white}{\textbf{4}}} & Interactive & 1/year  \\
     \hline
-    \color[HTML]{3531FF} \textbf{5} & Interactive & 50/day  \\
+    {\textcolor{white}{\textbf{5}}} & Interactive & 5/month  \\
     \hline
-    \color[HTML]{3531FF} \textbf{6} & Batch & 10/week  \\
+   {\textcolor{white}{\textbf{6}}} & Interactive & 100/day  \\
     \hline
-    \color[HTML]{3531FF} \textbf{7} & Interactive & 2/year  \\
+    {\textcolor{white}{\textbf{7}}} & Interactive & 50/day  \\
     \hline
-    \color[HTML]{3531FF} \textbf{8} & Batch & 1/month  \\
+    {\textcolor{white}{\textbf{8}}} & Batch & 10/month  \\
     \hline
-  \end{tabular}
+    {\textcolor{white}{\textbf{9}}} & Batch & 1/week  \\
+    \hline
+    {\textcolor{white}{\textbf{10}}} & Interactive & 2/year  \\
+    \hline
+  \end{tabular}\label{tab:table7}
 \end{table}
 
 \pagebreak
 
 \subsubsection{Restructured access tables}
 
-In the total cost evaluation we assume that a write access costs like two read accesses.
-
+We assume that a write access costs two read accesses in the total cost evaluation.
 
 \vspace{12px}
 
@@ -208,54 +297,47 @@ In the total cost evaluation we assume that a write access costs like two read a
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} Customer & Entity & 1 & W \\
+   {\textcolor{white}{\textbf{Person}}} & 	Entity & 1 & W \\
     \hline
-    \color[HTML]{3531FF} Phone & Entity & 1.5* & W \\
+    {\textcolor{white}{\textbf{Player}}} & 	Entity & 1 & W \\
+    \hline
+    {\textcolor{white}{\textbf{PlayerContract}}} & Entity & 1 & W \\
     \hline
   \end{tabular}
-  * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
+  % * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
 \end{table}
-Total: 2.5*20 write accesses = 100 accesses per day
+Total: 3*10 write accesses = 60 accesses per month
 
 \vspace{12px}
 
-{\centering \textbf{Access table for Operation 2a (RetainerHolder or RetainerAccessory)}\\}
+{\centering \textbf{Access table for Operation 2}\\}
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} SnowstopProduct & Entity & 1 & W \\
+    {\textcolor{white}{\textbf{Person}}} & Entity & 1 & W \\
     \hline
-    \color[HTML]{3531FF} RetainerHolder /\newline RetainerAccessory & Entity & 1 & W \\
-    \hline
-  \end{tabular}
-\end{table}
-Total: 2*10 write accesses = 40 accesses per month
-
-\vspace{12px}
-
-{\centering \textbf{Access table for Operation 2b (SnowRetainer)}\\}
-\begin{table}[H]
-  \def\arraystretch{1.10}%  1 is the default, change whatever you need
-  \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
-    \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
-    \hline
-    \color[HTML]{3531FF} SnowstopProduct & Entity & 1 & W \\
-    \hline
-    \color[HTML]{3531FF} SnowRetainer & Entity & 1 & W \\
+   {\textcolor{white}{\textbf{CoachingStaff}}} & Entity & 1 & W \\
     \hline
   \end{tabular}
+  % * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
 \end{table}
-Total: 2*10 write accesses = 40 accesses per month
+Total: 2*3 write accesses = 12 accesses per month
 
 \vspace{12px}
 
@@ -263,66 +345,111 @@ Total: 2*10 write accesses = 40 accesses per month
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} City & Entity & 1 & W \\
-    \hline
+  \textcolor{white}{\textbf{Person}} & Entity & 1 & R \\
+\hline
+\textcolor{white}{\textbf{Player}} & Entity & 1 & R \\
+\hline
+\textcolor{white}{\textbf{PlayerContract}} & Entity & 1 & R \\
+\hline
+\textcolor{white}{\textbf{PlayerContract}} & Entity & 1 & W \\
+\hline
   \end{tabular}
+  % * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
 \end{table}
-Total: 1*5 write accesses = 10 accesses per day
+Total: 1 write access + 3 read accesses = 5 accesses per operation
+\newline Total accesses per month: 5 accesses * 20 operations/month = 100 accesses per month
 
-\vspace{12px}
+\pagebreak
 
 {\centering \textbf{Access table for Operation 4}\\}
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} BuildingSite & Entity & 1 & W \\
+    {\textcolor{white}{\textbf{Player}}} & Entity & 1 & R \\
     \hline
-    \color[HTML]{3531FF} SnowloadComputation & Entity & 1 & W \\
+     {\textcolor{white}{\textbf{CaptainHistory}}} & Entity & 1 & W \\
     \hline
   \end{tabular}
+  % * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
 \end{table}
-Total: 2*40 write accesses = 160 accesses per day
+Total: 1 read access + 1 write access = 4 accesses
+\newline Total accesses per year: 4 accesses * 1 = 4 accesses/year
 
 \vspace{12px}
 
-{\centering \textbf{Access table for Operation 5}\\}
+{\centering \textbf{Access table for Operation 5a (Team sponsorship)}\\}
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} SnowloadComputation & Entity & 1 & R \\
+   {\textcolor{white}{\textbf{Sponsor}}} & Entity & 1 & R \\
     \hline
-    \color[HTML]{3531FF} BuildingSite & Entity & 1 & R \\
+    {\textcolor{white}{\textbf{Sponsor}}} & Entity & 1 & W \\
     \hline
-    \color[HTML]{3531FF} RetainerHolder & Entity & 1 & R \\
+    {\textcolor{white}{\textbf{T-Sponsorship}}} & Entity & 1 & W \\
     \hline
-    \color[HTML]{3531FF} SnowRetainer & Entity & 1 & R \\
+    {\textcolor{white}{\textbf{HasTSponsorship}}} & Relationship & 1 & W \\
     \hline
-    \color[HTML]{3531FF} RetainerAccessory & Entity & 1 & R \\
-    \hline
-    \color[HTML]{3531FF} SnowstopProduct & Entity & 3 & R \\
-    \hline
-    \color[HTML]{3531FF} SupplyOffer & Entity & 1 & W \\
-    \hline
-    \color[HTML]{3531FF} Offer-Prod & Relationship & 3* & W \\
-    \hline
-    \color[HTML]{3531FF} For Customer & Relationship & 1 & W \\
+     {\textcolor{white}{\textbf{Team}}} & Entity & 1 & R \\
     \hline
   \end{tabular}
-  \small{* On average three products offered}
+  % * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
 \end{table}
-Total: 5*50 write accesses + 8*50 read accesses = 1000 accesses per day
+Total: 2 read accesses + 3 write accesses = 8 accesses 
+\newline Total accesses per month: 8 accesses * 5 operations/month = 40 accesses/month
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 5b (Player sponsorship)}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
+    \hline
+   {\textcolor{white}{\textbf{Sponsor}}} & Entity & 1 & R \\
+    \hline
+    {\textcolor{white}{\textbf{Sponsor}}} & Entity & 1 & W \\
+    \hline
+    {\textcolor{white}{\textbf{P-Sponsorship}}} & Entity & 1 & W \\
+    \hline
+    {\textcolor{white}{\textbf{HasPSponsorship}}} & Entity & 1 & W \\
+    \hline
+     {\textcolor{white}{\textbf{Player}}} & Entity & 1 & R \\
+    \hline
+  \end{tabular}
+  % * \small{We assume that a customer has normally between 1 and 2 phone numbers, thus 1.5 on average}
+\end{table}
+Total: 2 read accesses + 3 write accesses = 8 accesses 
+\newline Total accesses per month:  8 accesses * 5 operations/month = 40 accesses/month
 
 \vspace{12px}
 
@@ -330,38 +457,45 @@ Total: 5*50 write accesses + 8*50 read accesses = 1000 accesses per day
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} Customer & Entity & 1 & R \\
+    {\textcolor{white}{\textbf{Player}}} & Entity & 25* & R \\
     \hline
-    \color[HTML]{3531FF} For-Customer & Relation & 5 & R \\
-    \hline
-    \color[HTML]{3531FF} SupplyOffer & Entity & 5* & R \\
+    {\textcolor{white}{\textbf{PlayerContract}}} & Entity & 25* & R \\
     \hline
   \end{tabular}
-  \small{* We suppose on average 5 supply offers for customer}
+  * \small{We assume that an average team has 25 players.}
 \end{table}
-Total: 11*10 read accesses = 110 read accesses per week
+Total: 50*100 read accesses per day = 5000 accesses per day
 
-\vspace{12px}
+\pagebreak
 
 {\centering \textbf{Access table for Operation 7}\\}
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} SnowstopProduct & Entity & 500 & R \\
+   {\textcolor{white}{\textbf{Player}}} & Entity & 1 & R \\
     \hline
-    \color[HTML]{3531FF} SnowstopProduct & Entity & 500 & W \\
+     {\textcolor{white}{\textbf{PlayerContract}}} & Entity & 1 & R \\
     \hline
   \end{tabular}
+  % * \small{We assume that an average team has 25 players.}
 \end{table}
-Total: 500*2 read accesses + 500*2 write accesses = 3.000 accesses per year
+Total: 2*50 read accesses per day = 100 accesses per day
 
 \vspace{12px}
 
@@ -369,19 +503,70 @@ Total: 500*2 read accesses + 500*2 write accesses = 3.000 accesses per year
 \begin{table}[H]
   \def\arraystretch{1.10}%  1 is the default, change whatever you need
   \centering
-  \begin{tabular}{ | m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
     \hline
-    {\textbf{\large Concept}} & {\textbf{\large Construct}} & {\textbf{\large Accesses}} & {\textbf{\large Type}} \\
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
     \hline
-    \color[HTML]{3531FF} City & Entity & 8000 & R \\
+    {\textcolor{white}{\textbf{Player}}} & Entity & 1 & R \\
     \hline
-    \color[HTML]{3531FF} City & Entity & 50* & W \\
+     {\textcolor{white}{\textbf{HasPSponsorship}}} & Entity & 3* & R \\
     \hline
   \end{tabular}
-  \small{* We assume only a small percentage of city have their zip code changed}
+  * \small{We assume that a Player has an average of 3 sponsorships.}
 \end{table}
-Total: 8000*1 read accesses + 50*1 write accesses = 8.100 accesses per month
-
-\pagebreak
+Total: 4*10 read accesses per month = 40 accesses per month
 
 \vspace{12px}
+
+{\centering \textbf{Access table for Operation 9}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
+    \hline
+   {\textcolor{white}{\textbf{Team}}} & Entity & 1 & R \\
+    \hline
+    {\textcolor{white}{\textbf{HasTSponsorship}}} & Entity & 4* & R \\
+    \hline
+  \end{tabular}
+  * \small{We assume that a Team has an average of 4 sponsorships.}
+\end{table}
+Total: 5*4 read accesses per week = 20 accesses per week
+
+\vspace{12px}
+
+{\centering \textbf{Access table for Operation 10}\\}
+\begin{table}[H]
+  \def\arraystretch{1.10}%  1 is the default, change whatever you need
+  \centering
+  \begin{tabular}{|>{\columncolor{myColor}} m{4cm} | m{4cm}| m{3cm} | m{2cm} |}
+    \hline
+    \rowcolor{myColor}
+    {\textcolor{white}{\large \textbf{Concept}}} 
+    &  {\textcolor{white}{\large \textbf{Construct}}} 
+    &  {\textcolor{white}{\large \textbf{Accesses}}} 
+    &  {\textcolor{white}{\large \textbf{Type}}}\\
+    \hline
+     {\textcolor{white}{\textbf{Player}}} & Entity & 1 & R \\
+    \hline
+     {\textcolor{white}{\textbf{Player}}} & Entity & 1 & W \\
+    \hline
+   {\textcolor{white}{\textbf{PlayerContract}}} & Entity & 1 & R \\
+    \hline
+     {\textcolor{white}{\textbf{PlayerContract}}} & Entity & 1 & W \\
+    \hline
+  \end{tabular}
+  % * \small{We assume that a Team has an average of 4 sponsorships.}
+\end{table}
+Total: 2 read accesses + 2 write accesses = 8 accesses per operation
+\newline Total accesses per year: 8 accesses * 2 operations/year = 16 accesses per year

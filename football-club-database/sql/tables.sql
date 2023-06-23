@@ -1,8 +1,3 @@
--- Introduction to Databases project
--- A Database for Football Clubs
--- Author: Maxwell Aboagye
-
-BEGIN;
 CREATE TABLE Team
 (
     teamID         INT PRIMARY KEY,
@@ -11,13 +6,27 @@ CREATE TABLE Team
     foundationYear SMALLINT    NOT NULL
 );
 
-CREATE TABLE Sponsor
+CREATE TABLE KitColors
 (
-    sponsorID      INT PRIMARY KEY    NOT NULL,
-    name           VARCHAR(50) UNIQUE NOT NULL,
-    industry       VARCHAR(50)        NOT NULL,
-    foundationYear SMALLINT           NOT NULL
+    color VARCHAR(50) NOT NULL PRIMARY KEY
 );
+
+
+CREATE TABLE HasKitColor
+(
+    teamID INT         NOT NULL,
+    color  VARCHAR(50) NOT NULL,
+    PRIMARY KEY (teamID, color),
+    CONSTRAINT teamHasKitColor FOREIGN KEY (teamID)
+        REFERENCES Team (teamID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT kitColorHasKitColor FOREIGN KEY (color)
+        REFERENCES KitColors (color)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
 
 CREATE TABLE Person
 (
@@ -55,7 +64,23 @@ CREATE TABLE CoachingStaff
         DEFERRABLE INITIALLY DEFERRED
 );
 
+CREATE TABLE Trains
+(
+    coachingStaffID INT NOT NULL,
+    playerID        INT NOT NULL,
+    PRIMARY KEY (coachingStaffID, playerID),
+    CONSTRAINT coachingStaffInTrains FOREIGN KEY (coachingStaffID)
+        REFERENCES CoachingStaff (coachingStaffID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT playerInTrains FOREIGN KEY (playerID)
+        REFERENCES Player (playerID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
 
+);
 
 CREATE TABLE CoachingStaffContract
 (
@@ -63,12 +88,12 @@ CREATE TABLE CoachingStaffContract
     coachingStaffID INT            NOT NULL,
     teamID          INT            NOT NULL,
     startDate       DATE           NOT NULL,
-    endDate         DATE,
+    endDate         DATE          NOT NULL,
     salary          DECIMAL(10, 2) NOT NULL,
-    CONSTRAINT CoachingStaffContract_PK PRIMARY KEY (coachingStaffID, teamID, startDate),
+    CONSTRAINT coachingStaffContractUQ UNIQUE (coachingStaffID, teamID, startDate),
     CONSTRAINT endDateCheck CHECK (endDate > startDate),
     CONSTRAINT staffInContract FOREIGN KEY (coachingStaffID)
-        REFERENCES Person (personID)
+        REFERENCES CoachingStaff (coachingStaffID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
         DEFERRABLE INITIALLY DEFERRED,
@@ -80,21 +105,22 @@ CREATE TABLE CoachingStaffContract
 );
 
 
+
 CREATE TABLE PlayerContract
 (
-    contractID   SERIAL,
+    contractID   SERIAL PRIMARY KEY,
     playerID     INT         NOT NULL,
     teamID       INT         NOT NULL,
     startDate    DATE        NOT NULL,
-    endDate      DATE,
+    endDate      DATE       NOT NULL,
     salary       DECIMAL(10, 2),
     jerseyNumber INT         NOT NULL,
     position     VARCHAR(50) NOT NULL,
-    CONSTRAINT PlayerContract_PK PRIMARY KEY (playerID, teamID, startDate),
+    CONSTRAINT playerContractUQ UNIQUE (playerID, teamID, startDate),
     CONSTRAINT jerseyNumberCheck CHECK (jerseyNumber BETWEEN 1 AND 99),
     CONSTRAINT endDateCheck CHECK (endDate > startDate),
     CONSTRAINT playerInContract FOREIGN KEY (playerID)
-        REFERENCES Person (personID)
+        REFERENCES Player (playerID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
         DEFERRABLE INITIALLY DEFERRED,
@@ -124,56 +150,27 @@ CREATE TABLE CaptainHistory
         DEFERRABLE INITIALLY DEFERRED
 );
 
+CREATE TABLE Sponsor
+(
+    sponsorID      INT PRIMARY KEY    NOT NULL,
+    name           VARCHAR(50) UNIQUE NOT NULL,
+    industry       VARCHAR(50)        NOT NULL,
+    foundationYear SMALLINT           NOT NULL
+);
+
+
 CREATE TABLE T_Sponsorship
 (
-    tSponsorshipID INT         NOT NULL,
+    tSponsorshipID INT         NOT NULL PRIMARY KEY,
     sponsorID      INT         NOT NULL,
     startDate      DATE        NOT NULL,
     endDate        DATE        NOT NULL,
     type           VARCHAR(50) NOT NULL,
-    PRIMARY KEY (tSponsorshipID, sponsorID),
     CONSTRAINT sponsorInTSponsorship FOREIGN KEY (sponsorID)
         REFERENCES Sponsor (sponsorID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
         DEFERRABLE INITIALLY DEFERRED
-);
-
-CREATE TABLE P_Sponsorship
-(
-    pSponsorshipID INT         NOT NULL,
-    sponsorID      INT         NOT NULL,
-    startDate      DATE        NOT NULL,
-    endDate        DATE        NOT NULL,
-    type           VARCHAR(50) NOT NULL,
-    PRIMARY KEY (pSponsorshipID, sponsorID),
-    CONSTRAINT sponsorInPSponsorship FOREIGN KEY (sponsorID)
-        REFERENCES Sponsor (sponsorID)
-        ON UPDATE CASCADE
-        DEFERRABLE INITIALLY DEFERRED
-);
-
-CREATE TABLE KitColors
-(
-    color VARCHAR(50) NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE Trains
-(
-    coachingStaffID INT NOT NULL,
-    playerID        INT NOT NULL,
-    PRIMARY KEY (coachingStaffID, playerID),
-    CONSTRAINT coachingStaffInTrains FOREIGN KEY (coachingStaffID)
-        REFERENCES CoachingStaff (coachingStaffID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-        DEFERRABLE INITIALLY DEFERRED,
-    CONSTRAINT playerInTrains FOREIGN KEY (playerID)
-        REFERENCES Player (playerID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-        DEFERRABLE INITIALLY DEFERRED
-
 );
 
 CREATE TABLE HasTSponsorship
@@ -191,10 +188,26 @@ CREATE TABLE HasTSponsorship
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT sponsorHasTSponsorship FOREIGN KEY (sponsor)
-        REFERENCES T_Sponsorship (sponsorID)
+        REFERENCES Sponsor (sponsorID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+
+
+CREATE TABLE P_Sponsorship
+(
+    pSponsorshipID INT         NOT NULL PRIMARY KEY,
+    sponsorID      INT         NOT NULL,
+    startDate      DATE        NOT NULL,
+    endDate        DATE        NOT NULL,
+    type           VARCHAR(50) NOT NULL,
+    CONSTRAINT sponsorInPSponsorship FOREIGN KEY (sponsorID)
+        REFERENCES Sponsor (sponsorID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        DEFERRABLE INITIALLY DEFERRED
+);
+
 
 CREATE TABLE HasPSponsorship
 (
@@ -211,26 +224,9 @@ CREATE TABLE HasPSponsorship
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT sponsorHasPSponsorship FOREIGN KEY (sponsor)
-        REFERENCES P_Sponsorship (sponsorID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
-
-CREATE TABLE HasKitColor
-(
-    teamID INT         NOT NULL,
-    color  VARCHAR(50) NOT NULL,
-    PRIMARY KEY (teamID, color),
-    CONSTRAINT teamHasKitColor FOREIGN KEY (teamID)
-        REFERENCES Team (teamID)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT kitColorHasKitColor FOREIGN KEY (color)
-        REFERENCES KitColors (color)
+        REFERENCES Sponsor (sponsorID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
 
 
-
-COMMIT;

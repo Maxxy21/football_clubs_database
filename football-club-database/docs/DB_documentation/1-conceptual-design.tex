@@ -6,19 +6,19 @@
 \setlength{\parindent}{0cm}
 \vspace{12px}
 \textbf{General statements:\\}
-We want to realize a database for football clubs, aiming to represent data related to a team, its players and their positions, captain, coaching staff, manager, sponsor, and contracts between a team and a person. The database will track historical data for contracts, team captaincies, and managerial positions over time.
+We want to realize a database for football clubs, aiming to represent data related to a team, its players and their positions, captain, coaching staff, manager, sponsor, and contracts between a team and a person. The database will track historical data for contracts, team captaincies, sponsorships, and managerial positions over time.
 
 \vspace{12px}
 \textbf{Statements concerning teams:\\}
-For the teams, we identify them uniquely by a team ID and also record the name, the city they are located in, their year of foundation, and kit colours which are optional.
+For the teams, we identify them uniquely by a team ID and also record the name, the city they are located in, their year of foundation, and their kit colors.
 
 \vspace{12px}
 \textbf{Statements concerning persons:\\}
- For the persons, each of them is identified uniquely by an ID together with the name. We represent their date of birth and nationality. We want to keep track of the contract’s date and salaries they have received over time with a team.
+ For the persons, each of them is identified uniquely by an ID. We represent their name, date of birth and nationality. We want to keep track of the contract’s date and salaries they have received over time with a team.
 
  \vspace{12px}
 \textbf{Statements concerning contracts:\\}
-For the contracts, we track the contract ID, the start and end dates, salary, and the person and team associated with each contract. Jersey number and position are optional attributes, relevant only when the person is a player.
+For the contracts, we track the contract ID, the start and end dates, salary, and the person and team associated with each contract. Jersey number and position are optional, and defined only if the contract is for a Player.
 
 \vspace{12px}
 \textbf{Statements concerning players:\\}
@@ -82,7 +82,7 @@ For the sponsors, we are interested in the sponsor ID that uniquely identifies t
     \hline
    {\textcolor{white}{\textbf{Sponsor}}} & A company or organization that provides funds to a team or player.
    & Official\phantom{,,}Sponsor, Partner & 
-   P-Sponsorship, T-Sponsorship \\
+   P-Sponsorship, \newline T-Sponsorship \\
     \hline
     {\textcolor{white}{\textbf{T-Sponsorship}}} & An agreement where a sponsor provides funds to a team. 
     & Team Sponsorship,
@@ -100,7 +100,7 @@ For the sponsors, we are interested in the sponsor ID that uniquely identifies t
   % \centering
   % \includegraphics[scale=0.39, angle=270]{images/conceptual-schema.drawio.png}
   \centerline{\includesvg[inkscapelatex=false,width=1.4\columnwidth]{images/conceptual-schema.svg}}
-  \caption{Conceptual schema}\label{fig:figure}
+  \caption{Conceptual schema}
 \end{figure}
 
 \pagebreak
@@ -150,7 +150,6 @@ For the sponsors, we are interested in the sponsor ID that uniquely identifies t
      & \{pSponsorshipID, Sponsor\} \\
     \hline
     
-
   \end{tabular}\label{tab:table2}
 \end{table}
 
@@ -168,6 +167,9 @@ For the sponsors, we are interested in the sponsor ID that uniquely identifies t
     \hline
     {\textcolor{white}{\textbf{HasContract}}} & Connects a person with a contract. It represents the contract a person has.
     & Person,\newline Contract & & \\
+    \hline
+     {\textcolor{white}{\textbf{ContractWith}}} & Connects a Team with contracts. It represents the contracts a Team has.
+    & Team,\newline Contract & & \\
     \hline
    {\textcolor{white}{\textbf{HasTSponsorship}}} & Connects a team with its sponsorship agreement. It represents the sponsorship agreement a team has with a sponsor.
    & Team,\newline T-Sponsorship, & & \\
@@ -329,3 +331,5 @@ For the sponsors, we are interested in the sponsor ID that uniquely identifies t
     \hline
   \end{tabular}\label{tab:table7}
 \end{table}
+
+\pagebreak

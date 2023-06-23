@@ -13,6 +13,35 @@ VALUES (1, 'FC Barcelona', 'Barcelona', 1899),
        (9, 'Manchester City', 'Manchester', 1880),
        (10, 'Arsenal', 'London', 1886);
 
+
+--- Insert KitColors
+INSERT INTO KitColors(color)
+VALUES ('Red'),
+       ('Blue'),
+       ('Green'),
+       ('Yellow'),
+       ('Black'),
+       ('White'),
+       ('Orange'),
+       ('Purple'),
+       ('Pink'),
+       ('Brown');
+
+-- Insert HasKitColor
+INSERT INTO HasKitColor(teamid, color)
+VALUES (1, 'Red'),
+       (2, 'White'),
+       (3, 'Blue'),
+       (4, 'Black'),
+       (5, 'Yellow'),
+       (6, 'Green'),
+       (7, 'Purple'),
+       (8, 'Orange'),
+       (9, 'Pink'),
+       (10, 'Brown');
+
+
+
 INSERT INTO Person(personid, firstname, middlename, lastname, dob, nationality)
 VALUES (1, 'Lionel', 'Andres', 'Messi', '1987-06-24', 'Argentina'),
        (2, 'Cristiano', ' ', 'Ronaldo', '1985-02-05', 'Portugal'),
@@ -43,19 +72,6 @@ VALUES (1, 'Lionel', 'Andres', 'Messi', '1987-06-24', 'Argentina'),
        (27, 'Thor', '', 'Asgard', '1963-01-26', 'England'),
        (28, 'Gavin', '', 'Newsom', '1963-01-26', 'England');
 
-
--- Insert Sponsor
-INSERT INTO Sponsor(sponsorid, name, industry, foundationyear)
-VALUES (1, 'Nike', 'Sportswear', 1964),
-       (2, 'Adidas', 'Sportswear', 1949),
-       (3, 'Puma', 'Sportswear', 1948),
-       (4, 'Under Armour', 'Sportswear', 1996),
-       (5, 'New Balance', 'Sportswear', 1906),
-       (6, 'Reebok', 'Sportswear', 1958),
-       (7, 'Umbro', 'Sportswear', 1920),
-       (8, 'Kappa', 'Sportswear', 1967),
-       (9, 'Asics', 'Sportswear', 1949),
-       (10, 'Joma', 'Sportswear', 1965);
 
 -- Insert Player
 INSERT INTO Player(playerid, startingxi, appearances)
@@ -90,6 +106,19 @@ VALUES (5, 'Manager', 10),
        (26, 'Manager', 20),
        (27, 'Manager', 20),
        (28, 'Manager', 20);
+
+-- Insert Trains
+INSERT INTO Trains(coachingstaffid, playerid)
+VALUES (5, 1),
+       (11, 7),
+       (12, 14),
+       (13, 2),
+       (15, 6),
+       (16, 10),
+       (17, 3),
+       (18, 7),
+       (19, 8),
+       (20, 9);
 
 --
 INSERT INTO CoachingStaffContract(coachingstaffid, teamid, startdate, enddate, salary)
@@ -128,15 +157,29 @@ VALUES (1, 1, '2020-01-01', '2022-12-31', 1000000, 10, 'Forward'),
 -- Insert CaptainHistory
 INSERT INTO CaptainHistory(playerid, teamid, startdate, enddate)
 VALUES (1, 1, '2020-08-25', '2021-08-24'),
-       (2, 2, '2018-07-10', '2021-07-09'),
-       (3, 3, '2017-08-03', '2021-08-02'),
-       (4, 4, '2014-07-09', '2021-07-08'),
-       (6, 5, '2019-08-01', '2021-07-31'),
-       (7, 6, '2018-08-01', '2021-07-31'),
-       (8, 7, '2017-08-01', '2021-07-31'),
-       (9, 8, '2016-08-01', '2021-07-31'),
-       (10, 9, '2015-08-01', '2021-07-31'),
-       (14, 10, '2019-08-01', '2021-07-31');
+       (2, 2, '2020-01-01', '2021-07-09'),
+       (3, 3, '2020-01-01', '2021-08-02'),
+       (4, 4, '2020-01-01', '2021-07-08'),
+       (6, 5, '2020-01-01', '2021-07-31'),
+       (7, 6, '2020-01-01', '2021-07-31'),
+       (8, 7, '2020-01-01', '2021-07-31'),
+       (9, 8, '2020-01-01', '2021-07-31'),
+       (10, 9, '2020-01-01', '2021-07-31'),
+       (14, 10, '2020-01-01', '2021-07-31');
+
+
+-- Insert Sponsor
+INSERT INTO Sponsor(sponsorid, name, industry, foundationyear)
+VALUES (1, 'Nike', 'Sportswear', 1964),
+       (2, 'Adidas', 'Sportswear', 1949),
+       (3, 'Puma', 'Sportswear', 1948),
+       (4, 'Under Armour', 'Sportswear', 1996),
+       (5, 'New Balance', 'Sportswear', 1906),
+       (6, 'Reebok', 'Sportswear', 1958),
+       (7, 'Umbro', 'Sportswear', 1920),
+       (8, 'Kappa', 'Sportswear', 1967),
+       (9, 'Asics', 'Sportswear', 1949),
+       (10, 'Joma', 'Sportswear', 1965);
 
 
 -- Insert P_Sponsorship
@@ -146,6 +189,19 @@ VALUES (1, 1, '2020-01-01', '2022-12-31', 'Boot Sponsorship'),
        (3, 3, '2019-01-01', '2023-12-31', 'Boot Sponsorship'),
        (4, 4, '2016-01-01', '2024-12-31', 'Boot Sponsorship');
 
+-- Insert HasPSponsorship
+INSERT INTO HasPSponsorship(playerid, psponsorshipid, sponsor)
+VALUES (1, 1, 1),
+       (2, 2, 2),
+       (3, 3, 3),
+       (4, 4, 4),
+       (6, 1, 5),
+       (7, 2, 6),
+       (8, 3, 7),
+       (9, 4, 8),
+       (10, 1, 9),
+       (14, 2, 10);
+
 -- Insert T_Sponsorship
 INSERT INTO T_Sponsorship(tsponsorshipid, sponsorid, startdate, enddate, type)
 VALUES (1, 1, '2020-01-01', '2023-12-31', 'Kit Sponsorship'),
@@ -154,77 +210,19 @@ VALUES (1, 1, '2020-01-01', '2023-12-31', 'Kit Sponsorship'),
        (4, 4, '2017-01-01', '2021-12-31', 'Kit Sponsorship'),
        (5, 5, '2020-01-01', '2024-12-31', 'Kit Sponsorship');
 
-
--- Insert Trains
-INSERT INTO Trains
-VALUES (5, 1),
-       (6, 2),
-       (7, 3),
-       (8, 4),
-       (9, 5),
-       (10, 6),
-       (11, 7),
-       (12, 14),
-       (11, 3),
-       (15, 6),
-       (16, 10),
-       (17, 3),
-       (18, 7),
-       (19, 8),
-       (20, 9);
-
---- Insert KitColors
-INSERT INTO KitColors(color)
-VALUES ('Red'),
-       ('Blue'),
-       ('Green'),
-       ('Yellow'),
-       ('Black'),
-       ('White'),
-       ('Orange'),
-       ('Purple'),
-       ('Pink'),
-       ('Brown');
-
-
--- Insert HasKitColor
-INSERT INTO HasKitColor(teamid, color)
-VALUES (1, 'Red'),
-       (2, 'White'),
-       (3, 'Blue'),
-       (4, 'Black'),
-       (5, 'Yellow'),
-       (6, 'Green'),
-       (7, 'Purple'),
-       (8, 'Orange'),
-       (9, 'Pink'),
-       (10, 'Brown');
-
 -- Insert HasTSponsorship
-INSERT INTO HasTSponsorship(teamid, tsponsorshipid)
-VALUES (1, 1),
-       (2, 2),
-       (3, 3),
-       (4, 4),
-       (5, 5),
-       (6, 1),
-       (7, 2),
-       (8, 3),
-       (9, 4),
-       (10, 5);
+INSERT INTO HasTSponsorship(teamid, tsponsorshipid, sponsor)
+VALUES (1, 1, 1),
+       (2, 2, 2),
+       (3, 3, 3),
+       (4, 4, 4),
+       (5, 5, 5),
+       (6, 1, 6),
+       (7, 2, 7),
+       (8, 3, 8),
+       (9, 4, 9),
+       (10, 5, 10);
 
--- Insert PlayerHasPSponsorship
-INSERT INTO HasPSponsorship(playerid, psponsorshipid)
-VALUES (1, 1),
-       (2, 2),
-       (3, 3),
-       (4, 4),
-       (6, 1),
-       (7, 2),
-       (8, 3),
-       (9, 4),
-       (10, 1),
-       (14, 2);
 
 
 -- DROP TABLE IF EXISTS captainhistory CASCADE ;
@@ -240,4 +238,7 @@ VALUES (1, 1),
 -- DROP TABLE IF EXISTS trains CASCADE;
 -- DROP TABLE IF EXISTS manager CASCADE;
 -- DROP TABLE IF EXISTS person CASCADE;
+-- DROP TABLE IF EXISTS haskitcolor CASCADE;
+-- DROP TABLE IF EXISTS hastsponsorship CASCADE;
+-- DROP TABLE IF EXISTS haspsponsorship CASCADE;
 

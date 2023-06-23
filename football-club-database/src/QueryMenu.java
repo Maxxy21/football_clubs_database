@@ -14,10 +14,12 @@ public class QueryMenu extends Menu {
     public State show() {
         String question = "\nWhich query would you like to execute?\n" +
                 "[1] Retrieve Team's Players.\n" +
-                "[2] List all sponsorships for a player\n" +
+                "[2] List all sponsorships for a player.\n" +
                 "[3] List all sponsorships for a team.\n" +
                 "[4] Retrieve a Player's contract.\n" +
                 "[5] Retrieve a Player's current position.\n" +
+                "[6] Retrieve a Manager's managed teams.\n" +
+                "[7] Retrieve Players Teams.\n" +
                 "[b] Back the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -37,6 +39,12 @@ public class QueryMenu extends Menu {
                     break;
                 case "5":
                     queryPlayerPosition();
+                    break;
+                case "6":
+                    queryManagerTeams();
+                    break;
+                case "7":
+                    queryPlayerTeams();
                     break;
                 default:
                     return State.Invalid;
@@ -74,7 +82,6 @@ public class QueryMenu extends Menu {
         db.getPlayerSponsorships(playerID);
     }
 
-
     private void queryPlayerPosition() throws SQLException {
         System.out.print("Enter player ID: ");
         int playerID = nextInteger();
@@ -82,4 +89,17 @@ public class QueryMenu extends Menu {
         db.getPlayerPosition(playerID);
     }
 
+    private void queryManagerTeams() throws SQLException {
+        System.out.print("Enter manager ID: ");
+        int managerID = nextInteger();
+
+        db.getManagerTeams(managerID);
+    }
+
+    private void queryPlayerTeams() throws SQLException {
+        System.out.print("Enter player ID: ");
+        int playerID = nextInteger();
+
+        db.getPlayerTeams(playerID);
+    }
 }

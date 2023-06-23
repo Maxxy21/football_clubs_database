@@ -18,9 +18,11 @@ public class InsertMenu extends Menu {
                 "[2] Person.\n" +
                 "[3] Player.\n" +
                 "[4] CoachingStaff.\n" +
-                "[5] PersonContract.\n" +
+                "[5] PlayerContract.\n" +
                 "[6] CoachingStaffContract.\n" +
                 "[7] Sponsor.\n" +
+                "[8] Team Sponsorship.\n" +
+                "[9] Player Sponsorship.\n" +
                 "[b] Back to the main menu.\n" +
                 "[q] Quit the program.";
 
@@ -36,16 +38,22 @@ public class InsertMenu extends Menu {
                     insertNewPlayer();
                     break;
                 case "4":
-                    insertNewPlayerContract();
+                    insertNewCoachingStaff();
                     break;
                 case "5":
-                    insertNewCoachingStaff();
+                    insertNewPlayerContract();
                     break;
                 case "6":
                     insertNewCoachingStaffContract();
                     break;
                 case "7":
                     insertNewSponsor();
+                    break;
+                case "8":
+                    insertNewTSponsorship();
+                    break;
+                case "9":
+                    insertNewPSponsorship();
                     break;
                 default:
                     return State.Invalid;
@@ -67,8 +75,18 @@ public class InsertMenu extends Menu {
         System.out.print("Enter team foundationYear: ");
         int foundationYear = nextInteger();
 
-        db.insertTeam(teamId, name, city, foundationYear);
+        System.out.print("Enter number of kit colors: ");
+        int numKitColors = nextInteger();
+
+        String[] kitColors = new String[numKitColors];
+        for (int i = 0; i < numKitColors; i++) {
+            System.out.print("Enter kit color " + (i + 1) + ": ");
+            kitColors[i] = nextString();
+        }
+
+        db.insertTeam(teamId, name, city, foundationYear, kitColors);
     }
+
 
     public void insertNewPlayer() throws SQLException {
         System.out.print("Enter playerID: ");
@@ -187,5 +205,70 @@ public class InsertMenu extends Menu {
 
         db.insertSponsor(sponsorID, name, industry, foundationYear);
     }
+
+    public void insertNewKitColor() throws SQLException {
+        System.out.print("Enter kit color: ");
+        String color = nextString();
+
+        System.out.print("Enter teamID: ");
+        int teamID = nextInteger();
+
+        db.insertKitColor(color, teamID);
+    }
+
+    public void insertNewTSponsorship() throws SQLException {
+        System.out.print("Enter Team SponsorshipID: ");
+        int tSponsorshipID = nextInteger();
+
+        System.out.print("Enter Sponsor ID: ");
+        int sponsorID = nextInteger();
+
+        System.out.print("Enter start date (format: dd-MM-yyyy): ");
+        Date startDate = nextDate();
+
+        System.out.print("Enter end date (format: dd-MM-yyyy): ");
+        Date endDate = nextDate();
+
+        System.out.print("Enter type: ");
+        String type = nextString();
+
+        System.out.print("Enter team ID: ");
+        int teamID = nextInteger();
+
+        db.insertTSponsorship(tSponsorshipID, sponsorID, startDate, endDate, type, teamID);
+    }
+
+    public void insertNewPSponsorship() throws SQLException {
+        System.out.print("Enter Player SponsorshipID: ");
+        int pSponsorshipID = nextInteger();
+
+        System.out.print("Enter Sponsor ID: ");
+        int sponsorID = nextInteger();
+
+        System.out.print("Enter start date (format: dd-MM-yyyy): ");
+        Date startDate = nextDate();
+
+        System.out.print("Enter end date (format: dd-MM-yyyy): ");
+        Date endDate = nextDate();
+
+        System.out.print("Enter type: ");
+        String type = nextString();
+
+        System.out.print("Enter player ID: ");
+        int playerID = nextInteger();
+
+        db.insertPSponsorship(pSponsorshipID, sponsorID, startDate, endDate, type, playerID);
+    }
+
+    public void insertTrains() throws SQLException {
+        System.out.print("Enter coachingStaffID: ");
+        int coachingStaffID = nextInteger();
+
+        System.out.print("Enter playerID: ");
+        int playerID = nextInteger();
+
+        db.insertTrains(coachingStaffID, playerID);
+    }
+
 
 }
